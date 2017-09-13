@@ -1,0 +1,19 @@
+{
+  "name": "flux",
+  "version": "1.0.0",
+  "description": "Binaris SDK & CLI",
+  "main": "index.js",
+  "bin": {
+    "flux": "./index.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Binaris",
+  "license": "ISC",
+  "dependencies": {
+    "colors": "^1.1.2",
+    "commander": "^2.11.0",
+    "moniker": "^0.1.2"
+  }
+}

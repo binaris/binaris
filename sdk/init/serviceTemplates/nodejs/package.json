@@ -1,0 +1,12 @@
+{
+  "name": "binaris-nodejs",
+  "version": "1.0.0",
+  "description": "Binaris Functions sample for the Serverless framework",
+  "main": "handler.js",
+  "keywords": [
+    "binaris",
+    "nodejs"
+  ],
+  "devDependencies": {
+  }
+}

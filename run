@@ -1,0 +1,4 @@
+#!/bin/bash -e
+
+docker build -f flux.Dockerfile -t flux .
+docker run --rm -it flux bash
