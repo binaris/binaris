@@ -3,7 +3,10 @@ const path = require('path');
 
 const yaml = require('js-yaml');
 
+const logger = require('../shared/loggerInit.js');
+
 const templateDir = './serviceTemplates/nodejs/';
+
 
 const init = async function (data) {
   const completionObj = {

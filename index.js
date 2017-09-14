@@ -4,6 +4,9 @@
 const { init, deploy, invoke, destroy, help,
   info, login, logout, signup } = require('./sdk/sdk');
 
+// create our basic logger
+const logger = require('./sdk/shared/loggerInit.js');
+
 // our core modules
 const fs = require('fs');
 const path = require('path');
@@ -19,7 +22,7 @@ const moniker = require('moniker');
 
 // helper to quickly notify the user that a function is unsupported
 const noSupport = function notSupported(cmdName) {
-  console.log(`${cmdName} is not currently supported!`.red);
+  logger.binaris.info(`${cmdName} is not currently supported!`.red);
   process.exit(0);
 };
 
@@ -59,12 +62,12 @@ commander
   .option('-s, --service [serviceName]', 'The name of the service you are creating')
   .option('-p, --path [path]', 'The path to create your service(default is pwd)')
   .action(async (options) => {
-    console.log('beginning Binaris service initialization...'.yellow);
+    logger.binaris.info('beginning Binaris service initialization...'.yellow);
     const initPayload = {
       serviceName: undefined,
       servicePath: undefined,
     };
-    console.log('validating service name...'.yellow);
+    logger.binaris.info('validating service name...'.yellow);
     // remove me
     await asyncTimeout(defaultSleep);
     if (options.service) {
@@ -72,7 +75,7 @@ commander
       if (answer.valid) {
         initPayload.serviceName = options.service;
       } else {
-        console.error(answer.error.red);
+        logger.binaris.error(answer.error.red);
         process.exit(0);
       }
     } else {
@@ -84,8 +87,8 @@ commander
         }
       }
     }
-    console.log('service name is valid!'.green);
-    console.log('validating service path...'.yellow);
+    logger.binaris.info('service name is valid!'.green);
+    logger.binaris.info('validating service path...'.yellow);
     // remove me
     await asyncTimeout(defaultSleep);
     if (options.path) {
@@ -93,30 +96,30 @@ commander
         if (fs.lstatSync(options.path).isDirectory()) {
           initPayload.servicePath = path.resolve(options.path);
         } else {
-          console.error(`path: ${options.path} is not a directory!`);
+          logger.binaris.error(`path: ${options.path} is not a directory!`);
           process.exit(0);
         }
       } else {
-        console.error(`path: ${options.path} is invalid!`.red);
+        logger.binaris.error(`path: ${options.path} is invalid!`.red);
         process.exit(0);
       }
     } else {
       initPayload.servicePath = process.cwd();
     }
-    console.log('service path is valid!'.green);
+    logger.binaris.info('service path is valid!'.green);
 
     // now we actually call our initialize function and then immediately
     // determine if was successfully completed
-    console.log('attempting to initialize...'.yellow);
+    logger.binaris.info('attempting to initialize...'.yellow);
     // remove me
     await asyncTimeout(defaultSleep);
     const initCompletion = await init(initPayload);
     if (initCompletion.success) {
-      console.log(`sucessfully initialized service ${initPayload.serviceName}`.green);
-      console.log('service details:'.yellow);
-      console.log(JSON.stringify(initPayload, null, 2).yellow);
+      logger.binaris.info(`sucessfully initialized service ${initPayload.serviceName}`.green);
+      logger.binaris.info('service details:'.yellow);
+      logger.binaris.info(JSON.stringify(initPayload, null, 2).yellow);
     } else {
-      console.error(initCompletion.error.red);
+      logger.binaris.error(initCompletion.error.red);
     }
   });
 
