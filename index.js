@@ -104,13 +104,13 @@ const initHandler = async function initHandler(options) {
 
   // now we actually call our initialize function and then immediately
   // determine if was successfully completed
-  const initCompletion = await init(initPayload);
-  if (initCompletion.success) {
+  try {
+    await init(initPayload);
     logger.binaris.info(`sucessfully initialized function ${initPayload.functionName}`.green);
     logger.binaris.info('function details:'.yellow);
     logger.binaris.info(JSON.stringify(initPayload, null, 2).yellow);
-  } else {
-    logger.binaris.error(initCompletion.error.red);
+  } catch (err) {
+    logger.binaris.error(err.message.red);
   }
 };
 
@@ -124,12 +124,11 @@ const deployHandler = async function deployHandler(options) {
     } else {
       deployPayload.functionPath = path.resolve(process.cwd());
     }
-
-    const deployCompletion = await deploy(deployPayload);
-    if (deployCompletion.success) {
-      logger.binaris.info(`sucessfully deployed function ${deployPayload.functionName}`.green);
-    } else {
-      logger.binaris.error(deployCompletion.error.red);
+    try {
+      await deploy(deployPayload);
+      logger.binaris.info('sucessfully deployed function'.green);
+    } catch (err) {
+      logger.binaris.error(err.message.red);
     }
   }
 };

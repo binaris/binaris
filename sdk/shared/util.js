@@ -3,6 +3,8 @@ const path = require('path');
 
 const yaml = require('js-yaml');
 
+const logger = require('./loggerInit.js');
+
 const binarisYMLPath = 'binaris.yml';
 const packageJSONPath = 'package.json';
 
@@ -11,22 +13,17 @@ const packageJSONPath = 'package.json';
 // location the object returned will have a false 'success'
 // field and a associated error field
 const loadBinarisYML = async function loadBinarisYML(funcDirPath) {
-  const completionObj = {
-    success: false,
-  };
   try {
     const fullYAMLPath = path.join(funcDirPath, binarisYMLPath);
     if (fs.existsSync(fullYAMLPath)) {
       const YAMLObj = yaml.safeLoad(fs.readFileSync(fullYAMLPath, 'utf8'));
-      completionObj.success = true;
-      completionObj.data = YAMLObj;
-    } else {
-      completionObj.error = `no binaris.yml file was found @path ${fullYAMLPath}`;
+      return YAMLObj;
     }
+    throw new Error(`no binaris.yml file was found @path ${fullYAMLPath}`);
   } catch (err) {
-    completionObj.error = err;
+    logger.binaris.debug(err);
+    throw new Error(`failed to load binaris.yml file @path ${funcDirPath}`);
   }
-  return completionObj;
 };
 
 // this loads our package.json file from the users current
@@ -34,24 +31,18 @@ const loadBinarisYML = async function loadBinarisYML(funcDirPath) {
 // location the object returned will have a false 'success'
 // field and a associated error field
 const loadPackageJSON = async function loadPackageJSON(funcDirPath) {
-  const completionObj = {
-    success: false,
-  };
-
   try {
     const fullJSONPath = path.join(funcDirPath, packageJSONPath);
     if (fs.existsSync(fullJSONPath)) {
       // eslint doesn't understand this case
       const JSONObj = require(fullJSONPath);
-      completionObj.success = true;
-      completionObj.data = JSONObj;
-    } else {
-      completionObj.error = `no package.json file was found @path ${fullJSONPath}`;
+      return JSONObj;
     }
+    throw new Error(`no package.json file was found @path ${fullJSONPath}`);
   } catch (err) {
-    completionObj.error = err;
+    logger.binaris.debug(err);
+    throw new Error(`failed to load package.json file @path ${funcDirPath}`);
   }
-  return completionObj;
 };
 
 // this loads our _______.js file from the users current
@@ -61,60 +52,38 @@ const loadPackageJSON = async function loadPackageJSON(funcDirPath) {
 // returned will have a false 'success' field and a
 // associated error field
 const loadFunctionJS = async function loadFunctionJS(funcDirPath, packageJSON) {
-  const completionObj = {
-    success: false,
-  };
-
   try {
     if (Object.prototype.hasOwnProperty.call(packageJSON, 'main')) {
       const JSFileName = packageJSON.main;
       const fullJSPath = path.join(funcDirPath, JSFileName);
       if (fs.existsSync(fullJSPath)) {
         const JSFile = fs.readFileSync(fullJSPath, 'utf8');
-        completionObj.success = true;
-        completionObj.data = JSFile;
-      } else {
-        completionObj.error = `no JS file could be located @path ${fullJSPath}`;
+        return JSFile;
       }
+      throw new Error(`no JS file could be located @path ${fullJSPath}`);
     } else {
-      completionObj.error = 'package.json file did not contain a main field!';
+      throw new Error('package.json file did not contain a main field!');
     }
   } catch (err) {
-    completionObj.error = err;
+    logger.binaris.debug(err);
+    throw err;
+    //throw new Error(`failed to load JS file @path ${funcDirPath}`);
   }
-  return completionObj;
 };
 
 const loadAllFiles = async function loadAllFiles(funcDirPath) {
-  const completionObj = {
-    success: false,
-  };
-
-  const packageJSONObj = await loadPackageJSON(funcDirPath);
-  if (packageJSONObj.success) {
-    const packageJSON = packageJSONObj.data;
-    const JSFileObj = await loadFunctionJS(funcDirPath, packageJSON);
-    if (JSFileObj.success) {
-      const JSFile = JSFileObj.data;
-      const binarisYMLObj = await loadBinarisYML(funcDirPath);
-      if (binarisYMLObj.success) {
-        const binarisYML = binarisYMLObj.data;
-        completionObj.success = true;
-        completionObj.data = {
-          binarisYML,
-          packageJSON,
-          JSFile,
-        };
-      } else {
-        completionObj.error = binarisYMLObj.error;
-      }
-    } else {
-      completionObj.error = JSFileObj.error;
-    }
-  } else {
-    completionObj.error = packageJSONObj.error;
+  try {
+    const packageJSON = await loadPackageJSON(funcDirPath);
+    const JSFile = await loadFunctionJS(funcDirPath, packageJSON);
+    const binarisYML = await loadBinarisYML(funcDirPath);
+    return {
+      binarisYML,
+      packageJSON,
+      JSFile,
+    };
+  } catch (err) {
+    throw err;
   }
-  return completionObj;
 };
 
 module.exports = {

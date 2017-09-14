@@ -9,10 +9,6 @@ const templateDir = './functionTemplates/nodejs/';
 
 
 const init = async function (data) {
-  const completionObj = {
-    success: false,
-  };
-
   if (data.functionName && data.functionPath) {
     try {
       // parse our templated yml and make the necessary modifications
@@ -24,10 +20,8 @@ const init = async function (data) {
       const newDir = path.join(data.functionPath, data.functionName);
       // ensure that the function directory doesn't already exist
       if (fs.existsSync(newDir)) {
-        completionObj.error = `function w/ name ${data.functionName} could not be initialized because a directory already exists with that name!`;
-        return completionObj;
+        throw new Error(`function w/ name ${data.functionName} could not be initialized because a directory already exists with that name!`);
       }
-
       // here we are just loading our JSON and giving it the correct function name
       const packageJSON = JSON.parse(fs.readFileSync(path.join(__dirname, templateDir, 'package.json'), 'utf8'));
       packageJSON.name = data.functionName;
@@ -39,16 +33,12 @@ const init = async function (data) {
       fs.writeFileSync(path.join(newDir, 'package.json'),
         JSON.stringify(packageJSON, null, 2), 'utf8');
       fs.writeFileSync(path.join(newDir, 'binaris.yml'), functionConfig, 'utf8');
-      completionObj.success = true;
-      return completionObj;
+      return;
     } catch (err) {
-      completionObj.error = err;
-      return completionObj;
+      throw err;
     }
   }
-
-  completionObj.error = 'invalid function path or function name provided!';
-  return completionObj;
+  throw new Error('invalid function path or function name provided!');
 };
 
 module.exports = init;
