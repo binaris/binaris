@@ -19,11 +19,31 @@ const moniker = require('moniker');
 // Things to do
 // create binaris dependent directories
 // create temp files
-
 // helper to quickly notify the user that a function is unsupported
 const noSupport = function notSupported(cmdName) {
   logger.binaris.info(`${cmdName} is not currently supported!`.red);
   process.exit(0);
+};
+
+// helper that allows us to a avoid a lot of redudant code
+const resolvePath = async function resolvePath(somePath) {
+  if (fs.existsSync(somePath)) {
+    if (fs.lstatSync(somePath).isDirectory()) {
+      try {
+        const returnPath = path.resolve(somePath);
+        return returnPath;
+      } catch (error) {
+        logger.binaris.error(`error when attempting to resolve path: ${somePath}`);
+        process.exit(0);
+      }
+    } else {
+      logger.binaris.error(`path: ${somePath} is not a directory!`);
+      process.exit(0);
+    }
+  } else {
+    logger.binaris.error(`path: ${somePath} is invalid!`.red);
+    process.exit(0);
+  }
 };
 
 // here we both ensure the name is valid syntatically and eventually
@@ -44,6 +64,15 @@ const validateFunctionName = async function validateFunctionName(name) {
   return response;
 };
 
+const validateBinarisLogin = async function validateBinarisLogin() {
+  return true;
+};
+
+
+// initializes a binaris function based on the options given by
+// the user
+// this essentially boils down to creating template files with
+// the correct information in the correct location
 const initHandler = async function initHandler(options) {
   logger.binaris.info('Initializing Binaris function...'.yellow);
   const initPayload = {
@@ -68,17 +97,7 @@ const initHandler = async function initHandler(options) {
     }
   }
   if (options.path) {
-    if (fs.existsSync(options.path)) {
-      if (fs.lstatSync(options.path).isDirectory()) {
-        initPayload.functionPath = path.resolve(options.path);
-      } else {
-        logger.binaris.error(`path: ${options.path} is not a directory!`);
-        process.exit(0);
-      }
-    } else {
-      logger.binaris.error(`path: ${options.path} is invalid!`.red);
-      process.exit(0);
-    }
+    initPayload.functionPath = resolvePath(options.path);
   } else {
     initPayload.functionPath = process.cwd();
   }
@@ -95,6 +114,26 @@ const initHandler = async function initHandler(options) {
   }
 };
 
+const deployHandler = async function deployHandler(options) {
+  if (validateBinarisLogin()) {
+    const deployPayload = {
+      functionPath: undefined,
+    };
+    if (options.path) {
+      deployPayload.functionPath = await resolvePath(options.path);
+    } else {
+      deployPayload.functionPath = path.resolve(process.cwd());
+    }
+
+    const deployCompletion = await deploy(deployPayload);
+    if (deployCompletion.success) {
+      logger.binaris.info(`sucessfully deployed function ${deployPayload.functionName}`.green);
+    } else {
+      logger.binaris.error(deployCompletion.error.red);
+    }
+  }
+};
+
 commander
   .version('0.0.1')
   .description('Binaris command line interface');
@@ -108,8 +147,9 @@ commander
 
 commander
   .command('deploy')
-  .description('')
-  .action();
+  .description('deploys your function to the Binaris cloud')
+  .option('-p, --path [path]', 'The path to the binaris function you wish to deploy')
+  .action(deployHandler);
 
 commander
   .command('invoke')
