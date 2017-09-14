@@ -32,9 +32,8 @@ const validateFunctionName = async function validateFunctionName(name) {
   const response = {
     valid: false,
   };
-
   // eslint issue but too annoying to fix given time
-  if (/[~`!#$%\^&*+=\\[\]\\';,/{}|\\":<>\?]/g.test(name)) {
+  if (/[~`!#$%^&*+=\\[\]\\';,/{}|\\":<>?]/g.test(name)) {
     response.error = `${name} is an invalid function name`;
     return response;
   }
