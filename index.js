@@ -28,14 +28,14 @@ const noSupport = function notSupported(cmdName) {
 
 // here we both ensure the name is valid syntatically and eventually
 // we will also determine if it has been previously created
-const validateServiceName = async function validateServiceName(name) {
+const validateFunctionName = async function validateFunctionName(name) {
   const response = {
     valid: false,
   };
 
   // eslint issue but too annoying to fix given time
   if (/[~`!#$%\^&*+=\\[\]\\';,/{}|\\":<>\?]/g.test(name)) {
-    response.error = `${name} is an invalid service name`;
+    response.error = `${name} is an invalid function name`;
     return response;
   }
 
@@ -58,43 +58,43 @@ commander
 
 commander
   .command('init')
-  .description('creates the skeleton of a binaris service')
-  .option('-s, --service [serviceName]', 'The name of the service you are creating')
-  .option('-p, --path [path]', 'The path to create your service(default is pwd)')
+  .description('creates the skeleton of a binaris function')
+  .option('-f, --functionName [functionName]', 'The name of the function you are creating')
+  .option('-p, --path [path]', 'The path to create your function(default is pwd)')
   .action(async (options) => {
-    logger.binaris.info('beginning Binaris service initialization...'.yellow);
+    logger.binaris.info('beginning Binaris function initialization...'.yellow);
     const initPayload = {
-      serviceName: undefined,
-      servicePath: undefined,
+      functionName: undefined,
+      functionPath: undefined,
     };
-    logger.binaris.info('validating service name...'.yellow);
+    logger.binaris.info('validating function name...'.yellow);
     // remove me
     await asyncTimeout(defaultSleep);
-    if (options.service) {
-      const answer = await validateServiceName(options.service);
+    if (options.functionName) {
+      const answer = await validateFunctionName(options.functionName);
       if (answer.valid) {
-        initPayload.serviceName = options.service;
+        initPayload.functionName = options.functionName;
       } else {
         logger.binaris.error(answer.error.red);
         process.exit(0);
       }
     } else {
-      while (!initPayload.serviceName) {
+      while (!initPayload.functionName) {
         const potentialName = moniker.choose();
-        const answer = await validateServiceName(potentialName);
+        const answer = await validateFunctionName(potentialName);
         if (answer.valid) {
-          initPayload.serviceName = potentialName;
+          initPayload.functionName = potentialName;
         }
       }
     }
-    logger.binaris.info('service name is valid!'.green);
-    logger.binaris.info('validating service path...'.yellow);
+    logger.binaris.info('function name is valid!'.green);
+    logger.binaris.info('validating function path...'.yellow);
     // remove me
     await asyncTimeout(defaultSleep);
     if (options.path) {
       if (fs.existsSync(options.path)) {
         if (fs.lstatSync(options.path).isDirectory()) {
-          initPayload.servicePath = path.resolve(options.path);
+          initPayload.functionPath = path.resolve(options.path);
         } else {
           logger.binaris.error(`path: ${options.path} is not a directory!`);
           process.exit(0);
@@ -104,9 +104,9 @@ commander
         process.exit(0);
       }
     } else {
-      initPayload.servicePath = process.cwd();
+      initPayload.functionPath = process.cwd();
     }
-    logger.binaris.info('service path is valid!'.green);
+    logger.binaris.info('function path is valid!'.green);
 
     // now we actually call our initialize function and then immediately
     // determine if was successfully completed
@@ -115,8 +115,8 @@ commander
     await asyncTimeout(defaultSleep);
     const initCompletion = await init(initPayload);
     if (initCompletion.success) {
-      logger.binaris.info(`sucessfully initialized service ${initPayload.serviceName}`.green);
-      logger.binaris.info('service details:'.yellow);
+      logger.binaris.info(`sucessfully initialized function ${initPayload.functionName}`.green);
+      logger.binaris.info('function details:'.yellow);
       logger.binaris.info(JSON.stringify(initPayload, null, 2).yellow);
     } else {
       logger.binaris.error(initCompletion.error.red);

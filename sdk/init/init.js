@@ -5,7 +5,7 @@ const yaml = require('js-yaml');
 
 const logger = require('../shared/loggerInit.js');
 
-const templateDir = './serviceTemplates/nodejs/';
+const templateDir = './functionTemplates/nodejs/';
 
 
 const init = async function (data) {
@@ -13,24 +13,24 @@ const init = async function (data) {
     success: false,
   };
 
-  if (data.serviceName && data.servicePath) {
+  if (data.functionName && data.functionPath) {
     try {
       // parse our templated yml and make the necessary modifications
       const vanillaConfig = yaml.safeLoad(fs.readFileSync(path.join(__dirname,
         templateDir, 'binaris.yml'), 'utf8'));
-      // replace the generic service name with the actual name
-      vanillaConfig.service = data.serviceName;
-      const serviceConfig = yaml.dump(vanillaConfig);
-      const newDir = path.join(data.servicePath, data.serviceName);
-      // ensure that the service directory doesn't already exist
+      // replace the generic function name with the actual name
+      vanillaConfig.functionName = data.functionName;
+      const functionConfig = yaml.dump(vanillaConfig);
+      const newDir = path.join(data.functionPath, data.functionName);
+      // ensure that the function directory doesn't already exist
       if (fs.existsSync(newDir)) {
-        completionObj.error = `service w/ name ${data.serviceName} could not be initialized because a directory already exists with that name!`;
+        completionObj.error = `function w/ name ${data.functionName} could not be initialized because a directory already exists with that name!`;
         return completionObj;
       }
 
-      // here we are just loading our JSON and giving it the correct service name
+      // here we are just loading our JSON and giving it the correct function name
       const packageJSON = JSON.parse(fs.readFileSync(path.join(__dirname, templateDir, 'package.json'), 'utf8'));
-      packageJSON.name = data.serviceName;
+      packageJSON.name = data.functionName;
 
       // now we have to write out all our files that we've modified
       fs.mkdirSync(newDir);
@@ -38,7 +38,7 @@ const init = async function (data) {
         fs.readFileSync(path.join(__dirname, templateDir, 'handler.js')));
       fs.writeFileSync(path.join(newDir, 'package.json'),
         JSON.stringify(packageJSON, null, 2), 'utf8');
-      fs.writeFileSync(path.join(newDir, 'binaris.yml'), serviceConfig, 'utf8');
+      fs.writeFileSync(path.join(newDir, 'binaris.yml'), functionConfig, 'utf8');
       completionObj.success = true;
       return completionObj;
     } catch (err) {
@@ -47,7 +47,7 @@ const init = async function (data) {
     }
   }
 
-  completionObj.error = 'invalid service path or service name provided!';
+  completionObj.error = 'invalid function path or function name provided!';
   return completionObj;
 };
 

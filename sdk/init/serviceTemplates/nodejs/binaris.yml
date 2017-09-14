@@ -1,5 +1,0 @@
-service: binaris-nodejs # we will need to update this to reflect our service name
-
-functions:
-    hello:
-        handler: handler.hello
