@@ -1,10 +1,10 @@
 {
-  "name": "flux",
+  "name": "binaris",
   "version": "1.0.0",
   "description": "Binaris SDK & CLI",
   "main": "index.js",
   "bin": {
-    "flux": "./index.js"
+    "bn": "./index.js"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

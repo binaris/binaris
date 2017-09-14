@@ -17,7 +17,7 @@ const colors = require('colors');
 const moniker = require('moniker');
 
 // Things to do
-// create flux dependent directories
+// create binaris dependent directories
 // create temp files
 
 // helper to quickly notify the user that a function is unsupported

@@ -1,4 +1,4 @@
 #!/bin/bash -e
 
-docker build -f flux.Dockerfile -t flux .
-docker run --rm -it flux bash
+docker build -f binaris.Dockerfile -t binaris .
+docker run --rm -it binaris bash
