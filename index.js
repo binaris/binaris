@@ -112,7 +112,7 @@ commander
     await asyncTimeout(defaultSleep);
     const initCompletion = await init(initPayload);
     if (initCompletion.success) {
-      console.log(`sucessfully initialized service${initPayload.serviceName}`.green);
+      console.log(`sucessfully initialized service ${initPayload.serviceName}`.green);
       console.log('service details:'.yellow);
       console.log(JSON.stringify(initPayload, null, 2).yellow);
     } else {
