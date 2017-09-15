@@ -44,6 +44,8 @@ const resolvePath = async function resolvePath(somePath) {
     logger.binaris.error(`path: ${somePath} is invalid!`.red);
     process.exit(0);
   }
+  logger.binaris.error(`path: ${somePath} is invalid!`.red);
+  process.exit(0);
 };
 
 // here we both ensure the name is valid syntatically and eventually
@@ -65,6 +67,7 @@ const validateFunctionName = async function validateFunctionName(name) {
 };
 
 const validateBinarisLogin = async function validateBinarisLogin() {
+  logger.binaris.info('validating Binaris credentials'.yellow);
   return true;
 };
 
@@ -114,7 +117,10 @@ const initHandler = async function initHandler(options) {
   }
 };
 
+// simply handles the process of deploying a function and its
+// associated metadata to the Binaris cloud
 const deployHandler = async function deployHandler(options) {
+  logger.binaris.info('starting function deployment process'.yellow);
   if (validateBinarisLogin()) {
     const deployPayload = {
       functionPath: undefined,
@@ -125,8 +131,9 @@ const deployHandler = async function deployHandler(options) {
       deployPayload.functionPath = path.resolve(process.cwd());
     }
     try {
-      await deploy(deployPayload);
+      const response = await deploy(deployPayload);
       logger.binaris.info('sucessfully deployed function'.green);
+      logger.binaris.info(`response was, ${response}`.yellow);
     } catch (err) {
       logger.binaris.error(err.message.red);
     }

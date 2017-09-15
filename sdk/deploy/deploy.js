@@ -1,6 +1,8 @@
 const fs = require('fs');
 const path = require('path');
 const targz = require('targz');
+const urljoin = require('urljoin');
+const request = require('request');
 
 const util = require('../shared/util');
 const logger = require('../shared/loggerInit');
@@ -9,6 +11,9 @@ const funcJSONPath = 'function.json';
 const binarisDir = '.binaris/';
 
 const ignoredTarFiles = ['node_modules', '.git', '.binaris', 'binaris.yml'];
+
+const publishEndpoint =
+  process.env.BINARIS_PUBLISH_ENDPOINT || 'api-staging.binaris.io:11011';
 
 // creates our hidden .binaris directory in the users function
 // directory if it doesn't already exist
@@ -77,9 +82,29 @@ const genTarBall = async function genTarBall(dirToTar, dest, ignoredFiles) {
   return success;
 };
 
-// TODO: return a clear error when in bad func dir
-// also have thing that returns metadata
+const uploadFuncTar = async function uploadFuncTar(tarPath, publishURL) {
+  const options = {
+    url: publishURL,
+  };
+  try {
+    const uploadPromise = new Promise((resolve, reject) => {
+      fs.createReadStream(tarPath)
+        .pipe(request.post(options, (uploadErr, uploadResponse) => {
+          if (uploadErr) {
+            reject(uploadErr);
+          } else {
+            resolve(uploadResponse);
+          }
+        }));
+    });
+    return await uploadPromise;
+  } catch (err) {
+    logger.binaris.debug(err);
+    throw new Error('failed to upload function tar file to Binaris backend');
+  }
+};
 
+// TODO: thing that returns metadata
 const deploy = async function (data) {
   const deployPath = data.functionPath;
   let funcTarPath;
@@ -90,7 +115,9 @@ const deploy = async function (data) {
   });
   try {
     const { packageJSON, binarisYML, JSFile } =
-      await util.loadAllFiles(deployPath);
+      await util.loadAllFiles(deployPath).catch((loadErr) => {
+        throw new Error('your current directory does not contain a valid binaris function!');
+      });
     const funcName = binarisYML.functionName;
     await genBinarisDir(deployPath);
     const entryPoint = await util.getFuncEntry(binarisYML);
@@ -98,8 +125,15 @@ const deploy = async function (data) {
     funcJSONCleanup = true;
     funcTarPath = path.join(deployPath, binarisDir, `${funcName}.tgz`);
     await genTarBall(deployPath, funcTarPath, fullIgnorePaths);
+    const endpoint = urljoin(`http://${publishEndpoint}/function`, funcName);
+    const response = await uploadFuncTar(funcTarPath, endpoint);
     await cleanupFile(path.join(deployPath, funcJSONPath));
     funcJSONCleanup = false;
+    if (response.statusCode !== 200) {
+      logger.binaris.debug(response);
+      throw new Error('function was not deployed successfully, check logs for more details');
+    }
+    return response;
   } catch (err) {
     if (funcJSONCleanup) {
       await cleanupFile(path.join(deployPath, funcJSONPath));
