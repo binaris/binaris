@@ -67,10 +67,12 @@ const loadFunctionJS = async function loadFunctionJS(funcDirPath, packageJSON) {
   } catch (err) {
     logger.binaris.debug(err);
     throw err;
-    //throw new Error(`failed to load JS file @path ${funcDirPath}`);
   }
 };
 
+// loads all our files at once handling the potential errors in
+// batch. Unfortunately the load still needs to be done in sync
+// because of file dependencies
 const loadAllFiles = async function loadAllFiles(funcDirPath) {
   try {
     const packageJSON = await loadPackageJSON(funcDirPath);
@@ -86,9 +88,33 @@ const loadAllFiles = async function loadAllFiles(funcDirPath) {
   }
 };
 
+// determines the current functions entrypoint based on the data
+// available in the binarisYML
+const getFuncEntry = async function getFuncEntry(binarisYML) {
+  const funcStr = 'function';
+  // ensure that our YML was populated by the correct fields
+  if (Object.prototype.hasOwnProperty.call(binarisYML, funcStr)) {
+    const funcObj = binarisYML[funcStr];
+    const funcKeys = Object.keys(funcObj);
+    if (funcKeys.length !== 1) {
+      throw new Error('binarisYML function field did not contain an appropriate definition');
+    }
+    const defKey = funcKeys[0];
+    const defObj = funcObj[defKey];
+    const defKeys = Object.keys(defObj);
+    if (defKeys.length !== 1) {
+      throw new Error('binarisYML function-defintion field did not contain an appropriate definition');
+    }
+    // here we split between the file name and entrypoint
+    return defObj[defKeys[0]].split('.')[1];
+  }
+  throw new Error('binarisYML did not contain a require field: <function>');
+};
+
 module.exports = {
   loadBinarisYML,
   loadPackageJSON,
   loadFunctionJS,
   loadAllFiles,
+  getFuncEntry,
 };
