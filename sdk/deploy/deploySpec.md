@@ -1,7 +1,7 @@
 # Deployment specification
 
 ## Contents of tgz
-###A tgz file containing the following items will be sent
+### A tgz file containing the following items will be sent
 
 	function-name.tgz
 	  -- <function-handler>.js 
