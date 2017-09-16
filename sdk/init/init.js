@@ -3,7 +3,7 @@ const path = require('path');
 
 const yaml = require('js-yaml');
 
-const logger = require('../shared/loggerInit.js');
+const logger = require('../shared/loggerInit');
 
 const templateDir = './functionTemplates/nodejs/';
 

@@ -125,7 +125,6 @@ const deploy = async function deploy(data) {
         throw new Error('your current directory does not contain a valid binaris function!');
       });
     const metadata = await util.getFuncMetadata(binarisYML, packageJSON);
-    console.log(metadata);
     await genBinarisDir(deployPath);
     await writeFuncJSON(metadata.entryPoint, deployPath);
     funcJSONCleanup = true;

@@ -2,7 +2,7 @@
 
 // here we just grab all our SDK functions that we plan to use
 // invoke, destroy, help, info, login, logout, signup
-const { init, deploy } = require('./sdk/sdk');
+const { init, invoke, deploy } = require('./sdk/sdk');
 
 // create our basic logger
 const logger = require('./sdk/shared/loggerInit.js');
@@ -135,6 +135,29 @@ const deployHandler = async function deployHandler(options) {
   }
 };
 
+// invokes a binaris function that you have previously
+// deployed either through the CLI or other means
+const invokeHandler = async function invokeHandler(options) {
+  // TODO: options.json
+  // TODO: options.file
+  logger.binaris.info('attempting to invoke your function'.yellow);
+  const invokePayload = {};
+  if (options.path) {
+    await resolvePath(options.path);
+    invokePayload.functionPath = options.path;
+  } else {
+    invokePayload.functionPath = process.cwd();
+  }
+
+  try {
+    const response = await invoke(invokePayload);
+    logger.binaris.info('successfully invoked function'.green);
+    logger.binaris.info(`response was, ${response}`.yellow);
+  } catch (err) {
+    logger.binaris.error(err.message.red);
+  }
+};
+
 commander
   .version('0.0.1')
   .description('Binaris command line interface');
@@ -154,8 +177,12 @@ commander
 
 commander
   .command('invoke')
-  .description('')
-  .action();
+  .description('invokes a previously deployed binaris function')
+  .option('-p, --path [path]', 'The path to the binaris function you wish to invoke')
+  // .option('-j, --json [json]', 'The json data you would like to include in the invocation')
+  // .option('-f, --file [file]', 'The path to your JSON file containing',
+  //    'the message to send in your invocation')
+  .action(invokeHandler);
 
 commander
   .command('destroy')
