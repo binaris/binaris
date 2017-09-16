@@ -111,10 +111,25 @@ const getFuncEntry = async function getFuncEntry(binarisYML) {
   throw new Error('binarisYML did not contain a require field: <function>');
 };
 
+// helper to create an object with key information about
+// a function and its config
+const getFuncMetadata = async function getFuncMetaData(binarisYML, packageJSON) {
+  const metadata = {};
+  try {
+    metadata.entrypoint = await getFuncEntry(binarisYML);
+    metadata.main = packageJSON.main;
+    metadata.name = packageJSON.name;
+    return metadata;
+  } catch (err) {
+    throw err;
+  }
+};
+
+
 module.exports = {
   loadBinarisYML,
   loadPackageJSON,
   loadFunctionJS,
   loadAllFiles,
-  getFuncEntry,
+  getFuncMetadata,
 };

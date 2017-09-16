@@ -8,7 +8,7 @@ const logger = require('../shared/loggerInit.js');
 const templateDir = './functionTemplates/nodejs/';
 
 
-const init = async function (data) {
+const init = async function init(data) {
   if (data.functionName && data.functionPath) {
     try {
       // parse our templated yml and make the necessary modifications
