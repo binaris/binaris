@@ -51,19 +51,14 @@ const resolvePath = async function resolvePath(somePath) {
 // here we both ensure the name is valid syntatically and eventually
 // we will also determine if it has been previously created
 const validateFunctionName = async function validateFunctionName(name) {
-  const response = {
-    valid: false,
-  };
   // eslint issue but too annoying to fix given time
   if (/[~`!#$%^&*+=\\[\]\\';,/{}|\\":<>?]/g.test(name)) {
-    response.error = `${name} is an invalid function name`;
-    return response;
+    return false;
   }
 
   // need to add an SDK? call to ensure that the name is not only
   // syntatically valid but also unique
-  response.valid = true;
-  return response;
+  return true;
 };
 
 const validateBinarisLogin = async function validateBinarisLogin() {
@@ -84,17 +79,17 @@ const initHandler = async function initHandler(options) {
   };
   if (options.functionName) {
     const answer = await validateFunctionName(options.functionName);
-    if (answer.valid) {
+    if (answer) {
       initPayload.functionName = options.functionName;
     } else {
-      logger.binaris.error(answer.error.red);
+      logger.binaris.error(`${options.functionName} is not a valid function name`.red);
       process.exit(0);
     }
   } else {
     while (!initPayload.functionName) {
       const potentialName = moniker.choose();
       const answer = await validateFunctionName(potentialName);
-      if (answer.valid) {
+      if (answer) {
         initPayload.functionName = potentialName;
       }
     }

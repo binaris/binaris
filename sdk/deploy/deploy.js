@@ -12,6 +12,8 @@ const binarisDir = '.binaris/';
 
 const ignoredTarFiles = ['node_modules', '.git', '.binaris', 'binaris.yml'];
 
+// TODO: ensure that this is configured in a better way, having a single
+// variable in the deploy file is inadequate
 const publishEndpoint =
   process.env.BINARIS_PUBLISH_ENDPOINT || 'api-staging.binaris.io:11011';
 
@@ -114,8 +116,11 @@ const deploy = async function (data) {
     fullIgnorePaths.push(path.join(deployPath, entry));
   });
   try {
-    const { packageJSON, binarisYML, JSFile } =
-      await util.loadAllFiles(deployPath).catch((loadErr) => {
+    // although we only take the binaris.yml file in our destructuring
+    // we still need to run loadAllFiles because it verifies that we
+    // have a correct function dir setup
+    const { binarisYML } =
+      await util.loadAllFiles(deployPath).catch(() => {
         throw new Error('your current directory does not contain a valid binaris function!');
       });
     const funcName = binarisYML.functionName;
