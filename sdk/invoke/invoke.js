@@ -20,6 +20,7 @@ const invoke = async function invoke(data) {
     const metadata = await util.getFuncMetadata(binarisYML, packageJSON);
     const endpoint = urljoin(`http://${invokeEndpoint}/v1/user/`, metadata.funcName);
     logger.binaris.debug(`attempting to invoke @endpoint ${endpoint}`);
+    // TODO: switch to request promise at a later time
     const requestPromise = new Promise((resolve, reject) => {
       request.post({
         url: endpoint,

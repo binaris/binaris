@@ -8,6 +8,19 @@ const logger = require('./loggerInit.js');
 const binarisYMLPath = 'binaris.yml';
 const packageJSONPath = 'package.json';
 
+// attempts to parse a json and throws if an issue is encountered
+const attemptJSONParse = async function attemptJSONParse(rawJSON) {
+  try {
+    const parsedJSON = JSON.parse(rawJSON);
+    if (parsedJSON && typeof parsedJSON === 'object') {
+      return parsedJSON;
+    }
+  } catch (err) {
+    logger.binaris.debug(err);
+  }
+  throw new Error('invalid JSON received, unable to parse');
+};
+
 // this loads our binaris.yml file from the users current
 // function directory. If it does not exist in the expected
 // location the object returned will have a false 'success'
@@ -127,6 +140,7 @@ const getFuncMetadata = async function getFuncMetaData(binarisYML, packageJSON) 
 
 
 module.exports = {
+  attemptJSONParse,
   loadBinarisYML,
   loadPackageJSON,
   loadFunctionJS,

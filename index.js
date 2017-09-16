@@ -5,7 +5,8 @@
 const { init, invoke, deploy } = require('./sdk/sdk');
 
 // create our basic logger
-const logger = require('./sdk/shared/loggerInit.js');
+const logger = require('./sdk/shared/loggerInit');
+const util = require('./sdk/shared/util');
 
 // our core modules
 const fs = require('fs');
@@ -95,7 +96,7 @@ const initHandler = async function initHandler(options) {
     }
   }
   if (options.path) {
-    initPayload.functionPath = resolvePath(options.path);
+    initPayload.functionPath = await resolvePath(options.path);
   } else {
     initPayload.functionPath = process.cwd();
   }
@@ -138,8 +139,6 @@ const deployHandler = async function deployHandler(options) {
 // invokes a binaris function that you have previously
 // deployed either through the CLI or other means
 const invokeHandler = async function invokeHandler(options) {
-  // TODO: options.json
-  // TODO: options.file
   logger.binaris.info('attempting to invoke your function'.yellow);
   const invokePayload = {};
   if (options.path) {
@@ -149,7 +148,27 @@ const invokeHandler = async function invokeHandler(options) {
     invokePayload.functionPath = process.cwd();
   }
 
+  if (options.file && options.json) {
+    logger.binaris.error('you may not provide both a json(-j) and file(-f)'.red);
+    process.exit(0);
+  }
+
   try {
+    let payloadJSON;
+    if (options.json) {
+      payloadJSON = options.json;
+    } else if (options.file) {
+      if (fs.existsSync(options.file)) {
+        payloadJSON = fs.readFileSync(options.file, 'utf8');
+      } else {
+        throw new Error(`${options.file} was not a valid path to a JSON file`);
+      }
+    }
+
+    if (payloadJSON) {
+      invokePayload.functionData = await util.attemptJSONParse(payloadJSON);
+      logger.binaris.debug({ functionData: invokePayload.functionData });
+    }
     const response = await invoke(invokePayload);
     logger.binaris.info('successfully invoked function'.green);
     logger.binaris.info(`response was, ${response}`.yellow);
@@ -179,9 +198,9 @@ commander
   .command('invoke')
   .description('invokes a previously deployed binaris function')
   .option('-p, --path [path]', 'The path to the binaris function you wish to invoke')
-  // .option('-j, --json [json]', 'The json data you would like to include in the invocation')
-  // .option('-f, --file [file]', 'The path to your JSON file containing',
-  //    'the message to send in your invocation')
+  .option('-j, --json [json]', 'The json data you would like to include in the invocation')
+  .option('-f, --file [file]', 'The path to your JSON file containing',
+    'the message to send in your invocation')
   .action(invokeHandler);
 
 commander
