@@ -27,6 +27,8 @@ const noSupport = function notSupported(cmdName) {
 };
 
 // helper that allows us to a avoid a lot of redudant code
+// probably want to switch this over to throw an error instead
+// of doing 0x80 itself
 const resolvePath = async function resolvePath(somePath) {
   if (fs.existsSync(somePath)) {
     if (fs.lstatSync(somePath).isDirectory()) {

@@ -11,6 +11,7 @@ const templateDir = './functionTemplates/nodejs/';
 const init = async function init(data) {
   if (data.functionName && data.functionPath) {
     try {
+      logger.binaris.debug('attempting to load template files for function dir creation');
       // parse our templated yml and make the necessary modifications
       const vanillaConfig = yaml.safeLoad(fs.readFileSync(path.join(__dirname,
         templateDir, 'binaris.yml'), 'utf8'));
@@ -23,9 +24,11 @@ const init = async function init(data) {
         throw new Error(`function w/ name ${data.functionName} could not be initialized because a directory already exists with that name!`);
       }
       // here we are just loading our JSON and giving it the correct function name
-      const packageJSON = JSON.parse(fs.readFileSync(path.join(__dirname, templateDir, 'package.json'), 'utf8'));
+      const packageJSON = JSON.parse(fs.readFileSync(path.join(__dirname,
+        templateDir, 'package.json'), 'utf8'));
       packageJSON.name = data.functionName;
 
+      logger.binaris.debug('loading and replicating all template files');
       // now we have to write out all our files that we've modified
       fs.mkdirSync(newDir);
       fs.writeFileSync(path.join(newDir, 'handler.js'),
