@@ -36,18 +36,18 @@ const resolvePath = async function resolvePath(somePath) {
         const returnPath = path.resolve(somePath);
         return returnPath;
       } catch (error) {
-        log.error(`error when attempting to resolve path: ${somePath}`);
+        log.error(`Error when attempting to resolve path: ${somePath}`);
         process.exit(0);
       }
     } else {
-      log.error(`path: ${somePath} is not a directory!`);
+      log.error(`The path: ${somePath} is not a directory!`);
       process.exit(0);
     }
   } else {
-    log.error(`path: ${somePath} is invalid!`.red);
+    log.error(`The path: ${somePath} is invalid!`.red);
     process.exit(0);
   }
-  log.error(`path: ${somePath} is invalid!`.red);
+  log.error(`The path: ${somePath} is invalid!`.red);
   process.exit(0);
 };
 
@@ -65,7 +65,7 @@ const validateFunctionName = async function validateFunctionName(name) {
 };
 
 const validateBinarisLogin = async function validateBinarisLogin() {
-  log.info('validating Binaris credentials'.yellow);
+  log.info('Validating Binaris credentials'.yellow);
   return true;
 };
 
@@ -108,9 +108,14 @@ const initHandler = async function initHandler(options) {
   // determine if was successfully completed
   try {
     await init(initPayload);
-    log.info(`sucessfully initialized function ${initPayload.functionName}`.green);
-    log.info('function details:'.yellow);
+    log.info(`Successfully initialized function ${initPayload.functionName}`.green);
+    log.info('=================================================='.yellow);
+    log.info('Function details:'.yellow);
     log.info(JSON.stringify(initPayload, null, 2).yellow);
+    log.info('=================================================='.yellow);
+    log.info('If you wish to deploy your function...'.magenta);
+    log.info('cd <insert function name here>'.magenta);
+    log.info('bn deploy'.magenta);
   } catch (err) {
     log.error(err.message.red);
   }
@@ -119,7 +124,7 @@ const initHandler = async function initHandler(options) {
 // simply handles the process of deploying a function and its
 // associated metadata to the Binaris cloud
 const deployHandler = async function deployHandler(options) {
-  log.info('starting function deployment process'.yellow);
+  log.info('Starting function deployment process'.yellow);
   if (validateBinarisLogin()) {
     const deployPayload = {
       functionPath: undefined,
@@ -131,8 +136,8 @@ const deployHandler = async function deployHandler(options) {
     }
     try {
       const response = await deploy(deployPayload);
-      log.info('sucessfully deployed function'.green);
-      log.info('response was'.yellow, response);
+      log.info('Sucessfully deployed function'.green);
+      log.info('Response was'.yellow, response);
     } catch (err) {
       log.error(err.message.red);
     }
@@ -142,7 +147,7 @@ const deployHandler = async function deployHandler(options) {
 // invokes a binaris function that you have previously
 // deployed either through the CLI or other means
 const invokeHandler = async function invokeHandler(options) {
-  log.info('attempting to invoke your function'.yellow);
+  log.info('Attempting to invoke your function'.yellow);
   const invokePayload = {};
   if (options.path) {
     await resolvePath(options.path);
@@ -152,7 +157,7 @@ const invokeHandler = async function invokeHandler(options) {
   }
 
   if (options.file && options.json) {
-    log.error('you may not provide both a json(-j) and file(-f)'.red);
+    log.error('You may not provide both a json(-j) and file(-f)'.red);
     process.exit(0);
   }
 
@@ -173,8 +178,8 @@ const invokeHandler = async function invokeHandler(options) {
       log.debug({ functionData: invokePayload.functionData });
     }
     const response = await invoke(invokePayload);
-    log.info('successfully invoked function'.green);
-    log.info('response was'.yellow, response);
+    log.info('Successfully invoked function'.green);
+    log.info('Response was'.yellow, response);
   } catch (err) {
     log.error(err.message.red);
   }

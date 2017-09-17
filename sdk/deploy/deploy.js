@@ -27,7 +27,7 @@ const genBinarisDir = async function genBinarisDir(genPath) {
     }
   } catch (err) {
     log.debug(err);
-    throw new Error('unable to generate .binaris hidden directory!');
+    throw new Error('Unable to generate .binaris hidden directory!');
   }
 };
 
@@ -49,7 +49,7 @@ const writeFuncMetadata = async function writeFuncMetadata(object, funcPath) {
       JSON.stringify(object, null, 2), 'utf8');
   } catch (err) {
     log.debug('failed to write function.json file in function dir', err);
-    throw new Error('failed to write function.json file in function dir!');
+    throw new Error('Failed to write function.json file in function dir!');
   }
 };
 
@@ -99,7 +99,7 @@ const uploadFuncTar = async function uploadFuncTar(tarPath, publishURL) {
     return await uploadPromise;
   } catch (err) {
     log.debug(err);
-    throw new Error('failed to upload function tar file to Binaris backend');
+    throw new Error('Failed to upload function tar file to Binaris backend');
   }
 };
 
@@ -119,7 +119,7 @@ const deploy = async function deploy(data) {
     // I should probably separate this
     const { binarisYML, packageJSON } =
       await util.loadAllFiles(deployPath).catch(() => {
-        throw new Error('your current directory does not contain a valid binaris function!');
+        throw new Error('Your current directory does not contain a valid binaris function!');
       });
     const metadata = await util.getFuncMetadata(binarisYML, packageJSON);
     await genBinarisDir(deployPath);
@@ -133,7 +133,7 @@ const deploy = async function deploy(data) {
     funcJSONCleanup = false;
     if (response.statusCode !== 200) {
       log.debug(response);
-      throw new Error('function was not deployed successfully, check logs for more details');
+      throw new Error('Function was not deployed successfully, check logs for more details');
     }
     return response;
   } catch (err) {

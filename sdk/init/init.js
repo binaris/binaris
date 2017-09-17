@@ -22,7 +22,7 @@ const init = async function init(data) {
       const newDir = path.join(data.functionPath, data.functionName);
       // ensure that the function directory doesn't already exist
       if (fs.existsSync(newDir)) {
-        throw new Error(`function w/ name ${data.functionName} could not be initialized because a directory already exists with that name!`);
+        throw new Error(`Function w/ name ${data.functionName} could not be initialized because a directory already exists with that name!`);
       }
       // here we are just loading our JSON and giving it the correct function name
       const packageJSON = JSON.parse(fs.readFileSync(path.join(__dirname,
@@ -42,7 +42,7 @@ const init = async function init(data) {
       throw err;
     }
   }
-  throw new Error('invalid function path or function name provided!');
+  throw new Error('Invalid function path or function name provided!');
 };
 
 module.exports = init;

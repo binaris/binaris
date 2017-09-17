@@ -18,7 +18,7 @@ const attemptJSONParse = async function attemptJSONParse(rawJSON) {
   } catch (err) {
     log.debug(err);
   }
-  throw new Error('invalid JSON received, unable to parse');
+  throw new Error('Invalid JSON received, unable to parse');
 };
 
 // this loads our binaris.yml file from the users current
@@ -32,10 +32,10 @@ const loadBinarisYML = async function loadBinarisYML(funcDirPath) {
       const YAMLObj = yaml.safeLoad(fs.readFileSync(fullYAMLPath, 'utf8'));
       return YAMLObj;
     }
-    throw new Error(`no binaris.yml file was found @path ${fullYAMLPath}`);
+    throw new Error(`No binaris.yml file was found @path ${fullYAMLPath}`);
   } catch (err) {
     log.debug(err);
-    throw new Error(`failed to load binaris.yml file @path ${funcDirPath}`);
+    throw new Error(`Failed to load binaris.yml file @path ${funcDirPath}`);
   }
 };
 
@@ -51,10 +51,10 @@ const loadPackageJSON = async function loadPackageJSON(funcDirPath) {
       const JSONObj = require(fullJSONPath);
       return JSONObj;
     }
-    throw new Error(`no package.json file was found @path ${fullJSONPath}`);
+    throw new Error(`No package.json file was found @path ${fullJSONPath}`);
   } catch (err) {
     log.debug(err);
-    throw new Error(`failed to load package.json file @path ${funcDirPath}`);
+    throw new Error(`Failed to load package.json file @path ${funcDirPath}`);
   }
 };
 
@@ -73,9 +73,9 @@ const loadFunctionJS = async function loadFunctionJS(funcDirPath, packageJSON) {
         const JSFile = fs.readFileSync(fullJSPath, 'utf8');
         return JSFile;
       }
-      throw new Error(`no JS file could be located @path ${fullJSPath}`);
+      throw new Error(`No JS file could be located @path ${fullJSPath}`);
     } else {
-      throw new Error('package.json file did not contain a main field!');
+      throw new Error('The package.json file did not contain a main field!');
     }
   } catch (err) {
     log.debug(err);
@@ -112,16 +112,16 @@ const getFuncEntry = async function getFuncEntry(binarisYML) {
     const funcKeys = Object.keys(funcObj);
     // We do not yet support multiple functions per yaml
     if (funcKeys.length !== 1) {
-      throw new Error('binarisYML function field did not contain an appropriate definition');
+      throw new Error('Your binaris.yml function field did not contain an appropriate definition');
     }
     const name = funcKeys[0];
     const defObj = funcObj[name];
     if (Object.prototype.hasOwnProperty.call(defObj, entryStr)) {
       return defObj.entrypoint;
     }
-    throw new Error('binarisYML function did not contain a require field: <entrypoint>');
+    throw new Error('Your binaris.yml function did not contain a require field: <entrypoint>');
   }
-  throw new Error('binarisYML did not contain a require field: <function>');
+  throw new Error('Your binaris.yml did not contain a require field: <function>');
 };
 
 // helper to create an object with key information about

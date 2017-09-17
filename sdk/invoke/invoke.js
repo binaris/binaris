@@ -15,7 +15,7 @@ const invoke = async function invoke(data) {
   try {
     const { binarisYML, packageJSON } =
       await util.loadAllFiles(invokeFilePath).catch(() => {
-        throw new Error('your current directory does not contain a valid binaris function!');
+        throw new Error('Your current directory does not contain a valid binaris function!');
       });
     const metadata = await util.getFuncMetadata(binarisYML, packageJSON);
     const endpoint = urljoin(`http://${invokeEndpoint}/v1/user/`, metadata.name);
@@ -34,7 +34,7 @@ const invoke = async function invoke(data) {
             statusCode: resp.statusCode,
             body
           });
-          reject(new Error('non 200 status code returned from invocation'));
+          reject(new Error('Non 200 status code returned from invocation'));
         } else {
           log.debug('request error', { body });
           resolve(body);
