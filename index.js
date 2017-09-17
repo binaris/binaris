@@ -131,7 +131,7 @@ const deployHandler = async function deployHandler(options) {
     try {
       const response = await deploy(deployPayload);
       logger.binaris.info('sucessfully deployed function'.green);
-      logger.binaris.info(`response was, ${response}`.yellow);
+      logger.binaris.info('response was'.yellow, response);
     } catch (err) {
       logger.binaris.error(err.message.red);
     }
@@ -173,7 +173,7 @@ const invokeHandler = async function invokeHandler(options) {
     }
     const response = await invoke(invokePayload);
     logger.binaris.info('successfully invoked function'.green);
-    logger.binaris.info(`response was, ${response}`.yellow);
+    logger.binaris.info('response was'.yellow, response);
   } catch (err) {
     logger.binaris.error(err.message.red);
   }
