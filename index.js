@@ -109,12 +109,8 @@ const initHandler = async function initHandler(options) {
   try {
     await init(initPayload);
     log.info(`Successfully initialized function ${initPayload.functionName}`.green);
-    log.info('=================================================='.yellow);
-    log.info('Function details:'.yellow);
-    log.info(JSON.stringify(initPayload, null, 2).yellow);
-    log.info('=================================================='.yellow);
-    log.info('If you wish to deploy your function...'.magenta);
-    log.info('cd <insert function name here>'.magenta);
+    log.info('You can deploy your function with'.green);
+    log.info(`cd ${initPayload.functionName}`.magenta);
     log.info('bn deploy'.magenta);
   } catch (err) {
     log.error(err.message.red);
