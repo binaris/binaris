@@ -91,7 +91,7 @@ const initHandler = async function initHandler(options) {
   } else {
     while (!initPayload.functionName) {
       // until the system supports dashes in names
-      const potentialName = moniker.choose().replace('-', '');
+      const potentialName = moniker.choose().replace(/-/g, '');
       const answer = await validateFunctionName(potentialName);
       if (answer) {
         initPayload.functionName = potentialName;
