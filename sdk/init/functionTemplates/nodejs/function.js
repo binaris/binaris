@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
 
-module.exports.hello = function (event, context, callback) {
+module.exports.handler = function (event, context, callback) {
   const response = {
     statusCode: 200,
     body: JSON.stringify({
