@@ -75,7 +75,7 @@ const validateBinarisLogin = async function validateBinarisLogin() {
 // this essentially boils down to creating template files with
 // the correct information in the correct location
 const initHandler = async function initHandler(options) {
-  log.info('Initializing Binaris function...'.yellow);
+  log.info('Initializing Binaris function'.yellow);
   const initPayload = {
     functionName: undefined,
     functionPath: undefined,
