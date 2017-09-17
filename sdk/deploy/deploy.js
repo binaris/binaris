@@ -135,7 +135,7 @@ const deploy = async function deploy(data) {
       log.debug(response);
       throw new Error('Function was not deployed successfully, check logs for more details');
     }
-    return response;
+    return response.body;
   } catch (err) {
     if (funcJSONCleanup) {
       await cleanupFile(path.join(deployPath, funcJSONPath));
