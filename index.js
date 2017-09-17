@@ -23,7 +23,7 @@ const moniker = require('moniker');
 // helper to quickly notify the user that a function is unsupported
 const noSupport = function notSupported(cmdName) {
   log.info(`${cmdName} is not currently supported!`.red);
-  process.exit(0);
+  process.exit(1);
 };
 
 // helper that allows us to a avoid a lot of redudant code
@@ -37,18 +37,18 @@ const resolvePath = async function resolvePath(somePath) {
         return returnPath;
       } catch (error) {
         log.error(`Error when attempting to resolve path: ${somePath}`);
-        process.exit(0);
+        process.exit(1);
       }
     } else {
       log.error(`The path: ${somePath} is not a directory!`);
-      process.exit(0);
+      process.exit(1);
     }
   } else {
     log.error(`The path: ${somePath} is invalid!`.red);
-    process.exit(0);
+    process.exit(1);
   }
   log.error(`The path: ${somePath} is invalid!`.red);
-  process.exit(0);
+  process.exit(1);
 };
 
 // here we both ensure the name is valid syntatically and eventually
@@ -86,7 +86,7 @@ const initHandler = async function initHandler(options) {
       initPayload.functionName = options.functionName;
     } else {
       log.error(`${options.functionName} is not a valid function name`.red);
-      process.exit(0);
+      process.exit(1);
     }
   } else {
     while (!initPayload.functionName) {
@@ -158,7 +158,7 @@ const invokeHandler = async function invokeHandler(options) {
 
   if (options.file && options.json) {
     log.error('You may not provide both a json(-j) and file(-f)'.red);
-    process.exit(0);
+    process.exit(1);
   }
 
   try {
