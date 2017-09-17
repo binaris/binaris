@@ -16,8 +16,6 @@ const path = require('path');
 const commander = require('commander');
 const colors = require('colors');
 const moniker = require('moniker');
-// until the system supports dashes, dots or underscores in names
-const names = moniker.generator([moniker.adjective, moniker.noun], { glue: 'x' });
 
 // Things to do
 // create binaris dependent directories
@@ -92,7 +90,8 @@ const initHandler = async function initHandler(options) {
     }
   } else {
     while (!initPayload.functionName) {
-      const potentialName = names.choose();
+      // until the system supports dashes in names
+      const potentialName = moniker.choose().replace('-', '');
       const answer = await validateFunctionName(potentialName);
       if (answer) {
         initPayload.functionName = potentialName;
