@@ -5,7 +5,7 @@
 const { init, invoke, deploy } = require('./sdk/sdk');
 
 // create our basic logger
-const logger = require('./sdk/shared/loggerInit');
+const log = require('./sdk/shared/logger');
 const util = require('./sdk/shared/util');
 
 // our core modules
@@ -22,7 +22,7 @@ const moniker = require('moniker');
 // create temp files
 // helper to quickly notify the user that a function is unsupported
 const noSupport = function notSupported(cmdName) {
-  logger.binaris.info(`${cmdName} is not currently supported!`.red);
+  log.info(`${cmdName} is not currently supported!`.red);
   process.exit(0);
 };
 
@@ -36,18 +36,18 @@ const resolvePath = async function resolvePath(somePath) {
         const returnPath = path.resolve(somePath);
         return returnPath;
       } catch (error) {
-        logger.binaris.error(`error when attempting to resolve path: ${somePath}`);
+        log.error(`error when attempting to resolve path: ${somePath}`);
         process.exit(0);
       }
     } else {
-      logger.binaris.error(`path: ${somePath} is not a directory!`);
+      log.error(`path: ${somePath} is not a directory!`);
       process.exit(0);
     }
   } else {
-    logger.binaris.error(`path: ${somePath} is invalid!`.red);
+    log.error(`path: ${somePath} is invalid!`.red);
     process.exit(0);
   }
-  logger.binaris.error(`path: ${somePath} is invalid!`.red);
+  log.error(`path: ${somePath} is invalid!`.red);
   process.exit(0);
 };
 
@@ -65,7 +65,7 @@ const validateFunctionName = async function validateFunctionName(name) {
 };
 
 const validateBinarisLogin = async function validateBinarisLogin() {
-  logger.binaris.info('validating Binaris credentials'.yellow);
+  log.info('validating Binaris credentials'.yellow);
   return true;
 };
 
@@ -75,7 +75,7 @@ const validateBinarisLogin = async function validateBinarisLogin() {
 // this essentially boils down to creating template files with
 // the correct information in the correct location
 const initHandler = async function initHandler(options) {
-  logger.binaris.info('Initializing Binaris function...'.yellow);
+  log.info('Initializing Binaris function...'.yellow);
   const initPayload = {
     functionName: undefined,
     functionPath: undefined,
@@ -85,7 +85,7 @@ const initHandler = async function initHandler(options) {
     if (answer) {
       initPayload.functionName = options.functionName;
     } else {
-      logger.binaris.error(`${options.functionName} is not a valid function name`.red);
+      log.error(`${options.functionName} is not a valid function name`.red);
       process.exit(0);
     }
   } else {
@@ -107,18 +107,18 @@ const initHandler = async function initHandler(options) {
   // determine if was successfully completed
   try {
     await init(initPayload);
-    logger.binaris.info(`sucessfully initialized function ${initPayload.functionName}`.green);
-    logger.binaris.info('function details:'.yellow);
-    logger.binaris.info(JSON.stringify(initPayload, null, 2).yellow);
+    log.info(`sucessfully initialized function ${initPayload.functionName}`.green);
+    log.info('function details:'.yellow);
+    log.info(JSON.stringify(initPayload, null, 2).yellow);
   } catch (err) {
-    logger.binaris.error(err.message.red);
+    log.error(err.message.red);
   }
 };
 
 // simply handles the process of deploying a function and its
 // associated metadata to the Binaris cloud
 const deployHandler = async function deployHandler(options) {
-  logger.binaris.info('starting function deployment process'.yellow);
+  log.info('starting function deployment process'.yellow);
   if (validateBinarisLogin()) {
     const deployPayload = {
       functionPath: undefined,
@@ -130,10 +130,10 @@ const deployHandler = async function deployHandler(options) {
     }
     try {
       const response = await deploy(deployPayload);
-      logger.binaris.info('sucessfully deployed function'.green);
-      logger.binaris.info('response was'.yellow, response);
+      log.info('sucessfully deployed function'.green);
+      log.info('response was'.yellow, response);
     } catch (err) {
-      logger.binaris.error(err.message.red);
+      log.error(err.message.red);
     }
   }
 };
@@ -141,7 +141,7 @@ const deployHandler = async function deployHandler(options) {
 // invokes a binaris function that you have previously
 // deployed either through the CLI or other means
 const invokeHandler = async function invokeHandler(options) {
-  logger.binaris.info('attempting to invoke your function'.yellow);
+  log.info('attempting to invoke your function'.yellow);
   const invokePayload = {};
   if (options.path) {
     await resolvePath(options.path);
@@ -151,7 +151,7 @@ const invokeHandler = async function invokeHandler(options) {
   }
 
   if (options.file && options.json) {
-    logger.binaris.error('you may not provide both a json(-j) and file(-f)'.red);
+    log.error('you may not provide both a json(-j) and file(-f)'.red);
     process.exit(0);
   }
 
@@ -169,13 +169,13 @@ const invokeHandler = async function invokeHandler(options) {
 
     if (payloadJSON) {
       invokePayload.functionData = await util.attemptJSONParse(payloadJSON);
-      logger.binaris.debug({ functionData: invokePayload.functionData });
+      log.debug({ functionData: invokePayload.functionData });
     }
     const response = await invoke(invokePayload);
-    logger.binaris.info('successfully invoked function'.green);
-    logger.binaris.info('response was'.yellow, response);
+    log.info('successfully invoked function'.green);
+    log.info('response was'.yellow, response);
   } catch (err) {
-    logger.binaris.error(err.message.red);
+    log.error(err.message.red);
   }
 };
 

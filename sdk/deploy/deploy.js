@@ -5,7 +5,7 @@ const urljoin = require('urljoin');
 const request = require('request');
 
 const util = require('../shared/util');
-const logger = require('../shared/loggerInit');
+const log = require('../shared/logger');
 
 const funcJSONPath = 'function.json';
 const binarisDir = '.binaris/';
@@ -26,7 +26,7 @@ const genBinarisDir = async function genBinarisDir(genPath) {
       fs.mkdirSync(fullPath);
     }
   } catch (err) {
-    logger.binaris.debug(err);
+    log.debug(err);
     throw new Error('unable to generate .binaris hidden directory!');
   }
 };
@@ -38,7 +38,7 @@ const cleanupFile = async function cleanupFile(filePath) {
     }
     return true;
   } catch (err) {
-    logger.binaris.debug(err);
+    log.debug(err);
     return false;
   }
 };
@@ -51,7 +51,7 @@ const writeFuncJSON = async function writeFuncJSON(entryPoint, funcPath) {
     fs.writeFileSync(path.join(funcPath, funcJSONPath),
       JSON.stringify(funcJSON, null, 2), 'utf8');
   } catch (err) {
-    logger.binaris.debug(err);
+    log.debug(err);
     throw new Error('failed to write function.json file in function dir!');
   }
 };
@@ -101,7 +101,7 @@ const uploadFuncTar = async function uploadFuncTar(tarPath, publishURL) {
     });
     return await uploadPromise;
   } catch (err) {
-    logger.binaris.debug(err);
+    log.debug(err);
     throw new Error('failed to upload function tar file to Binaris backend');
   }
 };
@@ -135,7 +135,7 @@ const deploy = async function deploy(data) {
     await cleanupFile(path.join(deployPath, funcJSONPath));
     funcJSONCleanup = false;
     if (response.statusCode !== 200) {
-      logger.binaris.debug(response);
+      log.debug(response);
       throw new Error('function was not deployed successfully, check logs for more details');
     }
     return response;
