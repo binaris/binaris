@@ -1,4 +1,4 @@
 function:
-    binaris-nodejs:
+    hello:
         file: function.js
         entrypoint: handler

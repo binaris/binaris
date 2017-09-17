@@ -6,7 +6,7 @@ const yaml = require('js-yaml');
 const log = require('../shared/logger');
 
 const templateDir = './functionTemplates/nodejs/';
-const templateName = 'binaris-nodejs';
+const templateName = 'hello';
 
 const init = async function init(data) {
   if (data.functionName && data.functionPath) {
