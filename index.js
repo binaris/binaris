@@ -201,8 +201,7 @@ commander
   .description('invokes a previously deployed binaris function')
   .option('-p, --path [path]', 'The path to the binaris function you wish to invoke')
   .option('-j, --json [json]', 'The json data you would like to include in the invocation')
-  .option('-f, --file [file]', 'The path to your JSON file containing',
-    'the message to send in your invocation')
+  .option('-f, --file [file]', 'The path to your JSON file containing the message to send in your invocation')
   .action(invokeHandler);
 
 commander
