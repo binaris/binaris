@@ -6,7 +6,7 @@ const yaml = require('js-yaml');
 const log = require('../shared/logger');
 
 const templateDir = './functionTemplates/nodejs/';
-
+const templateName = 'binaris-nodejs';
 
 const init = async function init(data) {
   if (data.functionName && data.functionPath) {
@@ -16,7 +16,8 @@ const init = async function init(data) {
       const vanillaConfig = yaml.safeLoad(fs.readFileSync(path.join(__dirname,
         templateDir, 'binaris.yml'), 'utf8'));
       // replace the generic function name with the actual name
-      vanillaConfig.functionName = data.functionName;
+      vanillaConfig['function'][data.functionName] = vanillaConfig['function'][templateName];
+      delete vanillaConfig['function'][templateName];
       const functionConfig = yaml.dump(vanillaConfig);
       const newDir = path.join(data.functionPath, data.functionName);
       // ensure that the function directory doesn't already exist

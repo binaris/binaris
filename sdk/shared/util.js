@@ -105,21 +105,21 @@ const loadAllFiles = async function loadAllFiles(funcDirPath) {
 // available in the binarisYML
 const getFuncEntry = async function getFuncEntry(binarisYML) {
   const funcStr = 'function';
+  const entryStr = 'entrypoint';
   // ensure that our YML was populated by the correct fields
   if (Object.prototype.hasOwnProperty.call(binarisYML, funcStr)) {
     const funcObj = binarisYML[funcStr];
     const funcKeys = Object.keys(funcObj);
+    // We do not yet support multiple functions per yaml
     if (funcKeys.length !== 1) {
       throw new Error('binarisYML function field did not contain an appropriate definition');
     }
-    const defKey = funcKeys[0];
-    const defObj = funcObj[defKey];
-    const defKeys = Object.keys(defObj);
-    if (defKeys.length !== 1) {
-      throw new Error('binarisYML function-defintion field did not contain an appropriate definition');
+    const name = funcKeys[0];
+    const defObj = funcObj[name];
+    if (Object.prototype.hasOwnProperty.call(defObj, entryStr)) {
+      return defObj.entrypoint;
     }
-    // here we split between the file name and entrypoint
-    return defObj[defKeys[0]].split('.')[1];
+    throw new Error('binarisYML function did not contain a require field: <entrypoint>');
   }
   throw new Error('binarisYML did not contain a require field: <function>');
 };
@@ -130,10 +130,11 @@ const getFuncMetadata = async function getFuncMetaData(binarisYML, packageJSON) 
   const metadata = {};
   try {
     metadata.entrypoint = await getFuncEntry(binarisYML);
-    metadata.main = packageJSON.main;
+    metadata.file = packageJSON.main;
     metadata.name = packageJSON.name;
     return metadata;
   } catch (err) {
+    log.debug('failed to extract metadata', err);
     throw err;
   }
 };

@@ -1,5 +1,4 @@
-functionName: binaris-nodejs # we will need to update this to reflect our service name
-
 function:
-    hello:
-        handler: handler.handler
+    binaris-nodejs:
+        file: function.js
+        entrypoint: handler

@@ -43,15 +43,12 @@ const cleanupFile = async function cleanupFile(filePath) {
   }
 };
 
-const writeFuncJSON = async function writeFuncJSON(entryPoint, funcPath) {
-  const funcJSON = {
-    entryPoint,
-  };
+const writeFuncJSON = async function writeFuncJSON(object, funcPath) {
   try {
     fs.writeFileSync(path.join(funcPath, funcJSONPath),
-      JSON.stringify(funcJSON, null, 2), 'utf8');
+      JSON.stringify(object, null, 2), 'utf8');
   } catch (err) {
-    log.debug(err);
+    log.debug('failed to write function.json file in function dir', err);
     throw new Error('failed to write function.json file in function dir!');
   }
 };
@@ -126,7 +123,7 @@ const deploy = async function deploy(data) {
       });
     const metadata = await util.getFuncMetadata(binarisYML, packageJSON);
     await genBinarisDir(deployPath);
-    await writeFuncJSON(metadata.entryPoint, deployPath);
+    await writeFuncJSON(metadata, deployPath);
     funcJSONCleanup = true;
     funcTarPath = path.join(deployPath, binarisDir, `${metadata.name}.tgz`);
     await genTarBall(deployPath, funcTarPath, fullIgnorePaths);
