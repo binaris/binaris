@@ -2,4 +2,4 @@ functionName: binaris-nodejs # we will need to update this to reflect our servic
 
 function:
     hello:
-        handler: handler.hello
+        handler: handler.handler

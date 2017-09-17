@@ -31,8 +31,8 @@ const init = async function init(data) {
       logger.binaris.debug('loading and replicating all template files');
       // now we have to write out all our files that we've modified
       fs.mkdirSync(newDir);
-      fs.writeFileSync(path.join(newDir, 'handler.js'),
-        fs.readFileSync(path.join(__dirname, templateDir, 'handler.js')));
+      fs.writeFileSync(path.join(newDir, 'function.js'),
+        fs.readFileSync(path.join(__dirname, templateDir, 'function.js')));
       fs.writeFileSync(path.join(newDir, 'package.json'),
         JSON.stringify(packageJSON, null, 2), 'utf8');
       fs.writeFileSync(path.join(newDir, 'binaris.yml'), functionConfig, 'utf8');
