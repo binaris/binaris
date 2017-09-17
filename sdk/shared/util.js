@@ -3,7 +3,7 @@ const path = require('path');
 
 const yaml = require('js-yaml');
 
-const logger = require('./loggerInit.js');
+const log = require('../shared/logger');
 
 const binarisYMLPath = 'binaris.yml';
 const packageJSONPath = 'package.json';
@@ -16,7 +16,7 @@ const attemptJSONParse = async function attemptJSONParse(rawJSON) {
       return parsedJSON;
     }
   } catch (err) {
-    logger.binaris.debug(err);
+    log.debug(err);
   }
   throw new Error('invalid JSON received, unable to parse');
 };
@@ -34,7 +34,7 @@ const loadBinarisYML = async function loadBinarisYML(funcDirPath) {
     }
     throw new Error(`no binaris.yml file was found @path ${fullYAMLPath}`);
   } catch (err) {
-    logger.binaris.debug(err);
+    log.debug(err);
     throw new Error(`failed to load binaris.yml file @path ${funcDirPath}`);
   }
 };
@@ -53,7 +53,7 @@ const loadPackageJSON = async function loadPackageJSON(funcDirPath) {
     }
     throw new Error(`no package.json file was found @path ${fullJSONPath}`);
   } catch (err) {
-    logger.binaris.debug(err);
+    log.debug(err);
     throw new Error(`failed to load package.json file @path ${funcDirPath}`);
   }
 };
@@ -78,7 +78,7 @@ const loadFunctionJS = async function loadFunctionJS(funcDirPath, packageJSON) {
       throw new Error('package.json file did not contain a main field!');
     }
   } catch (err) {
-    logger.binaris.debug(err);
+    log.debug(err);
     throw err;
   }
 };

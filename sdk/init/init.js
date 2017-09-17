@@ -3,7 +3,7 @@ const path = require('path');
 
 const yaml = require('js-yaml');
 
-const logger = require('../shared/loggerInit');
+const log = require('../shared/logger');
 
 const templateDir = './functionTemplates/nodejs/';
 
@@ -11,7 +11,7 @@ const templateDir = './functionTemplates/nodejs/';
 const init = async function init(data) {
   if (data.functionName && data.functionPath) {
     try {
-      logger.binaris.debug('attempting to load template files for function dir creation');
+      log.debug('attempting to load template files for function dir creation');
       // parse our templated yml and make the necessary modifications
       const vanillaConfig = yaml.safeLoad(fs.readFileSync(path.join(__dirname,
         templateDir, 'binaris.yml'), 'utf8'));
@@ -28,7 +28,7 @@ const init = async function init(data) {
         templateDir, 'package.json'), 'utf8'));
       packageJSON.name = data.functionName;
 
-      logger.binaris.debug('loading and replicating all template files');
+      log.debug('loading and replicating all template files');
       // now we have to write out all our files that we've modified
       fs.mkdirSync(newDir);
       fs.writeFileSync(path.join(newDir, 'function.js'),

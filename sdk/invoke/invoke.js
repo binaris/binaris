@@ -2,7 +2,7 @@ const urljoin = require('urljoin');
 const request = require('request');
 
 const util = require('../shared/util');
-const logger = require('../shared/loggerInit');
+const log = require('../shared/logger');
 
 // TODO: ensure that this is configured in a better way, having a single
 // variable in the deploy file is inadequate
@@ -19,7 +19,7 @@ const invoke = async function invoke(data) {
       });
     const metadata = await util.getFuncMetadata(binarisYML, packageJSON);
     const endpoint = urljoin(`http://${invokeEndpoint}/v1/user/`, metadata.funcName);
-    logger.binaris.debug(`attempting to invoke @endpoint ${endpoint}`);
+    log.debug(`attempting to invoke @endpoint ${endpoint}`);
     // TODO: switch to request promise at a later time
     const requestPromise = new Promise((resolve, reject) => {
       request.post({
@@ -30,10 +30,10 @@ const invoke = async function invoke(data) {
         },
       }, (err, resp, body) => {
         if (resp.statusCode !== 200) {
-          logger.binaris.debug(body);
+          log.debug(body);
           reject(new Error('non 200 status code returned from invocation'));
         } else {
-          logger.binaris.debug(body);
+          log.debug(body);
           resolve(body);
         }
       });
