@@ -43,7 +43,7 @@ const cleanupFile = async function cleanupFile(filePath) {
   }
 };
 
-const writeFuncJSON = async function writeFuncJSON(object, funcPath) {
+const writeFuncMetadata = async function writeFuncMetadata(object, funcPath) {
   try {
     fs.writeFileSync(path.join(funcPath, funcJSONPath),
       JSON.stringify(object, null, 2), 'utf8');
@@ -123,7 +123,7 @@ const deploy = async function deploy(data) {
       });
     const metadata = await util.getFuncMetadata(binarisYML, packageJSON);
     await genBinarisDir(deployPath);
-    await writeFuncJSON(metadata, deployPath);
+    await writeFuncMetadata(metadata, deployPath);
     funcJSONCleanup = true;
     funcTarPath = path.join(deployPath, binarisDir, `${metadata.name}.tgz`);
     await genTarBall(deployPath, funcTarPath, fullIgnorePaths);
