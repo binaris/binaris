@@ -30,10 +30,13 @@ const invoke = async function invoke(data) {
         },
       }, (err, resp, body) => {
         if (resp.statusCode !== 200) {
-          log.debug(body);
+          log.debug('request error', {
+            statusCode: resp.statusCode,
+            body
+          });
           reject(new Error('non 200 status code returned from invocation'));
         } else {
-          log.debug(body);
+          log.debug('request error', { body });
           resolve(body);
         }
       });
