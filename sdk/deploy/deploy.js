@@ -128,9 +128,9 @@ const deploy = async function deploy(data) {
     await genBinarisDir(deployPath);
     await writeFuncJSON(metadata.entryPoint, deployPath);
     funcJSONCleanup = true;
-    funcTarPath = path.join(deployPath, binarisDir, `${metadata.funcName}.tgz`);
+    funcTarPath = path.join(deployPath, binarisDir, `${metadata.name}.tgz`);
     await genTarBall(deployPath, funcTarPath, fullIgnorePaths);
-    const endpoint = urljoin(`http://${publishEndpoint}/function`, metadata.funcName);
+    const endpoint = urljoin(`http://${publishEndpoint}/function`, metadata.name);
     const response = await uploadFuncTar(funcTarPath, endpoint);
     await cleanupFile(path.join(deployPath, funcJSONPath));
     funcJSONCleanup = false;
