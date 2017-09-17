@@ -1,12 +1,10 @@
-/* eslint-disable no-param-reassign */
-
 module.exports.handler = function (event, context, callback) {
   const response = {
     statusCode: 200,
     body: JSON.stringify({
-      message: '{UUID}',
+      message: 'Welcome to Binaris',
       input: event,
-      requestContext: context,
+      context,
     }),
   };
   callback(null, response);
