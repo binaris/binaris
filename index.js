@@ -114,6 +114,7 @@ const initHandler = async function initHandler(options) {
     log.info('bn deploy'.magenta);
   } catch (err) {
     log.error(err.message.red);
+    process.exit(1);
   }
 };
 
@@ -136,6 +137,7 @@ const deployHandler = async function deployHandler(options) {
       log.info('Response was'.yellow, response);
     } catch (err) {
       log.error(err.message.red);
+      process.exit(1);
     }
   }
 };
@@ -178,6 +180,7 @@ const invokeHandler = async function invokeHandler(options) {
     log.info('Response was'.yellow, response);
   } catch (err) {
     log.error(err.message.red);
+    process.exit(1);
   }
 };
 
