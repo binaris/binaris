@@ -19,7 +19,7 @@ const publishEndpoint =
 
 // creates our hidden .binaris directory in the users function
 // directory if it doesn't already exist
-const genBinarisDir = async function genBinarisDir(genPath) {
+const genBinarisDir = function genBinarisDir(genPath) {
   try {
     const fullPath = path.join(genPath, binarisDir);
     if (!fs.existsSync(fullPath)) {
@@ -31,11 +31,9 @@ const genBinarisDir = async function genBinarisDir(genPath) {
   }
 };
 
-const cleanupFile = async function cleanupFile(filePath) {
+const cleanupFile = function cleanupFile(filePath) {
   try {
-    if (fs.existsSync(filePath)) {
-      fs.unlinkSync(filePath);
-    }
+    fs.unlinkSync(filePath);
     return true;
   } catch (err) {
     log.debug(err);
@@ -43,7 +41,7 @@ const cleanupFile = async function cleanupFile(filePath) {
   }
 };
 
-const writeFuncMetadata = async function writeFuncMetadata(object, funcPath) {
+const writeFuncMetadata = function writeFuncMetadata(object, funcPath) {
   try {
     fs.writeFileSync(path.join(funcPath, funcJSONPath),
       JSON.stringify(object, null, 2), 'utf8');
@@ -104,42 +102,38 @@ const uploadFuncTar = async function uploadFuncTar(tarPath, publishURL) {
 };
 
 // TODO: thing that returns metadata
-const deploy = async function deploy(data) {
-  const deployPath = data.functionPath;
+const deploy = async function deploy(functionPath) {
+  const deployPath = functionPath;
   let funcTarPath;
-  let funcJSONCleanup = false;
   const fullIgnorePaths = [];
   ignoredTarFiles.forEach((entry) => {
     fullIgnorePaths.push(path.join(deployPath, entry));
   });
+  // although we only take the binaris.yml and package.json file
+  // in our destructuring we still need to run loadAllFiles
+  // because it verifies that we have a correct function dir setup
+  // I should probably separate this
+
+  const { binarisYML, packageJSON } =
+    await util.loadAllFiles(deployPath).catch(() => {
+      throw new Error('Your current directory does not contain a valid binaris function!');
+    });
+  const metadata = util.getFuncMetadata(binarisYML, packageJSON);
+  genBinarisDir(deployPath);
+  writeFuncMetadata(metadata, deployPath);
   try {
-    // although we only take the binaris.yml and package.json file
-    // in our destructuring we still need to run loadAllFiles
-    // because it verifies that we have a correct function dir setup
-    // I should probably separate this
-    const { binarisYML, packageJSON } =
-      await util.loadAllFiles(deployPath).catch(() => {
-        throw new Error('Your current directory does not contain a valid binaris function!');
-      });
-    const metadata = await util.getFuncMetadata(binarisYML, packageJSON);
-    await genBinarisDir(deployPath);
-    await writeFuncMetadata(metadata, deployPath);
-    funcJSONCleanup = true;
     funcTarPath = path.join(deployPath, binarisDir, `${metadata.name}.tgz`);
     await genTarBall(deployPath, funcTarPath, fullIgnorePaths);
     const endpoint = urljoin(`http://${publishEndpoint}/function`, metadata.name);
     const response = await uploadFuncTar(funcTarPath, endpoint);
-    await cleanupFile(path.join(deployPath, funcJSONPath));
-    funcJSONCleanup = false;
+    cleanupFile(path.join(deployPath, funcJSONPath));
     if (response.statusCode !== 200) {
       log.debug(response);
       throw new Error('Function was not deployed successfully, check logs for more details');
     }
     return response.body;
   } catch (err) {
-    if (funcJSONCleanup) {
-      await cleanupFile(path.join(deployPath, funcJSONPath));
-    }
+    cleanupFile(path.join(deployPath, funcJSONPath));
     throw err;
   }
 };
