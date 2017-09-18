@@ -26,34 +26,9 @@ const noSupport = function notSupported(cmdName) {
   process.exit(1);
 };
 
-// helper that allows us to a avoid a lot of redudant code
-// probably want to switch this over to throw an error instead
-// of doing 0x80 itself
-const resolvePath = async function resolvePath(somePath) {
-  if (fs.existsSync(somePath)) {
-    if (fs.lstatSync(somePath).isDirectory()) {
-      try {
-        const returnPath = path.resolve(somePath);
-        return returnPath;
-      } catch (error) {
-        log.error(`Error when attempting to resolve path: ${somePath}`);
-        process.exit(1);
-      }
-    } else {
-      log.error(`The path: ${somePath} is not a directory!`);
-      process.exit(1);
-    }
-  } else {
-    log.error(`The path: ${somePath} is invalid!`.red);
-    process.exit(1);
-  }
-  log.error(`The path: ${somePath} is invalid!`.red);
-  process.exit(1);
-};
-
 // here we both ensure the name is valid syntatically and eventually
 // we will also determine if it has been previously created
-const validateFunctionName = async function validateFunctionName(name) {
+const validateFunctionName = function validateFunctionName(name) {
   // eslint issue but too annoying to fix given time
   if (/[~`!#$%^&*+=\\[\]\\';,/{}|\\":<>?]/g.test(name)) {
     return false;
@@ -64,11 +39,10 @@ const validateFunctionName = async function validateFunctionName(name) {
   return true;
 };
 
-const validateBinarisLogin = async function validateBinarisLogin() {
+const validateBinarisLogin = function validateBinarisLogin() {
   log.info('Validating Binaris credentials'.yellow);
   return true;
 };
-
 
 // initializes a binaris function based on the options given by
 // the user
@@ -76,12 +50,9 @@ const validateBinarisLogin = async function validateBinarisLogin() {
 // the correct information in the correct location
 const initHandler = async function initHandler(options) {
   log.info('Initializing Binaris function'.yellow);
-  const initPayload = {
-    functionName: undefined,
-    functionPath: undefined,
-  };
+  const initPayload = {};
   if (options.functionName) {
-    const answer = await validateFunctionName(options.functionName);
+    const answer = validateFunctionName(options.functionName);
     if (answer) {
       initPayload.functionName = options.functionName;
     } else {
@@ -92,21 +63,21 @@ const initHandler = async function initHandler(options) {
     while (!initPayload.functionName) {
       // until the system supports dashes in names
       const potentialName = moniker.choose().replace(/-/g, '');
-      const answer = await validateFunctionName(potentialName);
+      const answer = validateFunctionName(potentialName);
       if (answer) {
         initPayload.functionName = potentialName;
       }
     }
   }
-  if (options.path) {
-    initPayload.functionPath = await resolvePath(options.path);
-  } else {
-    initPayload.functionPath = process.cwd();
-  }
 
   // now we actually call our initialize function and then immediately
   // determine if was successfully completed
   try {
+    if (options.path) {
+      initPayload.functionPath = path.resolve(options.path);
+    } else {
+      initPayload.functionPath = process.cwd();
+    }
     await init(initPayload);
     log.info(`Successfully initialized function ${initPayload.functionName}`.green);
     log.info('You can deploy your function with'.green);
@@ -123,18 +94,16 @@ const initHandler = async function initHandler(options) {
 const deployHandler = async function deployHandler(options) {
   log.info('Starting function deployment process'.yellow);
   if (validateBinarisLogin()) {
-    const deployPayload = {
-      functionPath: undefined,
-    };
-    if (options.path) {
-      deployPayload.functionPath = await resolvePath(options.path);
-    } else {
-      deployPayload.functionPath = path.resolve(process.cwd());
-    }
+    let deployPath;
     try {
-      const response = await deploy(deployPayload);
+      if (options.path) {
+        deployPath = path.resolve(options.path);
+      } else {
+        // is this necessary?
+        deployPath = path.resolve(process.cwd());
+      }
+      await deploy(deployPath);
       log.info('Sucessfully deployed function'.green);
-      log.info('Response was'.yellow, response);
     } catch (err) {
       log.error(err.message.red);
       process.exit(1);
@@ -147,19 +116,16 @@ const deployHandler = async function deployHandler(options) {
 const invokeHandler = async function invokeHandler(options) {
   log.info('Attempting to invoke your function'.yellow);
   const invokePayload = {};
-  if (options.path) {
-    await resolvePath(options.path);
-    invokePayload.functionPath = options.path;
-  } else {
-    invokePayload.functionPath = process.cwd();
-  }
-
   if (options.file && options.json) {
     log.error('You may not provide both a json(-j) and file(-f)'.red);
     process.exit(1);
   }
-
   try {
+    if (options.path) {
+      invokePayload.functionPath = options.path;
+    } else {
+      invokePayload.functionPath = process.cwd();
+    }
     let payloadJSON;
     if (options.json) {
       payloadJSON = options.json;
@@ -172,12 +138,12 @@ const invokeHandler = async function invokeHandler(options) {
     }
 
     if (payloadJSON) {
-      invokePayload.functionData = await util.attemptJSONParse(payloadJSON);
+      invokePayload.functionData = util.attemptJSONParse(payloadJSON);
       log.debug({ functionData: invokePayload.functionData });
     }
     const response = await invoke(invokePayload);
     log.info('Successfully invoked function'.green);
-    log.info('Response was'.yellow, response);
+    log.info('Response was \''.yellow, JSON.parse(response).message, "'".yellow);
   } catch (err) {
     log.error(err.message.red);
     process.exit(1);

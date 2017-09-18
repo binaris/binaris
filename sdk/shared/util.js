@@ -9,7 +9,7 @@ const binarisYMLPath = 'binaris.yml';
 const packageJSONPath = 'package.json';
 
 // attempts to parse a json and throws if an issue is encountered
-const attemptJSONParse = async function attemptJSONParse(rawJSON) {
+const attemptJSONParse = function attemptJSONParse(rawJSON) {
   try {
     const parsedJSON = JSON.parse(rawJSON);
     if (parsedJSON && typeof parsedJSON === 'object') {
@@ -25,14 +25,11 @@ const attemptJSONParse = async function attemptJSONParse(rawJSON) {
 // function directory. If it does not exist in the expected
 // location the object returned will have a false 'success'
 // field and a associated error field
-const loadBinarisYML = async function loadBinarisYML(funcDirPath) {
+const loadBinarisYML = function loadBinarisYML(funcDirPath) {
   try {
     const fullYAMLPath = path.join(funcDirPath, binarisYMLPath);
-    if (fs.existsSync(fullYAMLPath)) {
-      const YAMLObj = yaml.safeLoad(fs.readFileSync(fullYAMLPath, 'utf8'));
-      return YAMLObj;
-    }
-    throw new Error(`No binaris.yml file was found @path ${fullYAMLPath}`);
+    const YAMLObj = yaml.safeLoad(fs.readFileSync(fullYAMLPath, 'utf8'));
+    return YAMLObj;
   } catch (err) {
     log.debug(err);
     throw new Error(`Failed to load binaris.yml file @path ${funcDirPath}`);
@@ -43,15 +40,12 @@ const loadBinarisYML = async function loadBinarisYML(funcDirPath) {
 // function directory. If it does not exist in the expected
 // location the object returned will have a false 'success'
 // field and a associated error field
-const loadPackageJSON = async function loadPackageJSON(funcDirPath) {
+const loadPackageJSON = function loadPackageJSON(funcDirPath) {
   try {
     const fullJSONPath = path.join(funcDirPath, packageJSONPath);
-    if (fs.existsSync(fullJSONPath)) {
-      // eslint doesn't understand this case
-      const JSONObj = require(fullJSONPath);
-      return JSONObj;
-    }
-    throw new Error(`No package.json file was found @path ${fullJSONPath}`);
+    // eslint doesn't understand this case
+    const JSONObj = require(fullJSONPath);
+    return JSONObj;
   } catch (err) {
     log.debug(err);
     throw new Error(`Failed to load package.json file @path ${funcDirPath}`);
@@ -64,46 +58,33 @@ const loadPackageJSON = async function loadPackageJSON(funcDirPath) {
 // If it does not exist in the expected location the object
 // returned will have a false 'success' field and a
 // associated error field
-const loadFunctionJS = async function loadFunctionJS(funcDirPath, packageJSON) {
-  try {
-    if (Object.prototype.hasOwnProperty.call(packageJSON, 'main')) {
-      const JSFileName = packageJSON.main;
-      const fullJSPath = path.join(funcDirPath, JSFileName);
-      if (fs.existsSync(fullJSPath)) {
-        const JSFile = fs.readFileSync(fullJSPath, 'utf8');
-        return JSFile;
-      }
-      throw new Error(`No JS file could be located @path ${fullJSPath}`);
-    } else {
-      throw new Error('The package.json file did not contain a main field!');
-    }
-  } catch (err) {
-    log.debug(err);
-    throw err;
+const loadFunctionJS = function loadFunctionJS(funcDirPath, packageJSON) {
+  if (Object.prototype.hasOwnProperty.call(packageJSON, 'main')) {
+    const JSFileName = packageJSON.main;
+    const fullJSPath = path.join(funcDirPath, JSFileName);
+    const JSFile = fs.readFileSync(fullJSPath, 'utf8');
+    return JSFile;
   }
+  throw new Error('The package.json file did not contain a main field!');
 };
 
 // loads all our files at once handling the potential errors in
 // batch. Unfortunately the load still needs to be done in sync
 // because of file dependencies
 const loadAllFiles = async function loadAllFiles(funcDirPath) {
-  try {
-    const packageJSON = await loadPackageJSON(funcDirPath);
-    const JSFile = await loadFunctionJS(funcDirPath, packageJSON);
-    const binarisYML = await loadBinarisYML(funcDirPath);
-    return {
-      binarisYML,
-      packageJSON,
-      JSFile,
-    };
-  } catch (err) {
-    throw err;
-  }
+  const packageJSON = loadPackageJSON(funcDirPath);
+  const JSFile = loadFunctionJS(funcDirPath, packageJSON);
+  const binarisYML = loadBinarisYML(funcDirPath);
+  return {
+    binarisYML,
+    packageJSON,
+    JSFile,
+  };
 };
 
 // determines the current functions entrypoint based on the data
 // available in the binarisYML
-const getFuncEntry = async function getFuncEntry(binarisYML) {
+const getFuncEntry = function getFuncEntry(binarisYML) {
   const funcStr = 'function';
   const entryStr = 'entrypoint';
   // ensure that our YML was populated by the correct fields
@@ -126,10 +107,10 @@ const getFuncEntry = async function getFuncEntry(binarisYML) {
 
 // helper to create an object with key information about
 // a function and its config
-const getFuncMetadata = async function getFuncMetaData(binarisYML, packageJSON) {
+const getFuncMetadata = function getFuncMetaData(binarisYML, packageJSON) {
   const metadata = {};
   try {
-    metadata.entrypoint = await getFuncEntry(binarisYML);
+    metadata.entrypoint = getFuncEntry(binarisYML);
     metadata.file = packageJSON.main;
     metadata.name = packageJSON.name;
     return metadata;
