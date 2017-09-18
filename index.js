@@ -133,7 +133,7 @@ const deployHandler = async function deployHandler(options) {
     try {
       const response = await deploy(deployPayload);
       log.info('Sucessfully deployed function'.green);
-      log.info('Response was'.yellow, response.yellow);
+      log.info('Response was'.yellow, response);
     } catch (err) {
       log.error(err.message.red);
     }
