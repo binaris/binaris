@@ -109,11 +109,6 @@ const deploy = async function deploy(functionPath) {
   ignoredTarFiles.forEach((entry) => {
     fullIgnorePaths.push(path.join(deployPath, entry));
   });
-  // although we only take the binaris.yml and package.json file
-  // in our destructuring we still need to run loadAllFiles
-  // because it verifies that we have a correct function dir setup
-  // I should probably separate this
-
   const { binarisYML, packageJSON } =
     await util.loadAllFiles(deployPath).catch(() => {
       throw new Error('Your current directory does not contain a valid binaris function!');
