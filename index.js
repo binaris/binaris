@@ -50,22 +50,23 @@ const validateBinarisLogin = function validateBinarisLogin() {
 // the correct information in the correct location
 const initHandler = async function initHandler(options) {
   log.info('Initializing Binaris function'.yellow);
-  const initPayload = {};
+  let functionName;
+  let functionPath;
   if (options.functionName) {
     const answer = validateFunctionName(options.functionName);
     if (answer) {
-      initPayload.functionName = options.functionName;
+      functionName = options.functionName;
     } else {
       log.error(`${options.functionName} is not a valid function name`.red);
       process.exit(1);
     }
   } else {
-    while (!initPayload.functionName) {
+    while (!functionName) {
       // until the system supports dashes in names
       const potentialName = moniker.choose().replace(/-/g, '');
       const answer = validateFunctionName(potentialName);
       if (answer) {
-        initPayload.functionName = potentialName;
+        functionName = potentialName;
       }
     }
   }
@@ -74,14 +75,14 @@ const initHandler = async function initHandler(options) {
   // determine if was successfully completed
   try {
     if (options.path) {
-      initPayload.functionPath = path.resolve(options.path);
+      functionPath = path.resolve(options.path);
     } else {
-      initPayload.functionPath = process.cwd();
+      functionPath = process.cwd();
     }
-    await init(initPayload);
-    log.info(`Successfully initialized function ${initPayload.functionName}`.green);
+    await init(functionName, functionPath);
+    log.info(`Successfully initialized function ${functionName}`.green);
     log.info('You can deploy your function with'.green);
-    log.info(`cd ${initPayload.functionName}`.magenta);
+    log.info(`cd ${functionName}`.magenta);
     log.info('bn deploy'.magenta);
   } catch (err) {
     log.error(err.message.red);
@@ -143,7 +144,15 @@ const invokeHandler = async function invokeHandler(options) {
     }
     const response = await invoke(invokePayload);
     log.info('Successfully invoked function'.green);
-    log.info('Response was \''.yellow, JSON.parse(response).message, "'".yellow);
+    let message;
+    try {
+      message = JSON.parse(response).message;
+    } catch (err) {
+      log.debug(err);
+      message = response;
+    }
+
+    log.info('Response was \''.yellow, message, "'".yellow);
   } catch (err) {
     log.error(err.message.red);
     process.exit(1);
