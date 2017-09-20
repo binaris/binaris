@@ -79,9 +79,10 @@ const genTarBall = async function genTarBall(dirToTar, dest, ignoredFiles) {
   return success;
 };
 
-const uploadFuncTar = async function uploadFuncTar(tarPath, publishURL) {
+const uploadFunction = async function uploadFunction(tarPath, conf, publishURL) {
   const options = {
     url: publishURL,
+    qs: conf,
   };
   try {
     const uploadPromise = new Promise((resolve, reject) => {
@@ -120,7 +121,11 @@ const deploy = async function deploy(functionPath) {
     funcTarPath = path.join(deployPath, binarisDir, `${metadata.name}.tgz`);
     await genTarBall(deployPath, funcTarPath, fullIgnorePaths);
     const endpoint = urljoin(`http://${publishEndpoint}/function`, metadata.name);
-    const response = await uploadFuncTar(funcTarPath, endpoint);
+    const funcConf = {
+      file: metadata.file,
+      entrypoint: metadata.entrypoint,
+    };
+    const response = await uploadFunction(funcTarPath, funcConf, endpoint);
     cleanupFile(path.join(deployPath, funcJSONPath));
     if (response.statusCode !== 200) {
       log.debug(response);
