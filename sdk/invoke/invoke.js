@@ -12,12 +12,11 @@ const invokeEndpoint =
 const invoke = async function invoke(data) {
   const invokeFilePath = data.functionPath;
   const invokeData = data.functionData;
-  const { binarisYML, packageJSON } =
-    await util.loadAllFiles(invokeFilePath).catch(() => {
-      throw new Error('Your current directory does not contain a valid binaris function!');
-    });
-  const metadata = util.getFuncMetadata(binarisYML, packageJSON);
-  const endpoint = urljoin(`http://${invokeEndpoint}/v1/user/`, metadata.name);
+  const binarisYML = util.loadBinarisYML(invokeFilePath);
+  const funcName = util.getFuncName(binarisYML);
+  const funcConf = util.getFuncConf(binarisYML, funcName);
+  log.debug('funcConf is', funcConf);
+  const endpoint = urljoin(`http://${invokeEndpoint}/v1/user/`, funcName);
   log.debug(`attempting to invoke @endpoint ${endpoint}`);
   // TODO: switch to request promise at a later time
   const requestPromise = new Promise((resolve, reject) => {

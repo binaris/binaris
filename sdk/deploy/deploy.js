@@ -46,8 +46,8 @@ const writeFuncMetadata = function writeFuncMetadata(object, funcPath) {
     fs.writeFileSync(path.join(funcPath, funcJSONPath),
       JSON.stringify(object, null, 2), 'utf8');
   } catch (err) {
-    log.debug('failed to write function.json file in function dir', err);
-    throw new Error('Failed to write function.json file in function dir!');
+    log.debug(`failed to write ${funcJSONPath} file in function dir`, err);
+    throw new Error(`Failed to write ${funcJSONPath} file in function dir!`);
   }
 };
 
@@ -103,28 +103,21 @@ const uploadFunction = async function uploadFunction(tarPath, conf, publishURL) 
 };
 
 // TODO: thing that returns metadata
-const deploy = async function deploy(functionPath) {
-  const deployPath = functionPath;
-  let funcTarPath;
+const deploy = async function deploy(deployPath) {
   const fullIgnorePaths = [];
   ignoredTarFiles.forEach((entry) => {
     fullIgnorePaths.push(path.join(deployPath, entry));
   });
-  const { binarisYML, packageJSON } =
-    await util.loadAllFiles(deployPath).catch(() => {
-      throw new Error('Your current directory does not contain a valid binaris function!');
-    });
-  const metadata = util.getFuncMetadata(binarisYML, packageJSON);
+  const binarisYML = util.loadBinarisYML(deployPath);
+  const funcName = util.getFuncName(binarisYML);
+  const funcConf = util.getFuncConf(binarisYML, funcName);
+  log.debug('funcConf is', funcConf);
   genBinarisDir(deployPath);
-  writeFuncMetadata(metadata, deployPath);
+  writeFuncMetadata(funcConf, deployPath);
   try {
-    funcTarPath = path.join(deployPath, binarisDir, `${metadata.name}.tgz`);
+    const funcTarPath = path.join(deployPath, binarisDir, `${funcName}.tgz`);
     await genTarBall(deployPath, funcTarPath, fullIgnorePaths);
-    const endpoint = urljoin(`http://${publishEndpoint}/function`, metadata.name);
-    const funcConf = {
-      file: metadata.file,
-      entrypoint: metadata.entrypoint,
-    };
+    const endpoint = urljoin(`http://${publishEndpoint}/function`, funcName);
     const response = await uploadFunction(funcTarPath, funcConf, endpoint);
     cleanupFile(path.join(deployPath, funcJSONPath));
     if (response.statusCode !== 200) {
