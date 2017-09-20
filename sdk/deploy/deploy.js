@@ -108,9 +108,9 @@ const deploy = async function deploy(deployPath) {
   ignoredTarFiles.forEach((entry) => {
     fullIgnorePaths.push(path.join(deployPath, entry));
   });
-  const binarisYML = util.loadBinarisYML(deployPath);
-  const funcName = util.getFuncName(binarisYML);
-  const funcConf = util.getFuncConf(binarisYML, funcName);
+  const binarisConf = util.loadBinarisConf(deployPath);
+  const funcName = util.getFuncName(binarisConf);
+  const funcConf = util.getFuncConf(binarisConf, funcName);
   log.debug('funcConf is', funcConf);
   genBinarisDir(deployPath);
   writeFuncMetadata(funcConf, deployPath);
