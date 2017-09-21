@@ -38,6 +38,12 @@ const loadBinarisConf = function loadBinarisConf(funcDirPath) {
   }
 };
 
+const saveBinarisConf = function saveBinarisConf(funcDirPath, binarisConf) {
+  const fullYAMLPath = path.join(funcDirPath, binarisConfFile);
+  const confString = yaml.dump(binarisConf);
+  fs.writeFileSync(fullYAMLPath, confString, 'utf8');
+};
+
 // this loads our _______.js file from the users current
 // function directory. It determines the correct name of the
 // file by inspecting the functions package.json main field.
@@ -50,13 +56,18 @@ const readFunctionJS = function readFunctionJS(funcDirPath, JSFileName) {
   return JSFile;
 };
 
-// Assumes a single function.
-const getFuncName = function getFuncName(binarisConf) {
-  // ensure that our YML was populated by the correct fields
+const getFunctionsSection = function getFunctionsSection(binarisConf) {
+  // ensure our configuration has the field
   if (!Object.prototype.hasOwnProperty.call(binarisConf, funcStr)) {
     throw new Error(`Your ${binarisConfFile} did not contain a require field: <${funcStr}>`);
   }
   const funcSection = binarisConf[funcStr];
+  return funcSection;
+};
+
+// Assumes a single function.
+const getFuncName = function getFuncName(binarisConf) {
+  const funcSection = getFunctionsSection(binarisConf);
   const funcKeys = Object.keys(funcSection);
   // There's not yet support for multiple functions per yaml
   // The first (and only) entry is used
@@ -75,15 +86,12 @@ const checkFuncConf = function checkFuncConf(funcConf, funcDirPath) {
     throw new Error(`Your ${binarisConfFile} function did not contain a require field: <${entryStr}>`);
   }
   const JSFile = readFunctionJS(funcDirPath, funcConf.file);
-}
+};
 
 // Assumes a single function.
 const getFuncConf = function getFuncConf(binarisConf, funcName) {
-  // ensure that our YML was populated by the correct fields
-  if (!Object.prototype.hasOwnProperty.call(binarisConf, funcStr)) {
-    throw new Error(`Your ${binarisConfFile} did not contain a require field: <${funcStr}>`);
-  }
-  const funcSection = binarisConf[funcStr];
+  const funcSection = getFunctionsSection(binarisConf);
+  // ensure our configuration has the correct function
   if (!Object.prototype.hasOwnProperty.call(funcSection, funcName)) {
     throw new Error(`Your ${binarisConfFile} did not contain function ${funcName}`);
   }
@@ -91,10 +99,29 @@ const getFuncConf = function getFuncConf(binarisConf, funcName) {
   return funcConf;
 };
 
+const addFuncConf = function addFuncConf(binarisConf, funcName, funcConf) {
+  const funcSection = getFunctionsSection(binarisConf);
+  if (Object.prototype.hasOwnProperty.call(funcSection, funcName)) {
+    throw new Error(`Your ${binarisConfFile} already contain function ${funcName}`);
+  }
+  funcSection[funcName] = JSON.parse(JSON.stringify(funcConf));
+};
+
+const delFuncConf = function delFuncConf(binarisConf, funcName) {
+  const funcSection = getFunctionsSection(binarisConf);
+  if (!Object.prototype.hasOwnProperty.call(funcSection, funcName)) {
+    throw new Error(`Your ${binarisConfFile} did not contain function ${funcName}`);
+  }
+  delete funcSection[funcName];
+};
+
 module.exports = {
   attemptJSONParse,
   loadBinarisConf,
+  saveBinarisConf,
   getFuncName,
   getFuncConf,
   checkFuncConf,
+  addFuncConf,
+  delFuncConf,
 };
