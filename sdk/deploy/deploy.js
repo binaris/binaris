@@ -7,7 +7,6 @@ const request = require('request');
 const util = require('../shared/util');
 const log = require('../shared/logger');
 
-const funcJSONPath = 'function.json';
 const binarisDir = '.binaris/';
 
 const ignoredTarFiles = ['node_modules', '.git', '.binaris', 'binaris.yml'];
@@ -28,26 +27,6 @@ const genBinarisDir = function genBinarisDir(genPath) {
   } catch (err) {
     log.debug(err);
     throw new Error('Unable to generate .binaris hidden directory!');
-  }
-};
-
-const cleanupFile = function cleanupFile(filePath) {
-  try {
-    fs.unlinkSync(filePath);
-    return true;
-  } catch (err) {
-    log.debug(err);
-    return false;
-  }
-};
-
-const writeFuncMetadata = function writeFuncMetadata(object, funcPath) {
-  try {
-    fs.writeFileSync(path.join(funcPath, funcJSONPath),
-      JSON.stringify(object, null, 2), 'utf8');
-  } catch (err) {
-    log.debug(`failed to write ${funcJSONPath} file in function dir`, err);
-    throw new Error(`Failed to write ${funcJSONPath} file in function dir!`);
   }
 };
 
@@ -114,22 +93,15 @@ const deploy = async function deploy(deployPath) {
   log.debug('funcConf is', funcConf);
   util.checkFuncConf(funcConf, deployPath);
   genBinarisDir(deployPath);
-  writeFuncMetadata(funcConf, deployPath);
-  try {
-    const funcTarPath = path.join(deployPath, binarisDir, `${funcName}.tgz`);
-    await genTarBall(deployPath, funcTarPath, fullIgnorePaths);
-    const endpoint = urljoin(`http://${publishEndpoint}/v1/function`, funcName);
-    const response = await uploadFunction(funcTarPath, funcConf, endpoint);
-    cleanupFile(path.join(deployPath, funcJSONPath));
-    if (response.statusCode !== 200) {
-      log.debug(response);
-      throw new Error('Function was not deployed successfully, check logs for more details');
-    }
-    return response.body;
-  } catch (err) {
-    cleanupFile(path.join(deployPath, funcJSONPath));
-    throw err;
+  const funcTarPath = path.join(deployPath, binarisDir, `${funcName}.tgz`);
+  await genTarBall(deployPath, funcTarPath, fullIgnorePaths);
+  const endpoint = urljoin(`http://${publishEndpoint}/v1/function`, funcName);
+  const response = await uploadFunction(funcTarPath, funcConf, endpoint);
+  if (response.statusCode !== 200) {
+    log.debug(response);
+    throw new Error('Function was not deployed successfully, check logs for more details');
   }
+  return response.body;
 };
 
 module.exports = deploy;
