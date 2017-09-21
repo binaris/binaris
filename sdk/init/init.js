@@ -11,7 +11,7 @@ const ymlName = 'binaris.yml';
 
 const init = async function init(functionName, functionPath) {
   if (functionName && functionPath) {
-    const section = 'function';
+    const section = 'functions';
     log.debug('attempting to load template files for function dir creation');
     // parse our templated yml and make the necessary modifications
     const conf = yaml.safeLoad(fs.readFileSync(path.join(__dirname,

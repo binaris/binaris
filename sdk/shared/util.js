@@ -6,7 +6,7 @@ const yaml = require('js-yaml');
 const log = require('../shared/logger');
 
 const binarisConfFile = 'binaris.yml';
-const funcStr = 'function';
+const funcStr = 'functions';
 const entryStr = 'entrypoint';
 const fileStr = 'file';
 
