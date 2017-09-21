@@ -9,13 +9,9 @@ const log = require('../shared/logger');
 const invokeEndpoint =
       process.env.BINARIS_INVOKE_ENDPOINT || 'run-staging.binaris.io:80';
 
-const invoke = async function invoke(data) {
-  const invokeFilePath = data.functionPath;
-  const invokeData = data.functionData;
+const invoke = async function invoke(invokeFilePath, invokeData) {
   const binarisConf = util.loadBinarisConf(invokeFilePath);
   const funcName = util.getFuncName(binarisConf);
-  const funcConf = util.getFuncConf(binarisConf, funcName);
-  log.debug('funcConf is', funcConf);
   const endpoint = urljoin(`http://${invokeEndpoint}/v1/user/`, funcName);
   log.debug(`attempting to invoke @endpoint ${endpoint}`);
   // TODO: switch to request promise at a later time

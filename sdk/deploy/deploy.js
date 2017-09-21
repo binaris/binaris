@@ -112,6 +112,7 @@ const deploy = async function deploy(deployPath) {
   const funcName = util.getFuncName(binarisConf);
   const funcConf = util.getFuncConf(binarisConf, funcName);
   log.debug('funcConf is', funcConf);
+  util.checkFuncConf(funcConf, deployPath);
   genBinarisDir(deployPath);
   writeFuncMetadata(funcConf, deployPath);
   try {

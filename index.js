@@ -44,6 +44,13 @@ const validateBinarisLogin = function validateBinarisLogin() {
   return true;
 };
 
+function getFuncPath(options) {
+  if (options.path) {
+    return path.resolve(options.path);
+  }
+  return path.resolve(process.cwd());
+}
+
 // initializes a binaris function based on the options given by
 // the user
 // this essentially boils down to creating template files with
@@ -51,7 +58,6 @@ const validateBinarisLogin = function validateBinarisLogin() {
 const initHandler = async function initHandler(options) {
   log.info('Initializing Binaris function'.yellow);
   let functionName;
-  let functionPath;
   if (options.functionName) {
     const answer = validateFunctionName(options.functionName);
     if (answer) {
@@ -73,12 +79,8 @@ const initHandler = async function initHandler(options) {
 
   // now we actually call our initialize function and then immediately
   // determine if was successfully completed
+  const functionPath = getFuncPath(options);
   try {
-    if (options.path) {
-      functionPath = path.resolve(options.path);
-    } else {
-      functionPath = process.cwd();
-    }
     await init(functionName, functionPath);
     log.info(`Successfully initialized function ${functionName}`.green);
     log.info('You can deploy your function with'.green);
@@ -95,14 +97,8 @@ const initHandler = async function initHandler(options) {
 const deployHandler = async function deployHandler(options) {
   log.info('Starting function deployment process'.yellow);
   if (validateBinarisLogin()) {
-    let deployPath;
+    const deployPath = getFuncPath(options);
     try {
-      if (options.path) {
-        deployPath = path.resolve(options.path);
-      } else {
-        // is this necessary?
-        deployPath = path.resolve(process.cwd());
-      }
       await deploy(deployPath);
       log.info('Sucessfully deployed function'.green);
     } catch (err) {
@@ -116,17 +112,13 @@ const deployHandler = async function deployHandler(options) {
 // deployed either through the CLI or other means
 const invokeHandler = async function invokeHandler(options) {
   log.info('Attempting to invoke your function'.yellow);
-  const invokePayload = {};
   if (options.file && options.json) {
     log.error('You may not provide both a json(-j) and file(-f)'.red);
     process.exit(1);
   }
+  const funcPath = getFuncPath(options);
+  let funcData;
   try {
-    if (options.path) {
-      invokePayload.functionPath = options.path;
-    } else {
-      invokePayload.functionPath = process.cwd();
-    }
     let payloadJSON;
     if (options.json) {
       payloadJSON = options.json;
@@ -139,10 +131,10 @@ const invokeHandler = async function invokeHandler(options) {
     }
 
     if (payloadJSON) {
-      invokePayload.functionData = util.attemptJSONParse(payloadJSON);
-      log.debug({ functionData: invokePayload.functionData });
+      funcData = util.attemptJSONParse(payloadJSON);
+      log.debug({ funcData });
     }
-    const response = await invoke(invokePayload);
+    const response = await invoke(funcPath, funcData);
     log.info('Successfully invoked function'.green);
     let message;
     try {
