@@ -7,6 +7,8 @@ const log = require('../shared/logger');
 
 const binarisConfFile = 'binaris.yml';
 const funcStr = 'function';
+const entryStr = 'entrypoint';
+const fileStr = 'file';
 
 // attempts to parse a json and throws if an issue is encountered
 const attemptJSONParse = function attemptJSONParse(rawJSON) {
@@ -28,8 +30,8 @@ const attemptJSONParse = function attemptJSONParse(rawJSON) {
 const loadBinarisConf = function loadBinarisConf(funcDirPath) {
   try {
     const fullYAMLPath = path.join(funcDirPath, binarisConfFile);
-    const YAMLObj = yaml.safeLoad(fs.readFileSync(fullYAMLPath, 'utf8'));
-    return YAMLObj;
+    const binarisConf = yaml.safeLoad(fs.readFileSync(fullYAMLPath, 'utf8'));
+    return binarisConf;
   } catch (err) {
     log.debug(err);
     throw new Error(`${funcDirPath} does not contain a valid binaris function!`);
@@ -42,7 +44,7 @@ const loadBinarisConf = function loadBinarisConf(funcDirPath) {
 // If it does not exist in the expected location the object
 // returned will have a false 'success' field and a
 // associated error field
-const loadFunctionJS = function loadFunctionJS(funcDirPath, JSFileName) {
+const readFunctionJS = function readFunctionJS(funcDirPath, JSFileName) {
   const fullJSPath = path.join(funcDirPath, JSFileName);
   const JSFile = fs.readFileSync(fullJSPath, 'utf8');
   return JSFile;
@@ -65,6 +67,16 @@ const getFuncName = function getFuncName(binarisConf) {
   return funcName;
 };
 
+const checkFuncConf = function checkFuncConf(funcConf, funcDirPath) {
+  if (!Object.prototype.hasOwnProperty.call(funcConf, fileStr)) {
+    throw new Error(`Your ${binarisConfFile} function did not contain a require field: <${fileStr}>`);
+  }
+  if (!Object.prototype.hasOwnProperty.call(funcConf, entryStr)) {
+    throw new Error(`Your ${binarisConfFile} function did not contain a require field: <${entryStr}>`);
+  }
+  const JSFile = readFunctionJS(funcDirPath, funcConf.file);
+}
+
 // Assumes a single function.
 const getFuncConf = function getFuncConf(binarisConf, funcName) {
   // ensure that our YML was populated by the correct fields
@@ -76,40 +88,13 @@ const getFuncConf = function getFuncConf(binarisConf, funcName) {
     throw new Error(`Your ${binarisConfFile} did not contain function ${funcName}`);
   }
   const funcConf = funcSection[funcName];
-
-  // verify all fields?
-  // see getFuncEntry
   return funcConf;
-};
-
-// loads all our files at once handling the potential errors in
-// batch. Unfortunately the load still needs to be done in sync
-// because of file dependencies
-const loadAllFiles = async function loadAllFiles(funcDirPath) {
-  const binarisConf = loadBinarisConf(funcDirPath);
-  const conf = getFunctionConf(binarisConf);
-  const JSFile = loadFunctionJS(funcDirPath, conf.file);
-  return {
-    binarisConf,
-    JSFile,
-  };
-};
-
-// determines the current functions entrypoint based on the data
-// available in the binarisConf
-const getFuncEntry = function getFuncEntry(binarisConf) {
-  const funcConf = getFuncConf(binarisConf)
-  const entryStr = 'entrypoint';
-  if (!Object.prototype.hasOwnProperty.call(funcConf, entryStr)) {
-    throw new Error(`Your ${binarisConfFile} function did not contain a require field: <entrypoint>`);
-  }
-  return funcConf[entryStr];
 };
 
 module.exports = {
   attemptJSONParse,
   loadBinarisConf,
-  loadAllFiles,
   getFuncName,
   getFuncConf,
+  checkFuncConf,
 };
