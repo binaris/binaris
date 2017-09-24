@@ -118,7 +118,7 @@ const deploy = async function deploy(deployPath) {
   try {
     const funcTarPath = path.join(deployPath, binarisDir, `${funcName}.tgz`);
     await genTarBall(deployPath, funcTarPath, fullIgnorePaths);
-    const endpoint = urljoin(`http://${publishEndpoint}/function`, funcName);
+    const endpoint = urljoin(`http://${publishEndpoint}/v1/function`, funcName);
     const response = await uploadFunction(funcTarPath, funcConf, endpoint);
     cleanupFile(path.join(deployPath, funcJSONPath));
     if (response.statusCode !== 200) {
