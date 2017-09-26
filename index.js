@@ -15,7 +15,6 @@ const path = require('path');
 // our 3rd party modules
 const commander = require('commander');
 const colors = require('colors');
-const moniker = require('moniker');
 
 const ignoredTarFiles = ['.git', '.binaris', 'binaris.yml'];
 
@@ -26,19 +25,6 @@ const ignoredTarFiles = ['.git', '.binaris', 'binaris.yml'];
 const noSupport = function notSupported(cmdName) {
   log.info(`${cmdName} is not currently supported!`.red);
   process.exit(1);
-};
-
-// here we both ensure the name is valid syntatically and eventually
-// we will also determine if it has been previously created
-const validateFunctionName = function validateFunctionName(name) {
-  // eslint issue but too annoying to fix given time
-  if (/[~`!#$%^&*+=\\[\]\\';,/{}|\\":<>?]/g.test(name)) {
-    return false;
-  }
-
-  // need to add an SDK? call to ensure that the name is not only
-  // syntatically valid but also unique
-  return true;
 };
 
 const validateBinarisLogin = function validateBinarisLogin() {
@@ -58,35 +44,14 @@ function getFuncPath(options) {
 // this essentially boils down to creating template files with
 // the correct information in the correct location
 const initHandler = async function initHandler(options) {
-  log.info('Initializing Binaris function'.yellow);
-  let functionName;
-  if (options.functionName) {
-    const answer = validateFunctionName(options.functionName);
-    if (answer) {
-      functionName = options.functionName;
-    } else {
-      log.error(`${options.functionName} is not a valid function name`.red);
-      process.exit(1);
-    }
-  } else {
-    while (!functionName) {
-      // until the system supports dashes in names
-      const potentialName = moniker.choose().replace(/-/g, '');
-      const answer = validateFunctionName(potentialName);
-      if (answer) {
-        functionName = potentialName;
-      }
-    }
-  }
-
   // now we actually call our initialize function and then immediately
   // determine if was successfully completed
   const functionPath = getFuncPath(options);
   try {
-    await cliSDK.init(functionName, functionPath);
-    log.info(`Successfully initialized function ${functionName}`.green);
+    const finalName = await cliSDK.init(options.functionName, functionPath);
+    log.info(`Successfully initialized function ${finalName}`.green);
     log.info('You can deploy your function with'.green);
-    log.info(`cd ${functionName}`.magenta);
+    log.info(`cd ${finalName}`.magenta);
     log.info('bn deploy'.magenta);
   } catch (err) {
     log.error(err.message.red);
