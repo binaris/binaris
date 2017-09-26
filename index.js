@@ -2,7 +2,6 @@
 
 // here we just grab all our SDK functions that we plan to use
 // invoke, destroy, help, info, login, logout, signup
-const { invoke } = require('./sdk');
 const cliSDK = require('./cli-sdk');
 
 // create our basic logger
@@ -93,9 +92,7 @@ const invokeHandler = async function invokeHandler(options) {
       log.debug({ funcData });
     }
 
-    const binarisConf = cliSDK.loadBinarisConf(funcPath);
-    const funcName = cliSDK.getFuncName(binarisConf);
-    const response = await invoke(funcName, funcData);
+    const response = await cliSDK.invokeHelper(funcPath, funcData);
     log.info('Successfully invoked function'.green);
     let message;
     try {
@@ -104,7 +101,6 @@ const invokeHandler = async function invokeHandler(options) {
       log.debug(err);
       message = response;
     }
-
     log.info('Response was \''.yellow, message, "'".yellow);
   } catch (err) {
     log.error(err.message.red);

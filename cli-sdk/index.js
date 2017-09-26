@@ -6,6 +6,7 @@ const { attemptJSONParse, genBinarisDir,
 
 const log = require('./shared/logger');
 const init = require('./init/init');
+const invokeHelper = require('./invokeHelper/invokeHelper');
 const deployHelper = require('./deployHelper/deployHelper');
 
 module.exports = {
@@ -21,6 +22,7 @@ module.exports = {
   addFuncConf,
   delFuncConf,
   init,
+  invokeHelper,
   deployHelper,
   log,
 };
