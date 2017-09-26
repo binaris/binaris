@@ -9,7 +9,7 @@ const log = require('../shared/logger');
 const publishEndpoint =
   process.env.BINARIS_PUBLISH_ENDPOINT || 'api-staging.binaris.io:11011';
 
-const uploadFunction = async function uploadFunction(tarPath, conf, publishURL) {
+const deployFunction = async function uploadFunction(tarPath, conf, publishURL) {
   const options = {
     url: publishURL,
     qs: conf,
@@ -35,7 +35,7 @@ const uploadFunction = async function uploadFunction(tarPath, conf, publishURL) 
 // TODO: thing that returns metadata
 const deploy = async function deploy(funcName, funcConf, tarPath) {
   const endpoint = urljoin(`http://${publishEndpoint}/v1/function`, funcName);
-  const response = await uploadFunction(tarPath, funcConf, endpoint);
+  const response = await deployFunction(tarPath, funcConf, endpoint);
   if (response.statusCode !== 200) {
     log.debug(response);
     throw new Error('Function was not deployed successfully, check logs for more details');

@@ -35,7 +35,7 @@ const genBinarisDir = function genBinarisDir(genPath) {
     }
   } catch (err) {
     log.debug(err);
-    throw new Error('Unable to generate .binaris hidden directory!');
+    throw new Error(`Unable to generate ${BINARIS_DIR} hidden directory!`);
   }
 };
 

@@ -100,19 +100,19 @@ const deployHandler = async function deployHandler(options) {
   log.info('Starting function deployment process'.yellow);
   if (validateBinarisLogin()) {
     try {
-      const deployPath = getFuncPath(options);
+      const funcPath = getFuncPath(options);
       const fullIgnorePaths = [];
       ignoredTarFiles.forEach((entry) => {
-        fullIgnorePaths.push(path.join(deployPath, entry));
+        fullIgnorePaths.push(path.join(funcPath, entry));
       });
-      const binarisConf = util.loadBinarisConf(deployPath);
+      const binarisConf = util.loadBinarisConf(funcPath);
       const funcName = util.getFuncName(binarisConf);
       const funcConf = util.getFuncConf(binarisConf, funcName);
       log.debug('funcConf is', funcConf);
-      util.checkFuncConf(funcConf, deployPath);
-      util.genBinarisDir(deployPath);
-      const funcTarPath = path.join(deployPath, util.BINARIS_DIR, `${funcName}.tgz`);
-      await util.genTarBall(deployPath, funcTarPath, fullIgnorePaths);
+      util.checkFuncConf(funcConf, funcPath);
+      util.genBinarisDir(funcPath);
+      const funcTarPath = path.join(funcPath, util.BINARIS_DIR, `${funcName}.tgz`);
+      await util.genTarBall(funcPath, funcTarPath, fullIgnorePaths);
       await deploy(funcName, funcConf, funcTarPath);
       log.info('Sucessfully deployed function'.green);
     } catch (err) {
