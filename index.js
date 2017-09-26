@@ -2,11 +2,11 @@
 
 // here we just grab all our SDK functions that we plan to use
 // invoke, destroy, help, info, login, logout, signup
-const { init, invoke, deploy } = require('./sdk');
+const { invoke, deploy } = require('./sdk');
+const cliSDK = require('./cli-sdk');
 
 // create our basic logger
-const log = require('./sdk/shared/logger');
-const util = require('./sdk/shared/util');
+const log = cliSDK.log;
 
 // our core modules
 const fs = require('fs');
@@ -83,7 +83,7 @@ const initHandler = async function initHandler(options) {
   // determine if was successfully completed
   const functionPath = getFuncPath(options);
   try {
-    await init(functionName, functionPath);
+    await cliSDK.init(functionName, functionPath);
     log.info(`Successfully initialized function ${functionName}`.green);
     log.info('You can deploy your function with'.green);
     log.info(`cd ${functionName}`.magenta);
@@ -105,14 +105,13 @@ const deployHandler = async function deployHandler(options) {
       ignoredTarFiles.forEach((entry) => {
         fullIgnorePaths.push(path.join(funcPath, entry));
       });
-      const binarisConf = util.loadBinarisConf(funcPath);
-      const funcName = util.getFuncName(binarisConf);
-      const funcConf = util.getFuncConf(binarisConf, funcName);
+      const binarisConf = cliSDK.loadBinarisConf(funcPath);
+      const funcName = cliSDK.getFuncName(binarisConf);
+      const funcConf = cliSDK.getFuncConf(binarisConf, funcName);
       log.debug('funcConf is', funcConf);
-      util.checkFuncConf(funcConf, funcPath);
-      util.genBinarisDir(funcPath);
-      const funcTarPath = path.join(funcPath, util.BINARIS_DIR, `${funcName}.tgz`);
-      await util.genTarBall(funcPath, funcTarPath, fullIgnorePaths);
+      cliSDK.checkFuncConf(funcConf, funcPath);
+      const funcTarPath = path.join(cliSDK.genBinarisDir(funcPath), `${funcName}.tgz`);
+      await cliSDK.genTarBall(funcPath, funcTarPath, fullIgnorePaths);
       await deploy(funcName, funcConf, funcTarPath);
       log.info('Sucessfully deployed function'.green);
     } catch (err) {
@@ -145,12 +144,12 @@ const invokeHandler = async function invokeHandler(options) {
     }
 
     if (payloadJSON) {
-      funcData = util.attemptJSONParse(payloadJSON);
+      funcData = cliSDK.attemptJSONParse(payloadJSON);
       log.debug({ funcData });
     }
 
-    const binarisConf = util.loadBinarisConf(funcPath);
-    const funcName = util.getFuncName(binarisConf);
+    const binarisConf = cliSDK.loadBinarisConf(funcPath);
+    const funcName = cliSDK.getFuncName(binarisConf);
     const response = await invoke(funcName, funcData);
     log.info('Successfully invoked function'.green);
     let message;

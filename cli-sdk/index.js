@@ -1,16 +1,18 @@
+// this is just a convenience/wrapper for the individual commands
 const fs = require('fs');
 const path = require('path');
 
 const targz = require('targz');
 const yaml = require('js-yaml');
 
-const log = require('../shared/logger');
+const log = require('./logger');
 
 const binarisConfFile = 'binaris.yml';
 const funcStr = 'functions';
 const entryStr = 'entrypoint';
 const fileStr = 'file';
-const BINARIS_DIR = '.binaris/';
+const binarisDir = '.binaris/';
+const templateDir = './functionTemplates/nodejs/';
 
 // attempts to parse a json and throws if an issue is encountered
 const attemptJSONParse = function attemptJSONParse(rawJSON) {
@@ -28,15 +30,17 @@ const attemptJSONParse = function attemptJSONParse(rawJSON) {
 // creates our hidden .binaris directory in the users function
 // directory if it doesn't already exist
 const genBinarisDir = function genBinarisDir(genPath) {
+  let fullPath;
   try {
-    const fullPath = path.join(genPath, BINARIS_DIR);
+    fullPath = path.join(genPath, binarisDir);
     if (!fs.existsSync(fullPath)) {
       fs.mkdirSync(fullPath);
     }
   } catch (err) {
     log.debug(err);
-    throw new Error(`Unable to generate ${BINARIS_DIR} hidden directory!`);
+    throw new Error(`Unable to generate ${binarisDir} hidden directory!`);
   }
+  return fullPath;
 };
 
 const genTarBall = async function genTarBall(dirToTar, dest, ignoredFiles) {
@@ -159,8 +163,42 @@ const delFuncConf = function delFuncConf(binarisConf, funcName) {
   delete funcSection[funcName];
 };
 
+const init = async function init(functionName, functionPath) {
+  if (!functionName) {
+    throw new Error('Invalid function name provided!');
+  }
+  if (!functionPath) {
+    throw new Error('Invalid function path provided!');
+  }
+
+  log.debug('attempting to load template files for function dir creation');
+  // parse our templated yml and make the necessary modifications
+  const templatePath = path.join(__dirname, templateDir);
+  const binarisConf = loadBinarisConf(templatePath);
+  const templateName = getFuncName(binarisConf);
+  const funcConf = getFuncConf(binarisConf, templateName);
+  // replace the generic function name with the actual name
+  addFuncConf(binarisConf, functionName, funcConf);
+  delFuncConf(binarisConf, templateName);
+
+  const newDir = path.join(functionPath, functionName);
+  // ensure that the function directory doesn't already exist
+  try {
+    fs.mkdirSync(newDir);
+  } catch (err) {
+    log.debug(err);
+    throw new Error(`Function ${functionName} could not be initialized because a directory already exists with that name!`);
+  }
+  log.debug('loading and replicating all template files');
+
+  // now we have to write out all our files that we've modified
+  const file = funcConf.file;
+  fs.writeFileSync(path.join(newDir, file),
+    fs.readFileSync(path.join(__dirname, templateDir, file)));
+  saveBinarisConf(newDir, binarisConf);
+};
+
 module.exports = {
-  BINARIS_DIR,
   attemptJSONParse,
   genBinarisDir,
   genTarBall,
@@ -171,4 +209,6 @@ module.exports = {
   checkFuncConf,
   addFuncConf,
   delFuncConf,
+  init,
+  log,
 };
