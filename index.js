@@ -2,7 +2,7 @@
 
 // here we just grab all our SDK functions that we plan to use
 // invoke, destroy, help, info, login, logout, signup
-const { init, invoke, deploy } = require('./sdk/sdk');
+const { init, invoke, deploy } = require('./sdk');
 
 // create our basic logger
 const log = require('./sdk/shared/logger');
