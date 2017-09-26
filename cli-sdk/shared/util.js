@@ -13,6 +13,11 @@ const entryStr = 'entrypoint';
 const fileStr = 'file';
 const binarisDir = '.binaris/';
 
+const validateBinarisLogin = function validateBinarisLogin() {
+  log.info('Validating Binaris credentials'.yellow);
+  return true;
+};
+
 // attempts to parse a json and throws if an issue is encountered
 const attemptJSONParse = function attemptJSONParse(rawJSON) {
   try {
@@ -163,6 +168,7 @@ const delFuncConf = function delFuncConf(binarisConf, funcName) {
 };
 
 module.exports = {
+  validateBinarisLogin,
   attemptJSONParse,
   genBinarisDir,
   genTarBall,

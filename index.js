@@ -2,7 +2,7 @@
 
 // here we just grab all our SDK functions that we plan to use
 // invoke, destroy, help, info, login, logout, signup
-const { invoke, deploy } = require('./sdk');
+const { invoke } = require('./sdk');
 const cliSDK = require('./cli-sdk');
 
 // create our basic logger
@@ -16,8 +16,6 @@ const path = require('path');
 const commander = require('commander');
 const colors = require('colors');
 
-const ignoredTarFiles = ['.git', '.binaris', 'binaris.yml'];
-
 // Things to do
 // create binaris dependent directories
 // create temp files
@@ -25,11 +23,6 @@ const ignoredTarFiles = ['.git', '.binaris', 'binaris.yml'];
 const noSupport = function notSupported(cmdName) {
   log.info(`${cmdName} is not currently supported!`.red);
   process.exit(1);
-};
-
-const validateBinarisLogin = function validateBinarisLogin() {
-  log.info('Validating Binaris credentials'.yellow);
-  return true;
 };
 
 function getFuncPath(options) {
@@ -63,26 +56,13 @@ const initHandler = async function initHandler(options) {
 // associated metadata to the Binaris cloud
 const deployHandler = async function deployHandler(options) {
   log.info('Starting function deployment process'.yellow);
-  if (validateBinarisLogin()) {
-    try {
-      const funcPath = getFuncPath(options);
-      const fullIgnorePaths = [];
-      ignoredTarFiles.forEach((entry) => {
-        fullIgnorePaths.push(path.join(funcPath, entry));
-      });
-      const binarisConf = cliSDK.loadBinarisConf(funcPath);
-      const funcName = cliSDK.getFuncName(binarisConf);
-      const funcConf = cliSDK.getFuncConf(binarisConf, funcName);
-      log.debug('funcConf is', funcConf);
-      cliSDK.checkFuncConf(funcConf, funcPath);
-      const funcTarPath = path.join(cliSDK.genBinarisDir(funcPath), `${funcName}.tgz`);
-      await cliSDK.genTarBall(funcPath, funcTarPath, fullIgnorePaths);
-      await deploy(funcName, funcConf, funcTarPath);
-      log.info('Sucessfully deployed function'.green);
-    } catch (err) {
-      log.error(err.message.red);
-      process.exit(1);
-    }
+  try {
+    const funcPath = getFuncPath(options);
+    await cliSDK.deployHelper(funcPath);
+    log.info('Sucessfully deployed function'.green);
+  } catch (err) {
+    log.error(err.message.red);
+    process.exit(1);
   }
 };
 
