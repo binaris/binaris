@@ -1,62 +1,13 @@
 const fs = require('fs');
-const path = require('path');
-const targz = require('targz');
 const urljoin = require('urljoin');
 const request = require('request');
 
-const util = require('../shared/util');
 const log = require('../shared/logger');
-
-const binarisDir = '.binaris/';
-
-const ignoredTarFiles = ['node_modules', '.git', '.binaris', 'binaris.yml'];
 
 // TODO: ensure that this is configured in a better way, having a single
 // variable in the deploy file is inadequate
 const publishEndpoint =
   process.env.BINARIS_PUBLISH_ENDPOINT || 'api-staging.binaris.io:11011';
-
-// creates our hidden .binaris directory in the users function
-// directory if it doesn't already exist
-const genBinarisDir = function genBinarisDir(genPath) {
-  try {
-    const fullPath = path.join(genPath, binarisDir);
-    if (!fs.existsSync(fullPath)) {
-      fs.mkdirSync(fullPath);
-    }
-  } catch (err) {
-    log.debug(err);
-    throw new Error('Unable to generate .binaris hidden directory!');
-  }
-};
-
-const genTarBall = async function genTarBall(dirToTar, dest, ignoredFiles) {
-  // our CLI pipeline is forced and intentionally synchronous,
-  // this wrapper is to ensure that vanilla cbs don't interfere
-  // with the order of things
-  const tarPromise = new Promise((resolve, reject) => {
-    targz.compress({
-      src: dirToTar,
-      dest,
-      tar: {
-        ignore: (name) => {
-          if (ignoredFiles.indexOf(name) > -1) {
-            return true;
-          }
-          return false;
-        },
-      },
-    }, (err) => {
-      if (err) {
-        reject(err);
-      }
-      resolve();
-    });
-  });
-
-  const success = await tarPromise;
-  return success;
-};
 
 const uploadFunction = async function uploadFunction(tarPath, conf, publishURL) {
   const options = {
@@ -82,21 +33,9 @@ const uploadFunction = async function uploadFunction(tarPath, conf, publishURL) 
 };
 
 // TODO: thing that returns metadata
-const deploy = async function deploy(deployPath) {
-  const fullIgnorePaths = [];
-  ignoredTarFiles.forEach((entry) => {
-    fullIgnorePaths.push(path.join(deployPath, entry));
-  });
-  const binarisConf = util.loadBinarisConf(deployPath);
-  const funcName = util.getFuncName(binarisConf);
-  const funcConf = util.getFuncConf(binarisConf, funcName);
-  log.debug('funcConf is', funcConf);
-  util.checkFuncConf(funcConf, deployPath);
-  genBinarisDir(deployPath);
-  const funcTarPath = path.join(deployPath, binarisDir, `${funcName}.tgz`);
-  await genTarBall(deployPath, funcTarPath, fullIgnorePaths);
+const deploy = async function deploy(funcName, funcConf, tarPath) {
   const endpoint = urljoin(`http://${publishEndpoint}/v1/function`, funcName);
-  const response = await uploadFunction(funcTarPath, funcConf, endpoint);
+  const response = await uploadFunction(tarPath, funcConf, endpoint);
   if (response.statusCode !== 200) {
     log.debug(response);
     throw new Error('Function was not deployed successfully, check logs for more details');

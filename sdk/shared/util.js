@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
+const targz = require('targz');
 const yaml = require('js-yaml');
 
 const log = require('../shared/logger');
@@ -9,6 +10,7 @@ const binarisConfFile = 'binaris.yml';
 const funcStr = 'functions';
 const entryStr = 'entrypoint';
 const fileStr = 'file';
+const BINARIS_DIR = '.binaris/';
 
 // attempts to parse a json and throws if an issue is encountered
 const attemptJSONParse = function attemptJSONParse(rawJSON) {
@@ -21,6 +23,48 @@ const attemptJSONParse = function attemptJSONParse(rawJSON) {
     log.debug(err);
   }
   throw new Error('Invalid JSON received, unable to parse');
+};
+
+// creates our hidden .binaris directory in the users function
+// directory if it doesn't already exist
+const genBinarisDir = function genBinarisDir(genPath) {
+  try {
+    const fullPath = path.join(genPath, BINARIS_DIR);
+    if (!fs.existsSync(fullPath)) {
+      fs.mkdirSync(fullPath);
+    }
+  } catch (err) {
+    log.debug(err);
+    throw new Error('Unable to generate .binaris hidden directory!');
+  }
+};
+
+const genTarBall = async function genTarBall(dirToTar, dest, ignoredFiles) {
+  // our CLI pipeline is forced and intentionally synchronous,
+  // this wrapper is to ensure that vanilla cbs don't interfere
+  // with the order of things
+  const tarPromise = new Promise((resolve, reject) => {
+    targz.compress({
+      src: dirToTar,
+      dest,
+      tar: {
+        ignore: (name) => {
+          if (ignoredFiles.indexOf(name) > -1) {
+            return true;
+          }
+          return false;
+        },
+      },
+    }, (err) => {
+      if (err) {
+        reject(err);
+      }
+      resolve();
+    });
+  });
+
+  const success = await tarPromise;
+  return success;
 };
 
 // this loads our binaris.yml file from the users current
@@ -85,7 +129,7 @@ const checkFuncConf = function checkFuncConf(funcConf, funcDirPath) {
   if (!Object.prototype.hasOwnProperty.call(funcConf, entryStr)) {
     throw new Error(`Your ${binarisConfFile} function did not contain a require field: <${entryStr}>`);
   }
-  const JSFile = readFunctionJS(funcDirPath, funcConf.file);
+  readFunctionJS(funcDirPath, funcConf.file);
 };
 
 // Assumes a single function.
@@ -116,7 +160,10 @@ const delFuncConf = function delFuncConf(binarisConf, funcName) {
 };
 
 module.exports = {
+  BINARIS_DIR,
   attemptJSONParse,
+  genBinarisDir,
+  genTarBall,
   loadBinarisConf,
   saveBinarisConf,
   getFuncName,

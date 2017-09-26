@@ -17,6 +17,8 @@ const commander = require('commander');
 const colors = require('colors');
 const moniker = require('moniker');
 
+const ignoredTarFiles = ['node_modules', '.git', '.binaris', 'binaris.yml'];
+
 // Things to do
 // create binaris dependent directories
 // create temp files
@@ -97,9 +99,21 @@ const initHandler = async function initHandler(options) {
 const deployHandler = async function deployHandler(options) {
   log.info('Starting function deployment process'.yellow);
   if (validateBinarisLogin()) {
-    const deployPath = getFuncPath(options);
     try {
-      await deploy(deployPath);
+      const deployPath = getFuncPath(options);
+      const fullIgnorePaths = [];
+      ignoredTarFiles.forEach((entry) => {
+        fullIgnorePaths.push(path.join(deployPath, entry));
+      });
+      const binarisConf = util.loadBinarisConf(deployPath);
+      const funcName = util.getFuncName(binarisConf);
+      const funcConf = util.getFuncConf(binarisConf, funcName);
+      log.debug('funcConf is', funcConf);
+      util.checkFuncConf(funcConf, deployPath);
+      util.genBinarisDir(deployPath);
+      const funcTarPath = path.join(deployPath, util.BINARIS_DIR, `${funcName}.tgz`);
+      await util.genTarBall(deployPath, funcTarPath, fullIgnorePaths);
+      await deploy(funcName, funcConf, funcTarPath);
       log.info('Sucessfully deployed function'.green);
     } catch (err) {
       log.error(err.message.red);
