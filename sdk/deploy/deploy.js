@@ -9,9 +9,9 @@ const log = require('../shared/logger');
 const deployEndpoint =
   process.env.BINARIS_DEPLOY_ENDPOINT || 'api-staging.binaris.io:11011';
 
-const deployFunction = async function uploadFunction(tarPath, conf, publishURL) {
+const deployFunction = async function uploadFunction(tarPath, conf, deployURL) {
   const options = {
-    url: publishURL,
+    url: deployURL,
     qs: conf,
   };
   try {
