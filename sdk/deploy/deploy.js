@@ -6,8 +6,8 @@ const log = require('../shared/logger');
 
 // TODO: ensure that this is configured in a better way, having a single
 // variable in the deploy file is inadequate
-const publishEndpoint =
-  process.env.BINARIS_PUBLISH_ENDPOINT || 'api-staging.binaris.io:11011';
+const deployEndpoint =
+  process.env.BINARIS_DEPLOY_ENDPOINT || 'api-staging.binaris.io:11011';
 
 const deployFunction = async function uploadFunction(tarPath, conf, publishURL) {
   const options = {
@@ -34,7 +34,8 @@ const deployFunction = async function uploadFunction(tarPath, conf, publishURL) 
 
 // TODO: thing that returns metadata
 const deploy = async function deploy(funcName, funcConf, tarPath) {
-  const endpoint = urljoin(`http://${publishEndpoint}/v1/function`, funcName);
+  const endpoint = urljoin(`http://${deployEndpoint}/v1/function`, funcName);
+  log.debug(`endpoint is: ${endpoint}`);
   const response = await deployFunction(tarPath, funcConf, endpoint);
   if (response.statusCode !== 200) {
     log.debug(response);
