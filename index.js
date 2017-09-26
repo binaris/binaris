@@ -80,9 +80,9 @@ const invokeHandler = async function invokeHandler(options) {
     if (options.json) {
       payloadJSON = options.json;
     } else if (options.file) {
-      if (fs.existsSync(options.file)) {
+      try {
         payloadJSON = fs.readFileSync(options.file, 'utf8');
-      } else {
+      } catch (err) {
         throw new Error(`${options.file} was not a valid path to a JSON file`);
       }
     }
