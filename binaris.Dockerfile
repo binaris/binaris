@@ -13,9 +13,10 @@ ENTRYPOINT ["/tini", "--"]
 RUN mkdir -p /opt/binaris
 RUN mkdir -p /opt/flux
 
-COPY ./package.json ./index.js /opt/flux/
-ADD sdk /opt/flux/sdk/
-WORKDIR /opt/flux
+COPY ./package.json ./index.js /opt/bn/
+ADD sdk /opt/bn/sdk/
+ADD cli-sdk /opt/bn/cli-sdk/
+WORKDIR /opt/bn
 RUN npm install -g
 
 WORKDIR /opt/binaris
