@@ -17,7 +17,7 @@ const commander = require('commander');
 const colors = require('colors');
 const moniker = require('moniker');
 
-const ignoredTarFiles = ['node_modules', '.git', '.binaris', 'binaris.yml'];
+const ignoredTarFiles = ['.git', '.binaris', 'binaris.yml'];
 
 // Things to do
 // create binaris dependent directories
