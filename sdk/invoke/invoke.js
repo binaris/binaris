@@ -1,7 +1,6 @@
 const urljoin = require('urljoin');
 const request = require('request');
 
-const util = require('../shared/util');
 const log = require('../shared/logger');
 
 // TODO: ensure that this is configured in a better way, having a single
@@ -9,16 +8,14 @@ const log = require('../shared/logger');
 const invokeEndpoint =
       process.env.BINARIS_INVOKE_ENDPOINT || 'run-staging.binaris.io';
 
-const invoke = async function invoke(invokeFilePath, invokeData) {
-  const binarisConf = util.loadBinarisConf(invokeFilePath);
-  const funcName = util.getFuncName(binarisConf);
+const invoke = async function invoke(funcName, funcData) {
   const endpoint = urljoin(`https://${invokeEndpoint}/v1/user/`, funcName);
   log.debug(`attempting to invoke @endpoint ${endpoint}`);
   // TODO: switch to request promise at a later time
   const requestPromise = new Promise((resolve, reject) => {
     request.post({
       url: endpoint,
-      body: JSON.stringify(invokeData),
+      body: JSON.stringify(funcData),
       headers: {
         'Content-Type': 'application/json',
       },

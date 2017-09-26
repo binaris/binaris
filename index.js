@@ -148,7 +148,10 @@ const invokeHandler = async function invokeHandler(options) {
       funcData = util.attemptJSONParse(payloadJSON);
       log.debug({ funcData });
     }
-    const response = await invoke(funcPath, funcData);
+
+    const binarisConf = util.loadBinarisConf(funcPath);
+    const funcName = util.getFuncName(binarisConf);
+    const response = await invoke(funcName, funcData);
     log.info('Successfully invoked function'.green);
     let message;
     try {
