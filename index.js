@@ -2,7 +2,7 @@
 
 // here we just grab all our SDK functions that we plan to use
 // invoke, destroy, help, info, login, logout, signup
-const cliSDK = require('./cli-sdk');
+const { init, invoke, deploy } = require('./cli-sdk');
 
 // create our basic logger
 const log = require('./logger');
@@ -24,6 +24,19 @@ const noSupport = function notSupported(cmdName) {
   process.exit(1);
 };
 
+// attempts to parse a json and throws if an issue is encountered
+const attemptJSONParse = function attemptJSONParse(rawJSON) {
+  try {
+    const parsedJSON = JSON.parse(rawJSON);
+    if (parsedJSON && typeof parsedJSON === 'object') {
+      return parsedJSON;
+    }
+  } catch (err) {
+    log.debug(err);
+  }
+  throw new Error('Invalid JSON received, unable to parse');
+};
+
 function getFuncPath(options) {
   if (options.path) {
     return path.resolve(options.path);
@@ -40,7 +53,7 @@ const initHandler = async function initHandler(options) {
   // determine if was successfully completed
   const functionPath = getFuncPath(options);
   try {
-    const finalName = await cliSDK.init(options.functionName, functionPath);
+    const finalName = await init(options.functionName, functionPath);
     log.info(`Successfully initialized function ${finalName}`.green);
     log.info('You can deploy your function with'.green);
     log.info(`cd ${finalName}`.magenta);
@@ -57,7 +70,7 @@ const deployHandler = async function deployHandler(options) {
   log.info('Starting function deployment process'.yellow);
   try {
     const funcPath = getFuncPath(options);
-    await cliSDK.deployHelper(funcPath);
+    await deploy(funcPath);
     log.info('Sucessfully deployed function'.green);
   } catch (err) {
     log.error(err.message.red);
@@ -88,11 +101,11 @@ const invokeHandler = async function invokeHandler(options) {
     }
 
     if (payloadJSON) {
-      funcData = cliSDK.attemptJSONParse(payloadJSON);
+      funcData = attemptJSONParse(payloadJSON);
       log.debug({ funcData });
     }
 
-    const response = await cliSDK.invokeHelper(funcPath, funcData);
+    const response = await invoke(funcPath, funcData);
     log.info('Successfully invoked function'.green);
     log.info('Response was:'.yellow, JSON.stringify(response, null, 2));
   } catch (err) {

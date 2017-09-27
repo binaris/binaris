@@ -3,8 +3,8 @@ const path = require('path');
 
 const moniker = require('moniker');
 
-const log = require('../shared/logger');
-const util = require('../shared/util');
+const log = require('./logger');
+const util = require('./util');
 
 const templateDir = './functionTemplates/nodejs/';
 

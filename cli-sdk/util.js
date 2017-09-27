@@ -18,19 +18,6 @@ const validateBinarisLogin = function validateBinarisLogin() {
   return true;
 };
 
-// attempts to parse a json and throws if an issue is encountered
-const attemptJSONParse = function attemptJSONParse(rawJSON) {
-  try {
-    const parsedJSON = JSON.parse(rawJSON);
-    if (parsedJSON && typeof parsedJSON === 'object') {
-      return parsedJSON;
-    }
-  } catch (err) {
-    log.debug(err);
-  }
-  throw new Error('Invalid JSON received, unable to parse');
-};
-
 // creates our hidden .binaris directory in the users function
 // directory if it doesn't already exist
 const genBinarisDir = function genBinarisDir(genPath) {
@@ -169,7 +156,6 @@ const delFuncConf = function delFuncConf(binarisConf, funcName) {
 
 module.exports = {
   validateBinarisLogin,
-  attemptJSONParse,
   genBinarisDir,
   genTarBall,
   loadBinarisConf,

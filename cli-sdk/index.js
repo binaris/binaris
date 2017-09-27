@@ -2,15 +2,14 @@
 const { attemptJSONParse, genBinarisDir,
   genTarBall, loadBinarisConf, saveBinarisConf,
   getFuncName, getFuncConf, checkFuncConf,
-  addFuncConf, delFuncConf, validateBinarisLogin } = require('./shared/util');
+  addFuncConf, delFuncConf, validateBinarisLogin } = require('./util');
 
-const init = require('./init/init');
-const invokeHelper = require('./invokeHelper/invokeHelper');
-const deployHelper = require('./deployHelper/deployHelper');
+const init = require('./init');
+const invoke = require('./invoke');
+const deploy = require('./deploy');
 
 module.exports = {
   validateBinarisLogin,
-  attemptJSONParse,
   genBinarisDir,
   genTarBall,
   loadBinarisConf,
@@ -21,6 +20,6 @@ module.exports = {
   addFuncConf,
   delFuncConf,
   init,
-  invokeHelper,
-  deployHelper,
+  invoke,
+  deploy,
 };

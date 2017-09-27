@@ -1,5 +1,5 @@
-const util = require('../shared/util');
-const { invoke } = require('../../sdk');
+const util = require('./util');
+const { invoke } = require('../sdk');
 
 // invokes a binaris function that you have previously
 // deployed either through the CLI or other means

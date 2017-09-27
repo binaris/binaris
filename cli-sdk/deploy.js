@@ -1,8 +1,8 @@
 const path = require('path');
 
-const log = require('../shared/logger');
-const util = require('../shared/util');
-const { deploy } = require('../../sdk');
+const log = require('./logger');
+const util = require('./util');
+const { deploy } = require('../sdk');
 
 const ignoredTarFiles = ['.git', '.binaris', 'binaris.yml'];
 
