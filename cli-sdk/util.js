@@ -2,7 +2,6 @@
 const fs = require('fs');
 const path = require('path');
 
-const targz = require('targz');
 const yaml = require('js-yaml');
 
 const log = require('./logger');
@@ -11,51 +10,6 @@ const binarisConfFile = 'binaris.yml';
 const funcStr = 'functions';
 const entryStr = 'entrypoint';
 const fileStr = 'file';
-const binarisDir = '.binaris/';
-
-// creates our hidden .binaris directory in the users function
-// directory if it doesn't already exist
-const genBinarisDir = function genBinarisDir(genPath) {
-  let fullPath;
-  try {
-    fullPath = path.join(genPath, binarisDir);
-    if (!fs.existsSync(fullPath)) {
-      fs.mkdirSync(fullPath);
-    }
-  } catch (err) {
-    log.debug(err);
-    throw new Error(`Unable to generate ${binarisDir} hidden directory!`);
-  }
-  return fullPath;
-};
-
-const genTarBall = async function genTarBall(dirToTar, dest, ignoredFiles) {
-  // our CLI pipeline is forced and intentionally synchronous,
-  // this wrapper is to ensure that vanilla cbs don't interfere
-  // with the order of things
-  const tarPromise = new Promise((resolve, reject) => {
-    targz.compress({
-      src: dirToTar,
-      dest,
-      tar: {
-        ignore: (name) => {
-          if (ignoredFiles.indexOf(name) > -1) {
-            return true;
-          }
-          return false;
-        },
-      },
-    }, (err) => {
-      if (err) {
-        reject(err);
-      }
-      resolve();
-    });
-  });
-
-  const success = await tarPromise;
-  return success;
-};
 
 // this loads our binaris.yml file from the users current
 // function directory. If it does not exist in the expected
@@ -150,8 +104,6 @@ const delFuncConf = function delFuncConf(binarisConf, funcName) {
 };
 
 module.exports = {
-  genBinarisDir,
-  genTarBall,
   loadBinarisConf,
   saveBinarisConf,
   getFuncName,
