@@ -5,7 +5,7 @@
 const cliSDK = require('./cli-sdk');
 
 // create our basic logger
-const log = cliSDK.log;
+const log = require('./logger');
 
 // our core modules
 const fs = require('fs');

@@ -2,8 +2,6 @@ const fs = require('fs');
 const urljoin = require('urljoin');
 const request = require('request');
 
-const log = require('../shared/logger');
-
 // TODO: ensure that this is configured in a better way, having a single
 // variable in the deploy file is inadequate
 const deployEndpoint =
@@ -27,7 +25,6 @@ const deployFunction = async function uploadFunction(tarPath, conf, deployURL) {
     });
     return await uploadPromise;
   } catch (err) {
-    log.debug(err);
     throw new Error('Failed to upload function tar file to Binaris backend');
   }
 };
@@ -35,10 +32,8 @@ const deployFunction = async function uploadFunction(tarPath, conf, deployURL) {
 // TODO: thing that returns metadata
 const deploy = async function deploy(funcName, funcConf, tarPath) {
   const endpoint = urljoin(`http://${deployEndpoint}/v1/function`, funcName);
-  log.debug(`endpoint is: ${endpoint}`);
   const response = await deployFunction(tarPath, funcConf, endpoint);
   if (response.statusCode !== 200) {
-    log.debug(response);
     throw new Error('Function was not deployed successfully, check logs for more details');
   }
 };

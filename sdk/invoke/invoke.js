@@ -1,8 +1,6 @@
 const urljoin = require('urljoin');
 const request = require('request');
 
-const log = require('../shared/logger');
-
 // TODO: ensure that this is configured in a better way, having a single
 // variable in the deploy file is inadequate
 const invokeEndpoint =
@@ -10,7 +8,6 @@ const invokeEndpoint =
 
 const invoke = async function invoke(funcName, funcData) {
   const endpoint = urljoin(`https://${invokeEndpoint}/v1/user/`, funcName);
-  log.debug(`attempting to invoke @endpoint ${endpoint}`);
   // TODO: switch to request promise at a later time
   const requestPromise = new Promise((resolve, reject) => {
     request.post({
@@ -21,13 +18,8 @@ const invoke = async function invoke(funcName, funcData) {
       },
     }, (err, resp, body) => {
       if (resp.statusCode !== 200) {
-        log.debug('request error', {
-          statusCode: resp.statusCode,
-          body,
-        });
         reject(new Error('Non 200 status code returned from invocation'));
       } else {
-        log.debug('request success', { body });
         resolve({ statusCode: resp.statusCode, body });
       }
     });
