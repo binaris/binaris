@@ -8,9 +8,8 @@ const ignoredTarFiles = ['.git', '.binaris', 'binaris.yml'];
 
 // simply handles the process of deploying a function and its
 // associated metadata to the Binaris cloud
-const deployHelper = async function deployHelper(funcPath) {
+const deployCLI = async function deployCLI(funcPath) {
   // this should throw an error when it fails
-  util.validateBinarisLogin();
   const fullIgnorePaths = [];
   ignoredTarFiles.forEach((entry) => {
     fullIgnorePaths.push(path.join(funcPath, entry));
@@ -25,4 +24,4 @@ const deployHelper = async function deployHelper(funcPath) {
   await deploy(funcName, funcConf, funcTarPath);
 };
 
-module.exports = deployHelper;
+module.exports = deployCLI;

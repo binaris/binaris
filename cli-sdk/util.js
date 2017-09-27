@@ -13,11 +13,6 @@ const entryStr = 'entrypoint';
 const fileStr = 'file';
 const binarisDir = '.binaris/';
 
-const validateBinarisLogin = function validateBinarisLogin() {
-  log.info('Validating Binaris credentials'.yellow);
-  return true;
-};
-
 // creates our hidden .binaris directory in the users function
 // directory if it doesn't already exist
 const genBinarisDir = function genBinarisDir(genPath) {
@@ -155,7 +150,6 @@ const delFuncConf = function delFuncConf(binarisConf, funcName) {
 };
 
 module.exports = {
-  validateBinarisLogin,
   genBinarisDir,
   genTarBall,
   loadBinarisConf,
