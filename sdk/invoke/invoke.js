@@ -28,7 +28,7 @@ const invoke = async function invoke(funcName, funcData) {
         reject(new Error('Non 200 status code returned from invocation'));
       } else {
         log.debug('request success', { body });
-        resolve(body);
+        resolve({ statusCode: resp.statusCode, body });
       }
     });
   });

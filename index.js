@@ -94,14 +94,7 @@ const invokeHandler = async function invokeHandler(options) {
 
     const response = await cliSDK.invokeHelper(funcPath, funcData);
     log.info('Successfully invoked function'.green);
-    let message;
-    try {
-      message = JSON.parse(response).message;
-    } catch (err) {
-      log.debug(err);
-      message = response;
-    }
-    log.info('Response was \''.yellow, message, "'".yellow);
+    log.info('Response was:'.yellow, JSON.stringify(response, null, 2));
   } catch (err) {
     log.error(err.message.red);
     process.exit(1);

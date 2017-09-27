@@ -41,7 +41,6 @@ const deploy = async function deploy(funcName, funcConf, tarPath) {
     log.debug(response);
     throw new Error('Function was not deployed successfully, check logs for more details');
   }
-  return response.body;
 };
 
 module.exports = deploy;
