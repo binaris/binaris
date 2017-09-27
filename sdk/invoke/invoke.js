@@ -7,7 +7,7 @@ const log = require('../shared/logger');
 // TODO: ensure that this is configured in a better way, having a single
 // variable in the deploy file is inadequate
 const invokeEndpoint =
-      process.env.BINARIS_INVOKE_ENDPOINT || 'run-staging.binaris.io:80';
+      process.env.BINARIS_INVOKE_ENDPOINT || 'run-staging.binaris.io';
 
 const invoke = async function invoke(invokeFilePath, invokeData) {
   const binarisConf = util.loadBinarisConf(invokeFilePath);
