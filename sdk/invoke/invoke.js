@@ -12,7 +12,7 @@ const invokeEndpoint =
 const invoke = async function invoke(invokeFilePath, invokeData) {
   const binarisConf = util.loadBinarisConf(invokeFilePath);
   const funcName = util.getFuncName(binarisConf);
-  const endpoint = urljoin(`http://${invokeEndpoint}/v1/user/`, funcName);
+  const endpoint = urljoin(`https://${invokeEndpoint}/v1/user/`, funcName);
   log.debug(`attempting to invoke @endpoint ${endpoint}`);
   // TODO: switch to request promise at a later time
   const requestPromise = new Promise((resolve, reject) => {
