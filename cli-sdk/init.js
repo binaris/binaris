@@ -4,7 +4,7 @@ const path = require('path');
 const moniker = require('moniker');
 
 const log = require('./logger');
-const util = require('./util');
+const YMLUtil = require('./binarisYML');
 
 const templateDir = './functionTemplates/nodejs/';
 
@@ -49,12 +49,12 @@ const init = async function init(functionName, functionPath) {
   log.debug('attempting to load template files for function dir creation');
   // parse our templated yml and make the necessary modifications
   const templatePath = path.join(__dirname, templateDir);
-  const binarisConf = util.loadBinarisConf(templatePath);
-  const templateName = util.getFuncName(binarisConf);
-  const funcConf = util.getFuncConf(binarisConf, templateName);
+  const binarisConf = YMLUtil.loadBinarisConf(templatePath);
+  const templateName = YMLUtil.getFuncName(binarisConf);
+  const funcConf = YMLUtil.getFuncConf(binarisConf, templateName);
   // replace the generic function name with the actual name
-  util.addFuncConf(binarisConf, finalName, funcConf);
-  util.delFuncConf(binarisConf, templateName);
+  YMLUtil.addFuncConf(binarisConf, finalName, funcConf);
+  YMLUtil.delFuncConf(binarisConf, templateName);
   const newDir = path.join(functionPath, finalName);
   // ensure that the function directory doesn't already exist
   try {
@@ -69,7 +69,7 @@ const init = async function init(functionName, functionPath) {
   const file = funcConf.file;
   fs.writeFileSync(path.join(newDir, file),
     fs.readFileSync(path.join(__dirname, templateDir, file)));
-  util.saveBinarisConf(newDir, binarisConf);
+  YMLUtil.saveBinarisConf(newDir, binarisConf);
   return finalName;
 };
 

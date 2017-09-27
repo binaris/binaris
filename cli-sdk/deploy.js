@@ -4,7 +4,7 @@ const path = require('path');
 const targz = require('targz');
 
 const log = require('./logger');
-const util = require('./util');
+const YMLUtil = require('./binarisYML');
 const { deploy } = require('../sdk');
 
 const binarisDir = '.binaris/';
@@ -62,11 +62,11 @@ const deployCLI = async function deployCLI(funcPath) {
   ignoredTarFiles.forEach((entry) => {
     fullIgnorePaths.push(path.join(funcPath, entry));
   });
-  const binarisConf = util.loadBinarisConf(funcPath);
-  const funcName = util.getFuncName(binarisConf);
-  const funcConf = util.getFuncConf(binarisConf, funcName);
+  const binarisConf = YMLUtil.loadBinarisConf(funcPath);
+  const funcName = YMLUtil.getFuncName(binarisConf);
+  const funcConf = YMLUtil.getFuncConf(binarisConf, funcName);
   log.debug('funcConf is', funcConf);
-  util.checkFuncConf(funcConf, funcPath);
+  YMLUtil.checkFuncConf(funcConf, funcPath);
   const funcTarPath = path.join(genBinarisDir(funcPath), `${funcName}.tgz`);
   await genTarBall(funcPath, funcTarPath, fullIgnorePaths);
   await deploy(funcName, funcConf, funcTarPath);
