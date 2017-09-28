@@ -18,12 +18,11 @@ const invoke = async function invoke(funcName, funcData) {
       },
     }, (err, resp, body) => {
       if (err) {
-        reject(new Error('Error encountered when connecting to Binaris backend!'));
+        return reject(new Error(err));
       } else if (resp.statusCode !== 200) {
-        reject(new Error('Non 200 status code returned from invocation'));
-      } else {
-        resolve({ statusCode: resp.statusCode, body });
+        return reject(new Error('Non 200 status code returned from invocation'));
       }
+      return resolve({ statusCode: resp.statusCode, body });
     });
   });
   const body = await requestPromise;
