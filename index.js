@@ -2,11 +2,10 @@
 
 // here we just grab all our SDK functions that we plan to use
 // invoke, destroy, help, info, login, logout, signup
-const { init, invoke, deploy } = require('./sdk/sdk');
+const { init, invoke, deploy } = require('./cli-sdk');
 
 // create our basic logger
-const log = require('./sdk/shared/logger');
-const util = require('./sdk/shared/util');
+const log = require('./logger');
 
 // our core modules
 const fs = require('fs');
@@ -15,9 +14,6 @@ const path = require('path');
 // our 3rd party modules
 const commander = require('commander');
 const colors = require('colors');
-const moniker = require('moniker');
-
-const ignoredTarFiles = ['.git', '.binaris', 'binaris.yml'];
 
 // Things to do
 // create binaris dependent directories
@@ -28,22 +24,17 @@ const noSupport = function notSupported(cmdName) {
   process.exit(1);
 };
 
-// here we both ensure the name is valid syntatically and eventually
-// we will also determine if it has been previously created
-const validateFunctionName = function validateFunctionName(name) {
-  // eslint issue but too annoying to fix given time
-  if (/[~`!#$%^&*+=\\[\]\\';,/{}|\\":<>?]/g.test(name)) {
-    return false;
+// attempts to parse a json and throws if an issue is encountered
+const attemptJSONParse = function attemptJSONParse(rawJSON) {
+  try {
+    const parsedJSON = JSON.parse(rawJSON);
+    if (parsedJSON && typeof parsedJSON === 'object') {
+      return parsedJSON;
+    }
+  } catch (err) {
+    log.debug(err);
   }
-
-  // need to add an SDK? call to ensure that the name is not only
-  // syntatically valid but also unique
-  return true;
-};
-
-const validateBinarisLogin = function validateBinarisLogin() {
-  log.info('Validating Binaris credentials'.yellow);
-  return true;
+  throw new Error('Invalid JSON received, unable to parse');
 };
 
 function getFuncPath(options) {
@@ -58,35 +49,14 @@ function getFuncPath(options) {
 // this essentially boils down to creating template files with
 // the correct information in the correct location
 const initHandler = async function initHandler(options) {
-  log.info('Initializing Binaris function'.yellow);
-  let functionName;
-  if (options.functionName) {
-    const answer = validateFunctionName(options.functionName);
-    if (answer) {
-      functionName = options.functionName;
-    } else {
-      log.error(`${options.functionName} is not a valid function name`.red);
-      process.exit(1);
-    }
-  } else {
-    while (!functionName) {
-      // until the system supports dashes in names
-      const potentialName = moniker.choose().replace(/-/g, '');
-      const answer = validateFunctionName(potentialName);
-      if (answer) {
-        functionName = potentialName;
-      }
-    }
-  }
-
   // now we actually call our initialize function and then immediately
   // determine if was successfully completed
   const functionPath = getFuncPath(options);
   try {
-    await init(functionName, functionPath);
-    log.info(`Successfully initialized function ${functionName}`.green);
+    const finalName = await init(options.functionName, functionPath);
+    log.info(`Successfully initialized function ${finalName}`.green);
     log.info('You can deploy your function with'.green);
-    log.info(`cd ${functionName}`.magenta);
+    log.info(`cd ${finalName}`.magenta);
     log.info('bn deploy'.magenta);
   } catch (err) {
     log.error(err.message.red);
@@ -98,27 +68,13 @@ const initHandler = async function initHandler(options) {
 // associated metadata to the Binaris cloud
 const deployHandler = async function deployHandler(options) {
   log.info('Starting function deployment process'.yellow);
-  if (validateBinarisLogin()) {
-    try {
-      const funcPath = getFuncPath(options);
-      const fullIgnorePaths = [];
-      ignoredTarFiles.forEach((entry) => {
-        fullIgnorePaths.push(path.join(funcPath, entry));
-      });
-      const binarisConf = util.loadBinarisConf(funcPath);
-      const funcName = util.getFuncName(binarisConf);
-      const funcConf = util.getFuncConf(binarisConf, funcName);
-      log.debug('funcConf is', funcConf);
-      util.checkFuncConf(funcConf, funcPath);
-      util.genBinarisDir(funcPath);
-      const funcTarPath = path.join(funcPath, util.BINARIS_DIR, `${funcName}.tgz`);
-      await util.genTarBall(funcPath, funcTarPath, fullIgnorePaths);
-      await deploy(funcName, funcConf, funcTarPath);
-      log.info('Sucessfully deployed function'.green);
-    } catch (err) {
-      log.error(err.message.red);
-      process.exit(1);
-    }
+  try {
+    const funcPath = getFuncPath(options);
+    await deploy(funcPath);
+    log.info('Sucessfully deployed function'.green);
+  } catch (err) {
+    log.error(err.message.red);
+    process.exit(1);
   }
 };
 
@@ -137,28 +93,21 @@ const invokeHandler = async function invokeHandler(options) {
     if (options.json) {
       payloadJSON = options.json;
     } else if (options.file) {
-      if (fs.existsSync(options.file)) {
+      try {
         payloadJSON = fs.readFileSync(options.file, 'utf8');
-      } else {
+      } catch (err) {
         throw new Error(`${options.file} was not a valid path to a JSON file`);
       }
     }
 
     if (payloadJSON) {
-      funcData = util.attemptJSONParse(payloadJSON);
+      funcData = attemptJSONParse(payloadJSON);
       log.debug({ funcData });
     }
+
     const response = await invoke(funcPath, funcData);
     log.info('Successfully invoked function'.green);
-    let message;
-    try {
-      message = JSON.parse(response).message;
-    } catch (err) {
-      log.debug(err);
-      message = response;
-    }
-
-    log.info('Response was \''.yellow, message, "'".yellow);
+    log.info('Response was:'.yellow, JSON.stringify(response, null, 2));
   } catch (err) {
     log.error(err.message.red);
     process.exit(1);
