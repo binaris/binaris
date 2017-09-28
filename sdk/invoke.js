@@ -17,7 +17,9 @@ const invoke = async function invoke(funcName, funcData) {
         'Content-Type': 'application/json',
       },
     }, (err, resp, body) => {
-      if (resp.statusCode !== 200) {
+      if (err) {
+        reject(new Error('Error encountered when connecting to Binaris backend!'));
+      } else if (resp.statusCode !== 200) {
         reject(new Error('Non 200 status code returned from invocation'));
       } else {
         resolve({ statusCode: resp.statusCode, body });
