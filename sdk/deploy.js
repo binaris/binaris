@@ -5,7 +5,7 @@ const request = require('request');
 // TODO: ensure that this is configured in a better way, having a single
 // variable in the deploy file is inadequate
 const deployEndpoint =
-  process.env.BINARIS_DEPLOY_ENDPOINT || 'api-staging.binaris.io';
+  process.env.BINARIS_DEPLOY_ENDPOINT || 'api.binaris.com';
 
 const deployFunction = async function uploadFunction(tarPath, conf, deployURL) {
   const options = {
