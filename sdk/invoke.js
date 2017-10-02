@@ -17,11 +17,12 @@ const invoke = async function invoke(funcName, funcData) {
         'Content-Type': 'application/json',
       },
     }, (err, resp, body) => {
-      if (resp.statusCode !== 200) {
-        reject(new Error('Non 200 status code returned from invocation'));
-      } else {
-        resolve({ statusCode: resp.statusCode, body });
+      if (err) {
+        return reject(new Error(err));
+      } else if (resp.statusCode !== 200) {
+        return reject(new Error('Non 200 status code returned from invocation'));
       }
+      return resolve({ statusCode: resp.statusCode, body });
     });
   });
   const body = await requestPromise;
