@@ -13,7 +13,7 @@ ENTRYPOINT ["/tini", "--"]
 RUN mkdir -p /opt/binaris
 RUN mkdir -p /opt/flux
 
-COPY ./package.json ./index.js /opt/bn/
+COPY ./package.json ./cli.js /opt/bn/
 ADD sdk /opt/bn/sdk/
 ADD cli-sdk /opt/bn/cli-sdk/
 WORKDIR /opt/bn
