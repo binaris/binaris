@@ -146,18 +146,18 @@ const invokeHandler = async function invokeHandler(options) {
 
 commander
   .version('0.0.1')
-  .description('Binaris command line interface');
+  .description('Binaris command line interface.');
 
 commander
   .command('init')
-  .description('creates the skeleton of a Binaris function')
+  .description('Generate a simple Binaris function.')
   .option('-f, --functionName [functionName]', 'The name of the function you are creating')
   .option('-p, --path [path]', 'The path to create your function(default is pwd)')
   .action(initHandler);
 
 commander
   .command('deploy')
-  .description('deploys your function to the Binaris cloud')
+  .description('Deploys your function to the Binaris cloud')
   .option('-p, --path [path]', 'The path to the binaris function you wish to deploy')
   .action(deployHandler);
 
