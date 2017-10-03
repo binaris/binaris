@@ -4,7 +4,7 @@ const { deployEndpoint } = require('./config');
 
 const removeFunction = async function removeFunction(url) {
   const options = {
-    url
+    url,
   };
 
   const removePromise = new Promise((resolve, reject) => {
