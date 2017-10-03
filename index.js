@@ -99,7 +99,7 @@ const removeHandler = async function removeHandler(options) {
     const funcPath = getFuncPath(options);
 
     log.info('Removing function'.yellow);
-    if (! functionName && !funcPath) {
+    if (!functionName && !funcPath) {
       throw new Error('No function name specified to remove; use --path or --functionName');
     }
     await remove(functionName, funcPath);
