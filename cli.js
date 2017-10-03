@@ -34,7 +34,7 @@ const attemptJSONParse = function attemptJSONParse(rawJSON) {
   } catch (err) {
     log.debug(err);
   }
-  throw new Error('Invalid JSON received, unable to parse');
+  throw new Error('Invalid JSON received, unable to parse!');
 };
 
 function getFuncPath(options) {
@@ -65,8 +65,8 @@ const initHandler = async function initHandler(options) {
   try {
     const finalName = await init(options.functionName, functionPath);
     log.info(binarisLOGO.yellow);
-    log.info(`Successfully initialized function ${finalName}`.green);
-    log.info('You can deploy your function with');
+    log.info('Successfully initialized function:'.green, finalName);
+    log.info('You can deploy your function with...');
     log.info(`cd ${finalName}`.magenta);
     log.info('bn deploy [options]'.magenta);
   } catch (err) {
@@ -78,12 +78,12 @@ const initHandler = async function initHandler(options) {
 // simply handles the process of deploying a function and its
 // associated metadata to the Binaris cloud
 const deployHandler = async function deployHandler(options) {
-  log.info('Starting function deployment process'.yellow);
+  log.info('Starting function deployment process...'.yellow);
   try {
     const funcPath = getFuncPath(options);
     await deploy(funcPath);
-    log.info('Sucessfully deployed function'.green);
-    log.info('You can invoke your function with');
+    log.info('Sucessfully deployed function!'.green);
+    log.info('You can invoke your function with...');
     log.info('bn invoke [options]'.magenta);
   } catch (err) {
     log.error(err.message.red);
@@ -98,12 +98,12 @@ const removeHandler = async function removeHandler(options) {
     const { functionName } = options;
     const funcPath = getFuncPath(options);
 
-    log.info('Removing function'.yellow);
+    log.info('Removing function...'.yellow);
     if (!functionName && !funcPath) {
-      throw new Error('No function name specified to remove; use --path or --functionName');
+      throw new Error('No function name specified to remove; use --path or --functionName!');
     }
     await remove(functionName, funcPath);
-    log.info('Removed function'.green);
+    log.info('Successfully removed function:'.green, functionName);
   } catch (err) {
     log.error(err.message.red);
     process.exit(1);
@@ -113,7 +113,7 @@ const removeHandler = async function removeHandler(options) {
 // invokes a binaris function that you have previously
 // deployed either through the CLI or other means
 const invokeHandler = async function invokeHandler(options) {
-  log.info('Attempting to invoke your function'.yellow);
+  log.info('Attempting to invoke your function...'.yellow);
   if (options.file && options.json) {
     log.error('You may not provide both a json(-j) and file(-f)'.red);
     process.exit(1);
@@ -128,7 +128,7 @@ const invokeHandler = async function invokeHandler(options) {
       try {
         payloadJSON = fs.readFileSync(options.file, 'utf8');
       } catch (err) {
-        throw new Error(`${options.file} was not a valid path to a JSON file`);
+        throw new Error(`${options.file} was not a valid path to a JSON file!`);
       }
     }
 

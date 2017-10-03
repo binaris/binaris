@@ -13,7 +13,7 @@ const removeCLI = async function removeCLI(funcName, funcPath) {
     configuredFuncName = YMLUtil.getFuncName(binarisConf);
   } catch (err) {
     log.verbose('Failed to read config file', { err, functionName: funcName, path: funcPath });
-    throw new Error(`Failed to read config file for ${funcPath}; specify function name to remove.`);
+    throw new Error(`Failed to read config file for ${funcPath}; specify function name to remove!`);
   }
   return remove(configuredFuncName);
 };
