@@ -2,7 +2,7 @@
 
 // here we just grab all our SDK functions that we plan to use
 // invoke, destroy, help, info, login, logout, signup
-const { init, invoke, deploy } = require('./cli-sdk');
+const { init, invoke, deploy, remove } = require('./cli-sdk');
 
 // create our basic logger
 const log = require('./logger');
@@ -78,6 +78,20 @@ const deployHandler = async function deployHandler(options) {
   }
 };
 
+
+// Removes a binaris function that you previously deployed.
+const removeHandler = async function removeHandler(options) {
+  try {
+    const { functionName } = options;
+    log.info('Removing function'.yellow);
+    await remove(options.functionName);
+    log.info(`Removed function ${functionName}`.green);
+  } catch (err) {
+    log.error(err.message.red);
+    process.exit(1);
+  }
+}
+
 // invokes a binaris function that you have previously
 // deployed either through the CLI or other means
 const invokeHandler = async function invokeHandler(options) {
@@ -130,6 +144,13 @@ commander
   .description('deploys your function to the Binaris cloud')
   .option('-p, --path [path]', 'The path to the binaris function you wish to deploy')
   .action(deployHandler);
+
+commander
+  .command('remove')
+  .description('removes your function from the Binaris cloud')
+  .option('-f, --functionName [functionName]',
+          'The name of the Binaris function you wish to remove')
+  .action(removeHandler);
 
 commander
   .command('invoke')
