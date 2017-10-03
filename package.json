@@ -2,9 +2,9 @@
   "name": "binaris",
   "version": "1.0.0",
   "description": "Binaris SDK & CLI",
-  "main": "cli.js",
+  "main": "index.js",
   "bin": {
-    "bn": "./cli.js"
+    "bn": "./index.js"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -17,6 +17,7 @@
     "js-yaml": "^3.10.0",
     "moniker": "^0.1.2",
     "request": "^2.81.0",
+    "semver": "^5.4.1",
     "targz": "^1.0.1",
     "urljoin": "^0.1.5",
     "winston": "^2.3.1"
