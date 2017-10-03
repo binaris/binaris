@@ -83,8 +83,13 @@ const deployHandler = async function deployHandler(options) {
 const removeHandler = async function removeHandler(options) {
   try {
     const { functionName } = options;
-    const funcPath = getFuncPath(options);
+    let funcPath;
+    funcPath = getFuncPath(options);
+
     log.info('Removing function'.yellow);
+    if (! functionName && !funcPath) {
+      throw new Error('No function name specified to remove; use --path or --functionName');
+    }
     await remove(functionName, funcPath);
     log.info('Removed function'.green);
   } catch (err) {
