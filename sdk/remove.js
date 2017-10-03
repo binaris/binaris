@@ -9,7 +9,9 @@ const removeFunction = async function removeFunction(url) {
 
   const removePromise = new Promise((resolve, reject) => {
     request.delete(options, (err, res) => {
-      if (err) return reject(err);
+      if (err) {
+        return reject(err);
+      }
       return resolve(res);
     });
   });
