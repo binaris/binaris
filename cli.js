@@ -66,9 +66,9 @@ const initHandler = async function initHandler(options) {
     const finalName = await init(options.functionName, functionPath);
     log.info(binarisLOGO.yellow);
     log.info('Successfully initialized function:'.green, finalName);
-    log.info('You can deploy your function with...');
-    log.info(`cd ${finalName}`.magenta);
-    log.info('bn deploy [options]'.magenta);
+    log.info('You can deploy your function with...'.yellow);
+    log.info(`cd ${finalName}`);
+    log.info('bn deploy [options]');
   } catch (err) {
     log.error(err.message.red);
     process.exit(1);
@@ -83,8 +83,8 @@ const deployHandler = async function deployHandler(options) {
     const funcPath = getFuncPath(options);
     await deploy(funcPath);
     log.info('Sucessfully deployed function!'.green);
-    log.info('You can invoke your function with...');
-    log.info('bn invoke [options]'.magenta);
+    log.info('You can invoke your function with...'.yellow);
+    log.info('bn invoke [options]');
   } catch (err) {
     log.error(err.message.red);
     process.exit(1);
