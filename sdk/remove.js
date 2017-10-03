@@ -15,7 +15,7 @@ const removeFunction = async function removeFunction(url) {
       return resolve(res);
     });
   });
-  return await removePromise;
+  return removePromise;
 };
 
 const remove = async function remove(funcName) {

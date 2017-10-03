@@ -83,14 +83,15 @@ const deployHandler = async function deployHandler(options) {
 const removeHandler = async function removeHandler(options) {
   try {
     const { functionName } = options;
+    const funcPath = getFuncPath(options);
     log.info('Removing function'.yellow);
-    await remove(options.functionName);
-    log.info(`Removed function ${functionName}`.green);
+    await remove(functionName, funcPath);
+    log.info('Removed function'.green);
   } catch (err) {
     log.error(err.message.red);
     process.exit(1);
   }
-}
+};
 
 // invokes a binaris function that you have previously
 // deployed either through the CLI or other means
@@ -149,7 +150,9 @@ commander
   .command('remove')
   .description('removes your function from the Binaris cloud')
   .option('-f, --functionName [functionName]',
-          'The name of the Binaris function you wish to remove')
+    'The name of the Binaris function you wish to remove')
+  .option('-p, --path [path]',
+    'The path to the Binaris function you wish to remove')
   .action(removeHandler);
 
 commander
