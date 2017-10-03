@@ -1,15 +1,24 @@
-#!/usr/bin/env node
-
-
-const minNodeVersion = '8.0.0';
-const semver = require('semver');
-
 // here we just grab all our SDK functions that we plan to use
 // invoke, destroy, help, info, login, logout, signup
-const { init, invoke, deploy, remove } = require('./cli-sdk');
+const { init, invoke, deploy } = require('./cli-sdk');
 
-if (!semver.gte(process.version, minNodeVersion)) {
-  console.log(`Unfortunately, at least node version ${minNodeVersion} is required. You are running version ${process.version}`);
+// create our basic logger
+const log = require('./logger');
+
+// our core modules
+const fs = require('fs');
+const path = require('path');
+
+// our 3rd party modules
+const commander = require('commander');
+const colors = require('colors');
+
+// Things to do
+// create binaris dependent directories
+// create temp files
+// helper to quickly notify the user that a function is unsupported
+const noSupport = function notSupported(cmdName) {
+  log.info(`${cmdName} is not currently supported!`.red);
   process.exit(1);
 };
 
@@ -33,14 +42,6 @@ function getFuncPath(options) {
   return path.resolve(process.cwd());
 }
 
-const binarisLOGO = '.______    __  .__   __.      ___      .______       __       _______.\n' +
-                    '|   _  \\  |  | |  \\ |  |     /   \\     |   _  \\     |  |     /       |\n' +
-                    '|  |_)  | |  | |   \\|  |    /  ^  \\    |  |_)  |    |  |    |   (----`\n' +
-                    '|   _  <  |  | |  . `  |   /  /_\\  \\   |      /     |  |     \\   \\    \n' +
-                    '|  |_)  | |  | |  |\\   |  /  _____  \\  |  |\\  \\----.|  | .----)   |   \n' +
-                    '|______/  |__| |__| \\__| /__/     \\__\\ | _| `._____||__| |_______/    \n';
-
-
 // initializes a binaris function based on the options given by
 // the user
 // this essentially boils down to creating template files with
@@ -51,11 +52,10 @@ const initHandler = async function initHandler(options) {
   const functionPath = getFuncPath(options);
   try {
     const finalName = await init(options.functionName, functionPath);
-    log.info(binarisLOGO.yellow);
     log.info(`Successfully initialized function ${finalName}`.green);
-    log.info('You can deploy your function with');
+    log.info('You can deploy your function with'.green);
     log.info(`cd ${finalName}`.magenta);
-    log.info('bn deploy [options]'.magenta);
+    log.info('bn deploy'.magenta);
   } catch (err) {
     log.error(err.message.red);
     process.exit(1);
@@ -70,27 +70,6 @@ const deployHandler = async function deployHandler(options) {
     const funcPath = getFuncPath(options);
     await deploy(funcPath);
     log.info('Sucessfully deployed function'.green);
-    log.info('You can invoke your function with');
-    log.info('bn invoke [options]'.magenta);
-  } catch (err) {
-    log.error(err.message.red);
-    process.exit(1);
-  }
-};
-
-
-// Removes a binaris function that you previously deployed.
-const removeHandler = async function removeHandler(options) {
-  try {
-    const { functionName } = options;
-    const funcPath = getFuncPath(options);
-
-    log.info('Removing function'.yellow);
-    if (! functionName && !funcPath) {
-      throw new Error('No function name specified to remove; use --path or --functionName');
-    }
-    await remove(functionName, funcPath);
-    log.info('Removed function'.green);
   } catch (err) {
     log.error(err.message.red);
     process.exit(1);
@@ -151,15 +130,6 @@ commander
   .action(deployHandler);
 
 commander
-  .command('remove')
-  .description('removes your function from the Binaris cloud')
-  .option('-f, --functionName [functionName]',
-    'The name of the Binaris function you wish to remove')
-  .option('-p, --path [path]',
-    'The path to the Binaris function you wish to remove')
-  .action(removeHandler);
-
-commander
   .command('invoke')
   .description('invokes a previously deployed binaris function')
   .option('-p, --path [path]', 'The path to the binaris function you wish to invoke')
@@ -209,4 +179,3 @@ if (!process.argv.slice(2).length) {
   commander.outputHelp(colors.red);
 }
 
-require('./cli');
