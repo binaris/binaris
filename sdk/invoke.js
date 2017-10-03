@@ -1,10 +1,6 @@
 const urljoin = require('urljoin');
 const request = require('request');
-
-// TODO: ensure that this is configured in a better way, having a single
-// variable in the deploy file is inadequate
-const invokeEndpoint =
-      process.env.BINARIS_INVOKE_ENDPOINT || 'run.binaris.com';
+const { invokeEndpoint } = require('./config');
 
 const invoke = async function invoke(funcName, funcData) {
   const endpoint = urljoin(`https://${invokeEndpoint}/v1/user/`, funcName);
