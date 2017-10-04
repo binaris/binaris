@@ -16,15 +16,6 @@ const path = require('path');
 const commander = require('commander');
 const colors = require('colors');
 
-// Things to do
-// create binaris dependent directories
-// create temp files
-// helper to quickly notify the user that a function is unsupported
-const noSupport = function notSupported(cmdName) {
-  log.info(`${cmdName} is not currently supported!`.red);
-  process.exit(1);
-};
-
 const errorMessageAndExit = function errorMessageAndExit() {
   log.info('Use'.yellow, 'export LOG_LEVEL={debug,verbose,info,warn,error}',
     'to debug your error'.yellow);
@@ -187,41 +178,6 @@ commander
   .option('-j, --json [json]', 'The JSON data you would like to include in the invocation')
   .option('-f, --file [file]', 'The path to your JSON file containing the message to send in your invocation')
   .action(invokeHandler);
-
-commander
-  .command('destroy')
-  .description('')
-  .action(() => { noSupport('destroy'); });
-
-commander
-  .command('help')
-  .description('')
-  .action(() => { noSupport('help'); });
-
-commander
-  .command('info')
-  .description('')
-  .action(() => { noSupport('info'); });
-
-commander
-  .command('login')
-  .description('')
-  .action(() => { noSupport('login'); });
-
-commander
-  .command('logout')
-  .description('')
-  .action(() => { noSupport('logout'); });
-
-commander
-  .command('signup')
-  .description('')
-  .action(() => { noSupport('signup'); });
-
-commander
-  .command('feedback')
-  .description('')
-  .action(() => { noSupport('feedback'); });
 
 commander
   .command('*', null, { noHelp: true })
