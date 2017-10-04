@@ -160,23 +160,23 @@ commander
 commander
   .command('deploy')
   .description('Deploys your function to the Binaris cloud')
-  .option('-p, --path [path]', 'The path to the binaris function you wish to deploy')
+  .option('-p, --path [path]', 'The path to the binaris function to deploy')
   .action(deployHandler);
 
 commander
   .command('remove')
   .description('removes your function from the Binaris cloud')
   .option('-f, --functionName [functionName]',
-    'The name of the Binaris function you wish to remove')
+    'The name of the Binaris function to remove')
   .option('-p, --path [path]',
-    'The path to the Binaris function you wish to remove')
+    'The path to the Binaris function to remove')
   .action(removeHandler);
 
 commander
   .command('invoke')
   .description('invokes a previously deployed binaris function')
-  .option('-p, --path [path]', 'The path to the binaris function you wish to invoke')
-  .option('-j, --json [json]', 'The json data you would like to include in the invocation')
+  .option('-p, --path [path]', 'The path to the Binaris function to invoke')
+  .option('-j, --json [json]', 'The JSON data you would like to include in the invocation')
   .option('-f, --file [file]', 'The path to your JSON file containing the message to send in your invocation')
   .action(invokeHandler);
 
