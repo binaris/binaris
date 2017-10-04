@@ -154,26 +154,44 @@ const invokeHandler = async function invokeHandler(options) {
   }
 };
 
+const initOneLiner = 'Generates a directory containing the template files for a Binaris function';
+const deployOneLiner = 'Deploys the function to the Binaris cloud';
+const invokeOneLiner = 'invokes a previously deployed Binaris function';
+const removeOneLiner = 'removes your function from the Binaris cloud';
+
+const initDescriptor =
+  `
+  NOTE: init is client side and will not generate anything on the Binaris backend`;
+
+const deployDescriptor =
+  `
+  Once deployed you can invoke your remote function via a few methods
+  1. 'bn invoke' cli command
+  2. 'raw HTTPS via curl or similiar tool'
+  2. 'Binaris SDK'`;
+
 commander
   .version('0.0.1')
   .description('Binaris command line interface.');
 
 commander
   .command('init')
-  .description('Generate a simple Binaris function.')
+  .description(initOneLiner)
   .option('-f, --functionName [functionName]', 'The name of the function you are creating')
   .option('-p, --path [path]', 'The path to create your function(default is pwd)')
-  .action(initHandler);
+  .action(initHandler)
+  .on('--help', () => { log.info(initDescriptor); });
 
 commander
   .command('deploy')
-  .description('Deploys your function to the Binaris cloud')
+  .description(deployOneLiner)
   .option('-p, --path [path]', 'The path to the binaris function to deploy')
-  .action(deployHandler);
+  .action(deployHandler)
+  .on('--help', () => { log.info(deployDescriptor); });
 
 commander
   .command('remove')
-  .description('removes your function from the Binaris cloud')
+  .description(removeOneLiner)
   .option('-f, --functionName [functionName]',
     'The name of the Binaris function to remove')
   .option('-p, --path [path]',
@@ -182,16 +200,11 @@ commander
 
 commander
   .command('invoke')
-  .description('invokes a previously deployed binaris function')
+  .description(invokeOneLiner)
   .option('-p, --path [path]', 'The path to the Binaris function to invoke')
   .option('-j, --json [json]', 'The JSON data you would like to include in the invocation')
   .option('-f, --file [file]', 'The path to your JSON file containing the message to send in your invocation')
   .action(invokeHandler);
-
-commander
-  .command('destroy')
-  .description('')
-  .action(() => { noSupport('destroy'); });
 
 commander
   .command('help')
