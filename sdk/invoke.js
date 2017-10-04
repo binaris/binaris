@@ -18,7 +18,14 @@ const invoke = async function invoke(funcName, funcData) {
       } else if (resp.statusCode !== 200) {
         return reject(new Error('Non 200 status code returned from invocation'));
       }
-      return resolve({ statusCode: resp.statusCode, body: JSON.parse(body) });
+      let finalBody;
+      try {
+        finalBody = JSON.parse(body);
+      } catch (err0) {
+        finalBody = body;
+      }
+
+      return resolve({ statusCode: resp.statusCode, body: finalBody });
     });
   });
   const body = await requestPromise;
