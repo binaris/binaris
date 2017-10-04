@@ -22,10 +22,10 @@ const remove = async function remove(funcName) {
   const endpoint = urljoin(`https://${deployEndpoint}/v1/function`, funcName);
   const response = await removeFunction(endpoint);
   if (response.statusCode === 404) {
-    throw new Error(`Function ${funcName} unknown`);
+    throw new Error(`Function ${funcName} unknown!`);
   }
   if (response.statusCode !== 200) {
-    throw new Error(`Failed to remove function ${funcName}`);
+    throw new Error(`Failed to remove function ${funcName}!`);
   }
 };
 

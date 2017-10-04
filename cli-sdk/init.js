@@ -29,7 +29,7 @@ const init = async function init(functionName, functionPath) {
     if (answer) {
       finalName = functionName;
     } else {
-      throw new Error(`${functionName} is not a valid function name`);
+      throw new Error(`${functionName} is not a valid function name!`);
     }
   } else {
     while (!finalName) {

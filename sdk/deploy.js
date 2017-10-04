@@ -21,7 +21,7 @@ const deployFunction = async function uploadFunction(tarPath, conf, deployURL) {
     });
     return await uploadPromise;
   } catch (err) {
-    throw new Error('Failed to upload function tar file to Binaris backend');
+    throw new Error('Failed to upload function tar file to Binaris backend!');
   }
 };
 
@@ -30,7 +30,7 @@ const deploy = async function deploy(funcName, funcConf, tarPath) {
   const endpoint = urljoin(`https://${deployEndpoint}/v1/function`, funcName);
   const response = await deployFunction(tarPath, funcConf, endpoint);
   if (response.statusCode !== 200) {
-    throw new Error('Function was not deployed successfully, check logs for more details');
+    throw new Error('Function was not deployed successfully, check logs for more details!');
   }
 };
 
