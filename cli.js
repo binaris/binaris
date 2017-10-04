@@ -1,6 +1,3 @@
-// grab our version to incorporate into the dialog
-const { version } = require('./package.json');
-
 // here we just grab all our SDK functions that we plan to use
 // invoke, destroy, help, info, login, logout, signup
 const { init, invoke, deploy, remove } = require('./cli-sdk');
@@ -42,16 +39,6 @@ function getFuncPath(options) {
   return path.resolve(process.cwd());
 }
 
-const binarisLOGO =
-`.______    __  .__   __.      ___      .______       __       _______.
-|   _  \\  |  | |  \\ |  |     /   \\     |   _  \\     |  |     /       |
-|  |_)  | |  | |   \\|  |    /  ^  \\    |  |_)  |    |  |    |   (----\`
-|   _  <  |  | |  . \`  |   /  /_\\  \\   |      /     |  |     \\   \\
-|  |_)  | |  | |  |\\   |  /  _____  \\  |  |\\  \\----.|  | .----)   |
-|______/  |__| |__| \\__| /__/     \\__\\ | _| \`._____||__| |_______/
-Binaris Serverless Framework: v${version}\n`;
-
-
 // initializes a binaris function based on the options given by
 // the user
 // this essentially boils down to creating template files with
@@ -63,7 +50,6 @@ const initHandler = async function initHandler(options) {
   try {
     const finalName = await init(options.functionName, functionPath);
     log.info('Generating template files...'.yellow);
-    log.info(binarisLOGO.yellow);
     log.info(`Successfully initialized function ${finalName}`.green);
     log.info('You can deploy your function with');
     log.info(`cd ${finalName}`.magenta);
