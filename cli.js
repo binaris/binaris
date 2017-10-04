@@ -218,9 +218,18 @@ commander
   .action(() => { noSupport('feedback'); });
 
 commander
+  .command('*', null, { noHelp: true })
+  .description('')
+  .action((env) => {
+    log.info('Unknown command:'.red, env);
+    commander.outputHelp(colors.yellow);
+    process.exit(1);
+  });
+
+commander
   .parse(process.argv);
 
 if (!process.argv.slice(2).length) {
-  commander.outputHelp(colors.red);
+  commander.outputHelp(colors.yellow);
 }
 
