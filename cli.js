@@ -25,6 +25,12 @@ const noSupport = function notSupported(cmdName) {
   process.exit(1);
 };
 
+const errorMessageAndExit = function errorMessageAndExit() {
+  log.info('Use'.yellow, 'export LOG_LEVEL={debug,verbose,info,warn,error}',
+    'to debug your error'.yellow);
+  process.exit(1);
+};
+
 // attempts to parse a json and throws if an issue is encountered
 const attemptJSONParse = function attemptJSONParse(rawJSON) {
   try {
@@ -73,7 +79,7 @@ const initHandler = async function initHandler(options) {
     log.info('bn deploy [options]'.magenta);
   } catch (err) {
     log.error(err.message.red);
-    process.exit(1);
+    errorMessageAndExit();
   }
 };
 
@@ -89,7 +95,7 @@ const deployHandler = async function deployHandler(options) {
     log.info('bn invoke [options]'.magenta);
   } catch (err) {
     log.error(err.message.red);
-    process.exit(1);
+    errorMessageAndExit();
   }
 };
 
@@ -108,7 +114,7 @@ const removeHandler = async function removeHandler(options) {
     log.info('Removed function'.green);
   } catch (err) {
     log.error(err.message.red);
-    process.exit(1);
+    errorMessageAndExit();
   }
 };
 
@@ -118,7 +124,7 @@ const invokeHandler = async function invokeHandler(options) {
   log.info('Attempting to invoke your function'.yellow);
   if (options.file && options.json) {
     log.error('You may not provide both a json(-j) and file(-f)'.red);
-    process.exit(1);
+    errorMessageAndExit();
   }
   const funcPath = getFuncPath(options);
   let funcData;
@@ -144,7 +150,7 @@ const invokeHandler = async function invokeHandler(options) {
     log.info('Response was:'.yellow, JSON.stringify(response, null, 2));
   } catch (err) {
     log.error(err.message.red);
-    process.exit(1);
+    errorMessageAndExit();
   }
 };
 
