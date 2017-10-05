@@ -66,9 +66,10 @@ const deployHandler = async function deployHandler(options) {
   log.info('Deploying function...'.yellow);
   try {
     const funcPath = getFuncPath(options);
-    await deploy(funcPath);
+    const funcEndpoint = await deploy(funcPath);
     log.info('Sucessfully deployed function'.green);
     log.info('You can invoke your function with');
+    log.info(`curl ${funcEndpoint}`);
     log.info('bn invoke [options]'.magenta);
   } catch (err) {
     log.error(err.message.red);

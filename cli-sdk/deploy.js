@@ -69,7 +69,7 @@ const deployCLI = async function deployCLI(funcPath) {
   YMLUtil.checkFuncConf(funcConf, funcPath);
   const funcTarPath = path.join(genBinarisDir(funcPath), `${funcName}.tgz`);
   await genTarBall(funcPath, funcTarPath, fullIgnorePaths);
-  await deploy(funcName, funcConf, funcTarPath);
+  return deploy(funcName, funcConf, funcTarPath);
 };
 
 module.exports = deployCLI;
