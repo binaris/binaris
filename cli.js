@@ -139,7 +139,7 @@ commander
   .command('init')
   .description('Generate a simple Binaris function.')
   .option('-f, --functionName [functionName]', 'The name of the function you are creating')
-  .option('-p, --path [path]', 'The path to create your function(default is pwd)')
+  .option('-p, --path [path]', 'The path to create your function (default is cwd)')
   .action(initHandler);
 
 commander
