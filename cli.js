@@ -63,7 +63,7 @@ const initHandler = async function initHandler(options) {
 // simply handles the process of deploying a function and its
 // associated metadata to the Binaris cloud
 const deployHandler = async function deployHandler(options) {
-  log.info('Starting function deployment process'.yellow);
+  log.info('Deploying function...'.yellow);
   try {
     const funcPath = getFuncPath(options);
     await deploy(funcPath);
