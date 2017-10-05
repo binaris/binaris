@@ -30,7 +30,7 @@ const deploy = async function deploy(funcName, funcConf, tarPath) {
   const endpoint = urljoin(`https://${deployEndpoint}/v1/function`, funcName);
   const response = await deployFunction(tarPath, funcConf, endpoint);
   if (response.statusCode !== 200) {
-    throw new Error('Function was not deployed successfully, check logs for more details');
+    throw new Error(`Error deploying function: ${response.statusCode}`);
   }
   return urljoin(`https://${invokeEndpoint}/v1/user`, funcName);
 };
