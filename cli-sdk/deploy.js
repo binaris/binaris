@@ -21,7 +21,7 @@ const genBinarisDir = function genBinarisDir(genPath) {
     }
   } catch (err) {
     log.debug(err);
-    throw new Error(`Unable to generate ${binarisDir} hidden directory!`);
+    throw new Error(`Error creating working directory: ${binarisDir}`);
   }
   return fullPath;
 };
@@ -65,7 +65,7 @@ const deployCLI = async function deployCLI(funcPath) {
   const binarisConf = YMLUtil.loadBinarisConf(funcPath);
   const funcName = YMLUtil.getFuncName(binarisConf);
   const funcConf = YMLUtil.getFuncConf(binarisConf, funcName);
-  log.debug('funcConf is', funcConf);
+  log.debug('funcConf:', funcConf);
   YMLUtil.checkFuncConf(funcConf, funcPath);
   const funcTarPath = path.join(genBinarisDir(funcPath), `${funcName}.tgz`);
   await genTarBall(funcPath, funcTarPath, fullIgnorePaths);

@@ -14,8 +14,7 @@ const commander = require('commander');
 const colors = require('colors');
 
 const errorMessageAndExit = function errorMessageAndExit() {
-  log.info('To change the logging level set the environment variable using'.yellow,
-    'export LOG_LEVEL={debug,verbose,info,warn,error}');
+  log.info('For more information set the BINARIS_LOG_LEVEL environment variable to debug, verbose, info, warn or error');
   process.exit(1);
 };
 
@@ -33,10 +32,7 @@ const attemptJSONParse = function attemptJSONParse(rawJSON) {
 };
 
 function getFuncPath(options) {
-  if (options.path) {
-    return path.resolve(options.path);
-  }
-  return path.resolve(process.cwd());
+  return path.resolve(options.path || process.cwd());
 }
 
 // initializes a binaris function based on the options given by
@@ -49,11 +45,8 @@ const initHandler = async function initHandler(options) {
   const functionPath = getFuncPath(options);
   try {
     const finalName = await init(options.functionName, functionPath);
-    log.info('Generating template files...'.yellow);
-    log.info(`Successfully initialized function ${finalName}`.green);
-    log.info('You can deploy your function with');
-    log.info(`cd ${finalName}`.magenta);
-    log.info('bn deploy [options]'.magenta);
+    log.info(`Initialized function: ${finalName}`);
+    log.info(`To deploy:\n  cd ${functionPath}/${finalName}\n  bn deploy`);
   } catch (err) {
     log.error(err.message.red);
     errorMessageAndExit();
@@ -63,20 +56,16 @@ const initHandler = async function initHandler(options) {
 // simply handles the process of deploying a function and its
 // associated metadata to the Binaris cloud
 const deployHandler = async function deployHandler(options) {
-  log.info('Deploying function...'.yellow);
+  log.info('Deploying function...');
   try {
     const funcPath = getFuncPath(options);
     const funcEndpoint = await deploy(funcPath);
-    log.info('Sucessfully deployed function'.green);
-    log.info('You can invoke your function with');
-    log.info(`curl ${funcEndpoint}`);
-    log.info('bn invoke [options]'.magenta);
+    log.info(`Function deployed. To invoke use:\n  curl ${funcEndpoint}\nor\n  bn invoke`);
   } catch (err) {
     log.error(err.message.red);
     errorMessageAndExit();
   }
 };
-
 
 // Removes a binaris function that you previously deployed.
 const removeHandler = async function removeHandler(options) {
@@ -84,12 +73,12 @@ const removeHandler = async function removeHandler(options) {
     const { functionName } = options;
     const funcPath = getFuncPath(options);
 
-    log.info('Removing function'.yellow);
     if (!functionName && !funcPath) {
-      throw new Error('No function name specified to remove; use --path or --functionName');
+      throw new Error('Missing function name. Use --path or --functionName');
     }
+    log.info(`Removing function: ${functionName || funcPath }...`);
     await remove(functionName, funcPath);
-    log.info('Removed function'.green);
+    log.info('Function removed');
   } catch (err) {
     log.error(err.message.red);
     errorMessageAndExit();
@@ -99,9 +88,8 @@ const removeHandler = async function removeHandler(options) {
 // invokes a binaris function that you have previously
 // deployed either through the CLI or other means
 const invokeHandler = async function invokeHandler(functionName, options) {
-  log.info('Attempting to invoke your function'.yellow);
   if (options.file && options.json) {
-    log.error('You may not provide both a json(-j) and file(-f)'.red);
+    log.error('Options json (-j) and file (-f) cannot be provided together'.red);
     errorMessageAndExit();
   }
   const funcPath = getFuncPath(options);
@@ -114,7 +102,7 @@ const invokeHandler = async function invokeHandler(functionName, options) {
       try {
         payloadJSON = fs.readFileSync(options.file, 'utf8');
       } catch (err) {
-        throw new Error(`${options.file} was not a valid path to a JSON file`);
+        throw new Error(`Invalid JSON file path: ${options.file}`);
       }
     }
 
@@ -124,8 +112,10 @@ const invokeHandler = async function invokeHandler(functionName, options) {
     }
 
     const response = await invoke(funcPath, functionName, funcData);
-    log.info('Successfully invoked function'.green);
-    log.info('Response was:'.yellow, JSON.stringify(response, null, 2));
+    if (response.statusCode !== 200) {
+      console.log(`Function returned non standard status: ${response.statusCode}`.yellow);
+    }
+    console.log(response.body);
   } catch (err) {
     log.error(err.message.red);
     errorMessageAndExit();
@@ -134,44 +124,42 @@ const invokeHandler = async function invokeHandler(functionName, options) {
 
 commander
   .version('0.0.1')
-  .description('Binaris command line interface.');
+  .description('Binaris command line interface');
 
 commander
   .command('init')
-  .description('Generate a simple Binaris function.')
-  .option('-f, --functionName [functionName]', 'The name of the function you are creating')
-  .option('-p, --path [path]', 'The path to create your function (default is cwd)')
+  .description('Initialize a function from template')
+  .option('-f, --functionName <functionName>', 'name for the generated fucntion (if omitted, a name will be chosen at random)')
+  .option('-p, --path <path>', 'directory for the generated function (default is cwd)')
   .action(initHandler);
 
 commander
   .command('deploy')
-  .description('Deploys your function to the Binaris cloud')
-  .option('-p, --path [path]', 'The path to the binaris function to deploy')
+  .description('Deploys a function to the cloud')
+  .option('-p, --path <path>', 'path to function direcotry (where binaris.yml is)')
   .action(deployHandler);
 
 commander
   .command('remove')
-  .description('removes your function from the Binaris cloud')
-  .option('-f, --functionName [functionName]',
-    'The name of the Binaris function to remove')
-  .option('-p, --path [path]',
-    'The path to the Binaris function to remove')
+  .description('Remove a function from the cloud')
+  .option('-f, --functionName <functionName>', 'name of function to remove')
+  .option('-p, --path <path>', 'path to function')
   .action(removeHandler);
 
 commander
   .command('invoke <functionName>')
-  .description('invokes a previously deployed binaris function')
-  .option('-p, --path [path]', 'The path to the Binaris function to invoke')
-  .option('-j, --json [json]', 'The JSON data you would like to include in the invocation')
-  .option('-f, --filePath [filePath]', 'The path to your JSON file containing the message to send in your invocation')
+  .description('Invoke a function on the cloud')
+  .option('-p, --path <path>', 'path to function')
+  .option('-j, --json <json>', 'JSON data to pass as event.body')
+  .option('-f, --filePath <filePath>', 'path to a JSON file containing data to pass as event.body')
   .action(invokeHandler);
 
 commander
   .command('*', null, { noHelp: true })
   .description('')
   .action((env) => {
-    log.info('Unknown command:'.red, env);
-    commander.outputHelp(colors.yellow);
+    log.info(`Unknown command: ${env}`.red);
+    commander.outputHelp();
     process.exit(1);
   });
 
@@ -179,6 +167,6 @@ commander
   .parse(process.argv);
 
 if (!process.argv.slice(2).length) {
-  commander.outputHelp(colors.yellow);
+  commander.outputHelp();
 }
 
