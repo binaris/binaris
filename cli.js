@@ -98,7 +98,7 @@ const removeHandler = async function removeHandler(options) {
 
 // invokes a binaris function that you have previously
 // deployed either through the CLI or other means
-const invokeHandler = async function invokeHandler(options) {
+const invokeHandler = async function invokeHandler(functionName, options) {
   log.info('Attempting to invoke your function'.yellow);
   if (options.file && options.json) {
     log.error('You may not provide both a json(-j) and file(-f)'.red);
@@ -123,7 +123,7 @@ const invokeHandler = async function invokeHandler(options) {
       log.debug({ funcData });
     }
 
-    const response = await invoke(funcPath, funcData);
+    const response = await invoke(funcPath, functionName, funcData);
     log.info('Successfully invoked function'.green);
     log.info('Response was:'.yellow, JSON.stringify(response, null, 2));
   } catch (err) {
@@ -159,11 +159,11 @@ commander
   .action(removeHandler);
 
 commander
-  .command('invoke')
+  .command('invoke <functionName>')
   .description('invokes a previously deployed binaris function')
   .option('-p, --path [path]', 'The path to the Binaris function to invoke')
   .option('-j, --json [json]', 'The JSON data you would like to include in the invocation')
-  .option('-f, --file [file]', 'The path to your JSON file containing the message to send in your invocation')
+  .option('-f, --filePath [filePath]', 'The path to your JSON file containing the message to send in your invocation')
   .action(invokeHandler);
 
 commander
