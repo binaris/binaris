@@ -1,11 +1,8 @@
-module.exports.handler = function (input, context, callback) {
+module.exports.handler = function (event, context, callback) {
+  const name = event.body.name || 'anonymous';
   const response = {
     statusCode: 200,
-    body: JSON.stringify({
-      message: 'Welcome to Binaris',
-      input,
-      context,
-    }),
+    body: `Welcome to Binaris ${name}`
   };
   callback(null, response);
 };
