@@ -113,7 +113,7 @@ const invokeHandler = async function invokeHandler(functionName, options) {
 
     const response = await invoke(funcPath, functionName, funcData);
     if (response.statusCode !== 200) {
-      console.log(`Function returned non standard status: ${response.statusCode}`.yellow);
+      log.warn(`Function returned non standard status: ${response.statusCode}`.yellow);
     }
     console.log(response.body);
   } catch (err) {
