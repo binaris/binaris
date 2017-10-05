@@ -14,8 +14,8 @@ const commander = require('commander');
 const colors = require('colors');
 
 const errorMessageAndExit = function errorMessageAndExit() {
-  log.info('Use'.yellow, 'export LOG_LEVEL={debug,verbose,info,warn,error}',
-    'to debug your error'.yellow);
+  log.info('To change the logging level set the environment variable using'.yellow,
+    'export LOG_LEVEL={debug,verbose,info,warn,error}');
   process.exit(1);
 };
 
