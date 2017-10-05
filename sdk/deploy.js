@@ -1,7 +1,7 @@
 const fs = require('fs');
 const urljoin = require('urljoin');
 const request = require('request');
-const { deployEndpoint } = require('./config');
+const { deployEndpoint, invokeEndpoint } = require('./config');
 
 const deployFunction = async function uploadFunction(tarPath, conf, deployURL) {
   const options = {
@@ -32,6 +32,7 @@ const deploy = async function deploy(funcName, funcConf, tarPath) {
   if (response.statusCode !== 200) {
     throw new Error('Function was not deployed successfully, check logs for more details');
   }
+  return urljoin(`https://${invokeEndpoint}/v1/function`, funcName);
 };
 
 module.exports = deploy;
