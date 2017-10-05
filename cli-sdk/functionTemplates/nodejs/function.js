@@ -1,8 +1,4 @@
-module.exports.handler = function (event, context, callback) {
-  const name = event.body.name || 'anonymous';
-  const response = {
-    statusCode: 200,
-    body: `Welcome to Binaris ${name}`
-  };
-  callback(null, response);
+exports.handler = (event, context, callback) => {
+  const name = event.queryStringParameters.name || event.body.name || 'World';
+  callback(null, { statusCode: 200, body: `Hello ${name}!` });
 };

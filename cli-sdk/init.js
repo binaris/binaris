@@ -29,7 +29,7 @@ const init = async function init(functionName, functionPath) {
     if (answer) {
       finalName = functionName;
     } else {
-      throw new Error(`${functionName} is not a valid function name`);
+      throw new Error(`Invalid function name: ${functionName}`);
     }
   } else {
     while (!finalName) {
@@ -43,10 +43,10 @@ const init = async function init(functionName, functionPath) {
   }
 
   if (!functionPath) {
-    throw new Error('Invalid function path provided!');
+    throw new Error('Invalid function path');
   }
 
-  log.debug('attempting to load template files for function dir creation');
+  log.debug('Loading template files');
   // parse our templated yml and make the necessary modifications
   const templatePath = path.join(__dirname, templateDir);
   const binarisConf = YMLUtil.loadBinarisConf(templatePath);
@@ -61,9 +61,9 @@ const init = async function init(functionName, functionPath) {
     fs.mkdirSync(newDir);
   } catch (err) {
     log.debug(err);
-    throw new Error(`Function ${finalName} could not be initialized because a directory already exists with that name!`);
+    throw new Error(`Function creation failed. Directory already exists: ${finalName}`);
   }
-  log.debug('loading and replicating all template files');
+  log.debug('Replicating template files');
 
   // now we have to write out all our files that we've modified
   const file = funcConf.file;

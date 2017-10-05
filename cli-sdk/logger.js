@@ -4,7 +4,7 @@ winston.loggers.add('binaris', {
   transports: [
     new (winston.transports.Console)({
       stringify: true,
-      level: process.env.LOG_LEVEL || 'info',
+      level: process.env.BINARIS_LOG_LEVEL || 'info',
       prettyPrint: true,
       formatter: (options) => {
         return (options.message ? options.message : '') +

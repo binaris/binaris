@@ -9,16 +9,12 @@ const invoke = async function invoke(funcName, funcData) {
     request.post({
       url: endpoint,
       body: JSON.stringify(funcData),
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    }, (err, resp, body) => {
+      headers: { 'Content-Type': 'application/json', },
+    }, (err, res, body) => {
       if (err) {
         return reject(new Error(err));
-      } else if (resp.statusCode !== 200) {
-        return reject(new Error('Non 200 status code returned from invocation'));
       }
-      return resolve({ statusCode: resp.statusCode, body });
+      return resolve({ statusCode: res.statusCode, body });
     });
   });
   const body = await requestPromise;

@@ -32,7 +32,7 @@ const deploy = async function deploy(funcName, funcConf, tarPath) {
   if (response.statusCode !== 200) {
     throw new Error('Function was not deployed successfully, check logs for more details');
   }
-  return urljoin(`https://${invokeEndpoint}/v1/function`, funcName);
+  return urljoin(`https://${invokeEndpoint}/v1/user`, funcName);
 };
 
 module.exports = deploy;
