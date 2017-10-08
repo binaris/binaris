@@ -115,7 +115,7 @@ const invokeHandler = async function invokeHandler(functionName, options) {
     if (response.statusCode !== 200) {
       log.warn(`Function returned non standard status: ${response.statusCode}`.yellow);
     }
-    console.log(response.body);
+    log.info(response.body);
   } catch (err) {
     log.error(err.message.red);
     errorMessageAndExit();
