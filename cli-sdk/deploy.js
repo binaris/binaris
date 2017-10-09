@@ -65,7 +65,7 @@ const deployCLI = async function deployCLI(funcPath) {
   const binarisConf = YMLUtil.loadBinarisConf(funcPath);
   const funcName = YMLUtil.getFuncName(binarisConf);
   const funcConf = YMLUtil.getFuncConf(binarisConf, funcName);
-  log.debug('funcConf:', funcConf);
+  log.debug({ funcConf });
   YMLUtil.checkFuncConf(funcConf, funcPath);
   const funcTarPath = path.join(genBinarisDir(funcPath), `${funcName}.tgz`);
   await genTarBall(funcPath, funcTarPath, fullIgnorePaths);

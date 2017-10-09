@@ -60,7 +60,7 @@ const getFuncName = function getFuncName(binarisConf) {
   // There's not yet support for multiple functions per yaml
   // The first (and only) entry is used
   if (funcKeys.length !== 1) {
-    throw new Error(`${binarisConfFile}: ${funcStr} section missing appropriate definition`);
+    throw new Error(`${binarisConfFile}: ${funcStr}, only one function supported!`);
   }
   const funcName = funcKeys[0];
   return funcName;
