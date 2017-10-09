@@ -46,7 +46,7 @@ const initHandler = async function initHandler(options) {
   try {
     const finalName = await init(options.functionName, functionPath);
     log.info(`Initialized function: ${finalName}`);
-    log.info(`To deploy:\n  cd ${functionPath}/${finalName}\n  bn deploy`);
+    log.info(`To deploy: (cd ${functionPath}/${finalName}; bn deploy)`);
   } catch (err) {
     log.error(err.message.red);
     errorMessageAndExit();
