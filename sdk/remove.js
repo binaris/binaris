@@ -1,5 +1,5 @@
 const urljoin = require('urljoin');
-const rp = require('request-promise');
+const rp = require('request-promise-native');
 const { deployEndpoint } = require('./config');
 
 const removeFunction = async function removeFunction(url) {

@@ -2,9 +2,9 @@ const fs = require('fs');
 const path = require('path');
 const { promisify } = require('util');
 
-const targz = require('targz');
+const { compress } = require('targz');
 
-const tgzCompress = promisify(targz.compress);
+const tgzCompress = promisify(compress);
 
 const log = require('./logger');
 const YMLUtil = require('./binarisYML');
@@ -34,12 +34,7 @@ const genTarBall = async function genTarBall(dirToTar, dest, ignoredFiles) {
     src: dirToTar,
     dest,
     tar: {
-      ignore: (name) => {
-        if (ignoredFiles.indexOf(name) > -1) {
-          return true;
-        }
-        return false;
-      },
+      ignore: name => ignoredFiles.includes(name),
     },
   });
 };
