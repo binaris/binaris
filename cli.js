@@ -123,7 +123,7 @@ const invokeHandler = async function invokeHandler(functionName, options) {
 };
 
 commander
-  .version('0.0.1')
+  .version('1.0.0')
   .description('Binaris command line interface');
 
 commander
