@@ -30,9 +30,6 @@ const genBinarisDir = function genBinarisDir(genPath) {
 };
 
 const genTarBall = async function genTarBall(dirToTar, dest, ignoredFiles) {
-  // our CLI pipeline is forced and intentionally synchronous,
-  // this wrapper is to ensure that vanilla cbs don't interfere
-  // with the order of things
   await tgzCompress({
     src: dirToTar,
     dest,
