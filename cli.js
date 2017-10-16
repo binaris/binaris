@@ -2,6 +2,9 @@
 // invoke, destroy, help, info, login, logout, signup
 const { init, invoke, deploy, remove } = require('./cli-sdk');
 
+// grab our version to keep things consistent
+const { version } = require('./package.json');
+
 // create our basic logger
 const log = require('./logger');
 
@@ -123,7 +126,7 @@ const invokeHandler = async function invokeHandler(functionName, options) {
 };
 
 commander
-  .version('1.0.0')
+  .version(version)
   .description('Binaris command line interface');
 
 commander
