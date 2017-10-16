@@ -9,6 +9,10 @@ const deployFunction = async function uploadFunction(tarPath, conf, deployURL) {
     qs: conf,
   };
   try {
+    // we use raw request here(as opposed to rp) because the
+    // request-promise module explicitly discourages using
+    // request-promise for pipe
+    // https://github.com/request/request-promise
     const uploadPromise = new Promise((resolve, reject) => {
       fs.createReadStream(tarPath)
         .pipe(request.post(options, (uploadErr, uploadResponse) => {

@@ -1,7 +1,10 @@
 const fs = require('fs');
 const path = require('path');
+const { promisify } = require('util');
 
 const targz = require('targz');
+
+const tgzCompress = promisify(targz.compress);
 
 const log = require('./logger');
 const YMLUtil = require('./binarisYML');
@@ -30,28 +33,18 @@ const genTarBall = async function genTarBall(dirToTar, dest, ignoredFiles) {
   // our CLI pipeline is forced and intentionally synchronous,
   // this wrapper is to ensure that vanilla cbs don't interfere
   // with the order of things
-  const tarPromise = new Promise((resolve, reject) => {
-    targz.compress({
-      src: dirToTar,
-      dest,
-      tar: {
-        ignore: (name) => {
-          if (ignoredFiles.indexOf(name) > -1) {
-            return true;
-          }
-          return false;
-        },
+  await tgzCompress({
+    src: dirToTar,
+    dest,
+    tar: {
+      ignore: (name) => {
+        if (ignoredFiles.indexOf(name) > -1) {
+          return true;
+        }
+        return false;
       },
-    }, (err) => {
-      if (err) {
-        reject(err);
-      }
-      resolve();
-    });
+    },
   });
-
-  const success = await tarPromise;
-  return success;
 };
 
 // simply handles the process of deploying a function and its

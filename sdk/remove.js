@@ -1,21 +1,13 @@
 const urljoin = require('urljoin');
-const request = require('request');
+const rp = require('request-promise');
 const { deployEndpoint } = require('./config');
 
 const removeFunction = async function removeFunction(url) {
   const options = {
     url,
+    resolveWithFullResponse: true,
   };
-
-  const removePromise = new Promise((resolve, reject) => {
-    request.delete(options, (err, res) => {
-      if (err) {
-        return reject(err);
-      }
-      return resolve(res);
-    });
-  });
-  return removePromise;
+  return rp.delete(options);
 };
 
 const remove = async function remove(funcName) {
