@@ -33,7 +33,7 @@ Deploy is used both to initially upload your Binaris function and to update that
 
 ### Response
 
-**On success**: <curlable invoke endpoint URL>
+**On success**:  [curlable invoke endpoint URL]
 
 When the function is deployed successfully a String object representing the invokable Binaris endpoint is returned. You may use this URL to invoke your now deployed Binaris function via Curl. Alternatively you may also invoke your function using the invoke commands provided by the CLI and the SDK.
 
@@ -63,7 +63,7 @@ Invoke is used to call a previously deployed Binaris function and receive its co
 
 ### Response
 
-**On success**: <invoked function response>
+**On success**: [invoked function response]
 
 When the function is invoked succesfully, you will receive the response Object you defined in your function and the statusCode contained in the response.
 
