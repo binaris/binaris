@@ -1,5 +1,6 @@
 // this is just a convenience/wrapper for the individual commands
-const fs = require('fs');
+const fs = require('mz/fs');
+
 const path = require('path');
 
 const yaml = require('js-yaml');
@@ -15,10 +16,10 @@ const fileStr = 'file';
 // function directory. If it does not exist in the expected
 // location the object returned will have a false 'success'
 // field and a associated error field
-const loadBinarisConf = function loadBinarisConf(funcDirPath) {
+const loadBinarisConf = async function loadBinarisConf(funcDirPath) {
   try {
     const fullYAMLPath = path.join(funcDirPath, binarisConfFile);
-    const binarisConf = yaml.safeLoad(fs.readFileSync(fullYAMLPath, 'utf8'));
+    const binarisConf = yaml.safeLoad(await fs.readFile(fullYAMLPath, 'utf8'));
     return binarisConf;
   } catch (err) {
     log.debug(err);
@@ -26,10 +27,10 @@ const loadBinarisConf = function loadBinarisConf(funcDirPath) {
   }
 };
 
-const saveBinarisConf = function saveBinarisConf(funcDirPath, binarisConf) {
+const saveBinarisConf = async function saveBinarisConf(funcDirPath, binarisConf) {
   const fullYAMLPath = path.join(funcDirPath, binarisConfFile);
   const confString = yaml.dump(binarisConf);
-  fs.writeFileSync(fullYAMLPath, confString, 'utf8');
+  await fs.writeFile(fullYAMLPath, confString, 'utf8');
 };
 
 // this loads our _______.js file from the users current
@@ -38,9 +39,9 @@ const saveBinarisConf = function saveBinarisConf(funcDirPath, binarisConf) {
 // If it does not exist in the expected location the object
 // returned will have a false 'success' field and a
 // associated error field
-const readFunctionJS = function readFunctionJS(funcDirPath, JSFileName) {
+const readFunctionJS = async function readFunctionJS(funcDirPath, JSFileName) {
   const fullJSPath = path.join(funcDirPath, JSFileName);
-  const JSFile = fs.readFileSync(fullJSPath, 'utf8');
+  const JSFile = await fs.readFile(fullJSPath, 'utf8');
   return JSFile;
 };
 
@@ -66,14 +67,14 @@ const getFuncName = function getFuncName(binarisConf) {
   return funcName;
 };
 
-const checkFuncConf = function checkFuncConf(funcConf, funcDirPath) {
+const checkFuncConf = async function checkFuncConf(funcConf, funcDirPath) {
   if (!Object.prototype.hasOwnProperty.call(funcConf, fileStr)) {
     throw new Error(`${binarisConfFile}: function missing required field: <${fileStr}>`);
   }
   if (!Object.prototype.hasOwnProperty.call(funcConf, entryStr)) {
     throw new Error(`${binarisConfFile}: function missing required field: <${entryStr}>`);
   }
-  readFunctionJS(funcDirPath, funcConf.file);
+  await readFunctionJS(funcDirPath, funcConf.file);
 };
 
 // Assumes a single function.

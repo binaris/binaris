@@ -9,7 +9,7 @@ const { version } = require('./package.json');
 const log = require('./logger');
 
 // our core modules
-const fs = require('fs');
+const fs = require('mz/fs');
 const path = require('path');
 
 // our 3rd party modules
@@ -103,7 +103,7 @@ const invokeHandler = async function invokeHandler(functionName, options) {
       payloadJSON = options.json;
     } else if (options.file) {
       try {
-        payloadJSON = fs.readFileSync(options.file, 'utf8');
+        payloadJSON = await fs.readFile(options.file, 'utf8');
       } catch (err) {
         throw new Error(`Invalid JSON file path: ${options.file}`);
       }
