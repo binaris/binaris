@@ -1,12 +1,9 @@
 // here we just grab all our SDK functions that we plan to use
 // invoke, destroy, help, info, login, logout, signup
-const { init, invoke, deploy, remove } = require('./cli-sdk');
+const { log, init, invoke, deploy, remove } = require('./cli-sdk');
 
 // grab our version to keep things consistent
 const { version } = require('./package.json');
-
-// create our basic logger
-const log = require('./cli-sdk/logger');
 
 // our core modules
 const fs = require('mz/fs');
