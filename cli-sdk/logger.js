@@ -2,9 +2,9 @@ const winston = require('winston');
 const config = winston.config;
 
 const colorLevels = {
-  silly: 'blue',
-  debug: 'green',
-  verbose: 'yellow',
+  silly: 'white',
+  debug: 'white',
+  verbose: 'white',
   info: 'white',
   warn: 'yellow',
   error: 'red',
