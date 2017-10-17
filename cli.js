@@ -13,7 +13,9 @@ const path = require('path');
 const commander = require('commander');
 
 const errorMessageAndExit = function errorMessageAndExit() {
-  log.info('For more information set the BINARIS_LOG_LEVEL environment variable to debug, verbose, info, warn or error');
+  if (!process.env.BINARIS_LOG_LEVEL) {
+    log.info('For more information set the BINARIS_LOG_LEVEL environment variable to debug, verbose, info, warn or error');
+  }
   process.exit(1);
 };
 
