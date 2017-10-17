@@ -1,4 +1,16 @@
 const winston = require('winston');
+const config = winston.config;
+
+const colorLevels = {
+  silly: 'blue',
+  debug: 'green',
+  verbose: 'yellow',
+  info: 'white',
+  warn: 'yellow',
+  error: 'red',
+};
+
+winston.addColors(colorLevels);
 
 winston.loggers.add('binaris', {
   transports: [
@@ -6,10 +18,11 @@ winston.loggers.add('binaris', {
       stringify: true,
       level: process.env.BINARIS_LOG_LEVEL || 'info',
       prettyPrint: true,
+      colorize: true,
       formatter: (options) => {
-        return (options.message ? options.message : '') +
+      return config.colorize(options.level, ((options.message ? options.message : '') +
           (options.meta && Object.keys(options.meta).length ? '\n\t'
-          + JSON.stringify(options.meta) : '');
+          + JSON.stringify(options.meta) : '')));
       },
     }),
   ],

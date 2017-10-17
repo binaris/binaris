@@ -12,7 +12,6 @@
   "author": "Binaris",
   "license": "ISC",
   "dependencies": {
-    "colors": "^1.1.2",
     "commander": "^2.11.0",
     "js-yaml": "^3.10.0",
     "moniker": "^0.1.2",

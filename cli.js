@@ -6,7 +6,7 @@ const { init, invoke, deploy, remove } = require('./cli-sdk');
 const { version } = require('./package.json');
 
 // create our basic logger
-const log = require('./logger');
+const log = require('./cli-sdk/logger');
 
 // our core modules
 const fs = require('fs');
@@ -14,7 +14,6 @@ const path = require('path');
 
 // our 3rd party modules
 const commander = require('commander');
-const colors = require('colors');
 
 const errorMessageAndExit = function errorMessageAndExit() {
   log.info('For more information set the BINARIS_LOG_LEVEL environment variable to debug, verbose, info, warn or error');
@@ -51,7 +50,7 @@ const initHandler = async function initHandler(options) {
     log.info(`Initialized function: ${finalName}`);
     log.info(`To deploy: (cd ${functionPath}/${finalName}; bn deploy)`);
   } catch (err) {
-    log.error(err.message.red);
+    log.error(err.message);
     errorMessageAndExit();
   }
 };
@@ -65,7 +64,7 @@ const deployHandler = async function deployHandler(options) {
     const funcEndpoint = await deploy(funcPath);
     log.info(`Function deployed. To invoke use:\n  curl ${funcEndpoint}\nor\n  bn invoke`);
   } catch (err) {
-    log.error(err.message.red);
+    log.error(err.message);
     errorMessageAndExit();
   }
 };
@@ -83,7 +82,7 @@ const removeHandler = async function removeHandler(options) {
     await remove(functionName, funcPath);
     log.info('Function removed');
   } catch (err) {
-    log.error(err.message.red);
+    log.error(err.message);
     errorMessageAndExit();
   }
 };
@@ -92,7 +91,7 @@ const removeHandler = async function removeHandler(options) {
 // deployed either through the CLI or other means
 const invokeHandler = async function invokeHandler(functionName, options) {
   if (options.file && options.json) {
-    log.error('Options json (-j) and file (-f) cannot be provided together'.red);
+    log.error('Options json (-j) and file (-f) cannot be provided together');
     errorMessageAndExit();
   }
   const funcPath = getFuncPath(options);
@@ -116,11 +115,11 @@ const invokeHandler = async function invokeHandler(functionName, options) {
 
     const response = await invoke(funcPath, functionName, funcData);
     if (response.statusCode !== 200) {
-      log.warn(`Function returned non standard status: ${response.statusCode}`.yellow);
+      log.warn(`Function returned non standard status: ${response.statusCode}`);
     }
     log.info(response.body);
   } catch (err) {
-    log.error(err.message.red);
+    log.error(err.message);
     errorMessageAndExit();
   }
 };
@@ -161,7 +160,7 @@ commander
   .command('*', null, { noHelp: true })
   .description('')
   .action((env) => {
-    log.info(`Unknown command: ${env}`.red);
+    log.error(`Unknown command: ${env}`);
     commander.outputHelp();
     process.exit(1);
   });
