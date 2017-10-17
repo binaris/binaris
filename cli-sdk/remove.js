@@ -9,7 +9,7 @@ const removeCLI = async function removeCLI(funcName, funcPath) {
 
   let configuredFuncName;
   try {
-    const binarisConf = YMLUtil.loadBinarisConf(funcPath);
+    const binarisConf = await YMLUtil.loadBinarisConf(funcPath);
     configuredFuncName = YMLUtil.getFuncName(binarisConf);
   } catch (err) {
     log.verbose('Failed to read config file', { err, functionName: funcName, path: funcPath });

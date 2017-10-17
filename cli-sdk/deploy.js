@@ -1,4 +1,4 @@
-const fs = require('fs');
+const fs = require('mz/fs');
 const path = require('path');
 
 const targz = require('targz');
@@ -12,13 +12,11 @@ const ignoredTarFiles = ['.git', '.binaris', 'binaris.yml'];
 
 // creates our hidden .binaris directory in the users function
 // directory if it doesn't already exist
-const genBinarisDir = function genBinarisDir(genPath) {
+const genBinarisDir = async function genBinarisDir(genPath) {
   let fullPath;
   try {
     fullPath = path.join(genPath, binarisDir);
-    if (!fs.existsSync(fullPath)) {
-      fs.mkdirSync(fullPath);
-    }
+    await fs.mkdir(fullPath);
   } catch (err) {
     log.debug(err);
     throw new Error(`Error creating working directory: ${binarisDir}`);
@@ -62,12 +60,12 @@ const deployCLI = async function deployCLI(funcPath) {
   ignoredTarFiles.forEach((entry) => {
     fullIgnorePaths.push(path.join(funcPath, entry));
   });
-  const binarisConf = YMLUtil.loadBinarisConf(funcPath);
+  const binarisConf = await YMLUtil.loadBinarisConf(funcPath);
   const funcName = YMLUtil.getFuncName(binarisConf);
   const funcConf = YMLUtil.getFuncConf(binarisConf, funcName);
   log.debug({ funcConf });
-  YMLUtil.checkFuncConf(funcConf, funcPath);
-  const funcTarPath = path.join(genBinarisDir(funcPath), `${funcName}.tgz`);
+  await YMLUtil.checkFuncConf(funcConf, funcPath);
+  const funcTarPath = path.join(await genBinarisDir(funcPath), `${funcName}.tgz`);
   await genTarBall(funcPath, funcTarPath, fullIgnorePaths);
   return deploy(funcName, funcConf, funcTarPath);
 };

@@ -1,4 +1,4 @@
-const fs = require('fs');
+const fs = require('mz/fs');
 const path = require('path');
 
 const moniker = require('moniker');
@@ -49,7 +49,7 @@ const init = async function init(functionName, functionPath) {
   log.debug('Loading template files');
   // parse our templated yml and make the necessary modifications
   const templatePath = path.join(__dirname, templateDir);
-  const binarisConf = YMLUtil.loadBinarisConf(templatePath);
+  const binarisConf = await YMLUtil.loadBinarisConf(templatePath);
   const templateName = YMLUtil.getFuncName(binarisConf);
   const funcConf = YMLUtil.getFuncConf(binarisConf, templateName);
   // replace the generic function name with the actual name
@@ -58,7 +58,7 @@ const init = async function init(functionName, functionPath) {
   const newDir = path.join(functionPath, finalName);
   // ensure that the function directory doesn't already exist
   try {
-    fs.mkdirSync(newDir);
+    await fs.mkdir(newDir);
   } catch (err) {
     log.debug(err);
     throw new Error(`Function creation failed. Directory already exists: ${finalName}`);
@@ -67,9 +67,9 @@ const init = async function init(functionName, functionPath) {
 
   // now we have to write out all our files that we've modified
   const file = funcConf.file;
-  fs.writeFileSync(path.join(newDir, file),
-    fs.readFileSync(path.join(__dirname, templateDir, file)));
-  YMLUtil.saveBinarisConf(newDir, binarisConf);
+  await fs.writeFile(path.join(newDir, file),
+    await fs.readFile(path.join(__dirname, templateDir, file)));
+  await YMLUtil.saveBinarisConf(newDir, binarisConf);
   return finalName;
 };
 
