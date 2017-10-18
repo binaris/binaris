@@ -77,7 +77,7 @@ const removeHandler = async function removeHandler(options) {
     if (!functionName && !funcPath) {
       throw new Error('Missing function name. Use --path or --functionName');
     }
-    log.info(`Removing function: ${functionName || funcPath }...`);
+    log.info(`Removing function: ${functionName || funcPath}...`);
     await remove(functionName, funcPath);
     log.info('Function removed');
   } catch (err) {
