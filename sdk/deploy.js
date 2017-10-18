@@ -31,7 +31,7 @@ const deployFunction = async function uploadFunction(tarPath, conf, deployURL) {
 
 // TODO: thing that returns metadata
 const deploy = async function deploy(funcName, funcConf, tarPath) {
-  const endpoint = urljoin(`https://${deployEndpoint}/v1/function`, funcName);
+  const endpoint = urljoin(`https://${deployEndpoint}`, '/v1/function', funcName);
   const response = await deployFunction(tarPath, funcConf, endpoint);
   if (response.statusCode !== 200) {
     throw new Error(`Error deploying function: ${response.statusCode} ${JSON.parse(response.body).error}`);

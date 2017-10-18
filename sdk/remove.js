@@ -11,7 +11,7 @@ const removeFunction = async function removeFunction(url) {
 };
 
 const remove = async function remove(funcName) {
-  const endpoint = urljoin(`https://${deployEndpoint}/v1/function`, funcName);
+  const endpoint = urljoin(`https://${deployEndpoint}`, '/v1/function', funcName);
   const response = await removeFunction(endpoint);
   if (response.statusCode === 404) {
     throw new Error(`Function ${funcName} unknown`);
