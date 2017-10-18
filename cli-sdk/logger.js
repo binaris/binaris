@@ -1,4 +1,5 @@
 const winston = require('winston');
+
 const config = winston.config;
 
 const colorLevels = {
@@ -19,8 +20,10 @@ winston.loggers.add('binaris', {
       level: process.env.BINARIS_LOG_LEVEL || 'info',
       prettyPrint: true,
       colorize: true,
+      // eslint-disable-next-line arrow-body-style
       formatter: (options) => {
-      return config.colorize(options.level, ((options.message ? options.message : '') +
+        return config.colorize(options.level, ((options.message ? options.message : '') +
+          // eslint-disable-next-line prefer-template
           (options.meta && Object.keys(options.meta).length ? '\n\t'
           + JSON.stringify(options.meta) : '')));
       },
