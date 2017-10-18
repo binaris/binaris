@@ -1,4 +1,5 @@
 const fs = require('mz/fs');
+const fse = require('fs-extra');
 const path = require('path');
 
 const moniker = require('moniker');
@@ -67,8 +68,7 @@ const init = async function init(functionName, functionPath) {
 
   // now we have to write out all our files that we've modified
   const file = funcConf.file;
-  await fs.writeFile(path.join(newDir, file),
-    await fs.readFile(path.join(__dirname, templateDir, file)));
+  await fse.copy(path.join(__dirname, templateDir, file), path.join(newDir, file));
   await YMLUtil.saveBinarisConf(newDir, binarisConf);
   return finalName;
 };
