@@ -3,7 +3,7 @@ const rp = require('request-promise-native');
 const { invokeEndpoint } = require('./config');
 
 const invoke = async function invoke(funcName, funcData) {
-  const endpoint = urljoin(`https://${invokeEndpoint}/v1/user/`, funcName);
+  const endpoint = urljoin(`https://${invokeEndpoint}`, '/v1/user/', funcName);
   const options = {
     url: endpoint,
     body: funcData,
