@@ -10,8 +10,8 @@ const YMLUtil = require('./binarisYML');
 const templateDir = './functionTemplates/nodejs/';
 
 // TODO: either export this or move it to shared file
-// here we both ensure the name is valid syntatically and eventually
-// we will also determine if it has been previously created
+// currently the code ensures the name is valid syntatically and eventually
+// will also determine if it has been previously created
 const validateFunctionName = function validateFunctionName(name) {
   // eslint issue but too annoying to fix given time
   if (/[~`!#$%^&*+=\\[\]\\';,/{}|\\":<>?]/g.test(name)) {
@@ -48,7 +48,7 @@ const init = async function init(functionName, functionPath) {
   }
 
   log.debug('Loading template files');
-  // parse our templated yml and make the necessary modifications
+  // parse the templated yml and make the necessary modifications
   const templatePath = path.join(__dirname, templateDir);
   const binarisConf = await YMLUtil.loadBinarisConf(templatePath);
   const templateName = YMLUtil.getFuncName(binarisConf);
@@ -66,7 +66,7 @@ const init = async function init(functionName, functionPath) {
   }
   log.debug('Replicating template files');
 
-  // now we have to write out all our files that we've modified
+  // now write out all the files that have been modified
   const file = funcConf.file;
   await fse.copy(path.join(__dirname, templateDir, file), path.join(newDir, file));
   await YMLUtil.saveBinarisConf(newDir, binarisConf);

@@ -13,7 +13,7 @@ const { deploy } = require('../sdk');
 const binarisDir = '.binaris/';
 const ignoredTarFiles = ['.git', '.binaris', 'binaris.yml'];
 
-// creates our hidden .binaris directory in the users function
+// creates hidden .binaris directory in the users function
 // directory if it doesn't already exist
 const genBinarisDir = async function genBinarisDir(genPath) {
   let fullPath;

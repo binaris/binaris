@@ -1,15 +1,14 @@
-// here we just grab all our SDK functions that we plan to use
-// invoke, destroy, help, info, login, logout, signup
+// grab all of the Binaris SDK functions
 const { log, init, invoke, deploy, remove } = require('./cli-sdk');
 
-// grab our version to keep things consistent
+// grab the version to keep things consistent
 const { version } = require('./package.json');
 
-// our core modules
+// core modules
 const fs = require('mz/fs');
 const path = require('path');
 
-// our 3rd party modules
+// 3rd party modules
 const commander = require('commander');
 
 const errorMessageAndExit = function errorMessageAndExit() {
@@ -36,13 +35,12 @@ function getFuncPath(options) {
   return path.resolve(options.path || process.cwd());
 }
 
-// initializes a binaris function based on the options given by
-// the user
+// initializes a binaris function based on the options given by the user
 // this essentially boils down to creating template files with
 // the correct information in the correct location
 const initHandler = async function initHandler(options) {
-  // now we actually call our initialize function and then immediately
-  // determine if was successfully completed
+  // this is where the actual initialize function is called and immediately
+  // evaluated to determine if was successfully completed
   const functionPath = getFuncPath(options);
   try {
     const finalName = await init(options.functionName, functionPath);
@@ -86,7 +84,7 @@ const removeHandler = async function removeHandler(options) {
   }
 };
 
-// invokes a binaris function that you have previously
+// invokes a binaris function that has been previously
 // deployed either through the CLI or other means
 const invokeHandler = async function invokeHandler(functionName, options) {
   if (options.file && options.json) {
