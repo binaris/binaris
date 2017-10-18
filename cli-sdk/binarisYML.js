@@ -12,7 +12,7 @@ const funcStr = 'functions';
 const entryStr = 'entrypoint';
 const fileStr = 'file';
 
-// this loads our binaris.yml file from the users current
+// this loads the binaris.yml file from the users current
 // function directory. If it does not exist in the expected
 // location the object returned will have a false 'success'
 // field and a associated error field
@@ -33,7 +33,7 @@ const saveBinarisConf = async function saveBinarisConf(funcDirPath, binarisConf)
   await fs.writeFile(fullYAMLPath, confString, 'utf8');
 };
 
-// this loads our _______.js file from the users current
+// this loads the JS file from the users current
 // function directory. It determines the correct name of the
 // file by inspecting the functions package.json main field.
 // If it does not exist in the expected location the object
@@ -46,7 +46,7 @@ const readFunctionJS = async function readFunctionJS(funcDirPath, JSFileName) {
 };
 
 const getFunctionsSection = function getFunctionsSection(binarisConf) {
-  // ensure our configuration has the field
+  // ensure configuration has the expected field
   if (!Object.prototype.hasOwnProperty.call(binarisConf, funcStr)) {
     throw new Error(`Your ${binarisConfFile} did not contain a require field: <${funcStr}>`);
   }
@@ -80,7 +80,7 @@ const checkFuncConf = async function checkFuncConf(funcConf, funcDirPath) {
 // Assumes a single function.
 const getFuncConf = function getFuncConf(binarisConf, funcName) {
   const funcSection = getFunctionsSection(binarisConf);
-  // ensure our configuration has the correct function
+  // ensure configuration has the correct function
   if (!Object.prototype.hasOwnProperty.call(funcSection, funcName)) {
     throw new Error(`${binarisConfFile}: function missing: ${funcName}`);
   }

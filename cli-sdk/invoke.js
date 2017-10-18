@@ -1,7 +1,7 @@
 const YMLUtil = require('./binarisYML');
 const { invoke } = require('../sdk');
 
-// invokes a binaris function that you have previously
+// invokes a binaris function that has been previously
 // deployed either through the CLI or other means
 const invokeCLI = async function invokeCLI(funcPath, funcName, funcData) {
   const binarisConf = await YMLUtil.loadBinarisConf(funcPath);
