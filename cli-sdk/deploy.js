@@ -19,7 +19,9 @@ const genBinarisDir = async function genBinarisDir(genPath) {
   let fullPath;
   try {
     fullPath = path.join(genPath, binarisDir);
-    await fs.mkdir(fullPath);
+    if (!(await fs.exists(fullPath))) {
+      await fs.mkdir(fullPath);
+    }
   } catch (err) {
     log.debug(err);
     throw new Error(`Error creating working directory: ${binarisDir}`);
