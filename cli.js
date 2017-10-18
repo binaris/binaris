@@ -69,16 +69,10 @@ const deployHandler = async function deployHandler(options) {
 };
 
 // Removes a binaris function that you previously deployed.
-const removeHandler = async function removeHandler(options) {
+const removeHandler = async function removeHandler(functionName) {
   try {
-    const { functionName } = options;
-    const funcPath = getFuncPath(options);
-
-    if (!functionName && !funcPath) {
-      throw new Error('Missing function name. Use --path or --functionName');
-    }
-    log.info(`Removing function: ${functionName || funcPath }...`);
-    await remove(functionName, funcPath);
+    log.info(`Removing function: ${functionName}`);
+    await remove(functionName);
     log.info('Function removed');
   } catch (err) {
     log.error(err.message);
@@ -141,10 +135,8 @@ commander
   .action(deployHandler);
 
 commander
-  .command('remove')
+  .command('remove <functionName>')
   .description('Remove a function from the cloud')
-  .option('-f, --functionName <functionName>', 'name of function to remove')
-  .option('-p, --path <path>', 'path to function')
   .action(removeHandler);
 
 commander
