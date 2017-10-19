@@ -11,10 +11,10 @@ const path = require('path');
 // 3rd party modules
 const commander = require('commander');
 
-const tryCatchWrapper = function tryCatchWrapper(funcToWrap) {
+const exceptionWrapper = function tryCatchWrapper(funcToWrap) {
   const wrapped = async function wrapped() {
     try {
-      const args = [...arguments].splice(0);
+      const args = [...arguments];
       await funcToWrap(...args);
     } catch (err) {
       log.error(err);
@@ -119,20 +119,20 @@ commander
   .description('Initialize a function from template')
   .option('-f, --functionName <functionName>', 'name for the generated fucntion (if omitted, a name will be chosen at random)')
   .option('-p, --path <path>', 'directory for the generated function (default is cwd)')
-  .action(tryCatchWrapper(initHandler));
+  .action(exceptionWrapper(initHandler));
 
 commander
   .command('deploy')
   .description('Deploys a function to the cloud')
   .option('-p, --path <path>', 'path to function direcotry (where binaris.yml is)')
-  .action(tryCatchWrapper(deployHandler));
+  .action(exceptionWrapper(deployHandler));
 
 commander
   .command('remove')
   .description('Remove a function from the cloud')
   .option('-f, --functionName <functionName>', 'name of function to remove')
   .option('-p, --path <path>', 'path to function')
-  .action(tryCatchWrapper(removeHandler));
+  .action(exceptionWrapper(removeHandler));
 
 commander
   .command('invoke <functionName>')
@@ -140,7 +140,7 @@ commander
   .option('-p, --path <path>', 'path to function')
   .option('-j, --json <json>', 'JSON data to pass as event.body')
   .option('-f, --filePath <filePath>', 'path to a JSON file containing data to pass as event.body')
-  .action(tryCatchWrapper(invokeHandler));
+  .action(exceptionWrapper(invokeHandler));
 
 commander
   .command('*', null, { noHelp: true })
