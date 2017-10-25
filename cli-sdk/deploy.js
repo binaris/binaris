@@ -8,6 +8,7 @@ const tgzCompress = promisify(compress);
 
 const log = require('./logger');
 const YMLUtil = require('./binarisYML');
+const { getApiKey } = require('./userConf');
 const { deploy } = require('../sdk');
 
 const binarisDir = '.binaris/';
@@ -54,7 +55,8 @@ const deployCLI = async function deployCLI(funcPath) {
   await YMLUtil.checkFuncConf(funcConf, funcPath);
   const funcTarPath = path.join(await genBinarisDir(funcPath), `${funcName}.tgz`);
   await genTarBall(funcPath, funcTarPath, fullIgnorePaths);
-  return deploy(funcName, funcConf, funcTarPath);
+  const apiKey = getApiKey();
+  return deploy(apiKey, funcName, funcConf, funcTarPath);
 };
 
 module.exports = deployCLI;

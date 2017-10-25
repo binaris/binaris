@@ -10,8 +10,8 @@ const removeFunction = async function removeFunction(url) {
   return rp.delete(options);
 };
 
-const remove = async function remove(funcName) {
-  const endpoint = urljoin(`https://${deployEndpoint}`, '/v1/function', funcName);
+const remove = async function remove(apiKey, funcName) {
+  const endpoint = urljoin(`https://${deployEndpoint}`, 'v1', apiKey, funcName);
   const response = await removeFunction(endpoint);
   if (response.statusCode === 404) {
     throw new Error(`Function ${funcName} unknown`);

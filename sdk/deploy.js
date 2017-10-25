@@ -29,14 +29,14 @@ const deployFunction = async function uploadFunction(tarPath, conf, deployURL) {
   }
 };
 
-// TODO: thing that returns metadata
-const deploy = async function deploy(funcName, funcConf, tarPath) {
-  const endpoint = urljoin(`https://${deployEndpoint}`, '/v1/function', funcName);
+const deploy = async function deploy(apiKey, funcName, funcConf, tarPath) {
+  const endpoint = urljoin(`https://${deployEndpoint}`, 'v1', apiKey, funcName);
   const response = await deployFunction(tarPath, funcConf, endpoint);
   if (response.statusCode !== 200) {
     throw new Error(`Error deploying function: ${response.statusCode} ${JSON.parse(response.body).error}`);
   }
-  return urljoin(`https://${invokeEndpoint}/v1/user`, funcName);
+  // TODO: deploy itself should return the run url / key
+  return urljoin(`https://${invokeEndpoint}`, 'v1', apiKey, funcName);
 };
 
 module.exports = deploy;
