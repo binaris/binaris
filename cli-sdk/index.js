@@ -1,13 +1,13 @@
+const deploy = require('./deploy');
 const init = require('./init');
 const invoke = require('./invoke');
-const deploy = require('./deploy');
-const remove = require('./remove');
 const log = require('./logger');
+const remove = require('./remove');
 
 module.exports = {
-  log,
+  deploy,
   init,
   invoke,
-  deploy,
+  log,
   remove,
 };
