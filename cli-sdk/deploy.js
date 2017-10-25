@@ -55,7 +55,8 @@ const deployCLI = async function deployCLI(funcPath) {
   await YMLUtil.checkFuncConf(funcConf, funcPath);
   const funcTarPath = path.join(await genBinarisDir(funcPath), `${funcName}.tgz`);
   await genTarBall(funcPath, funcTarPath, fullIgnorePaths);
-  const apiKey = getApiKey();
+  const apiKey = await getApiKey();
+  console.log('got api key', apiKey);
   return deploy(apiKey, funcName, funcConf, funcTarPath);
 };
 

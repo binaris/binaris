@@ -4,7 +4,7 @@ const YMLUtil = require('./binarisYML');
 const { getApiKey } = require('./userConf');
 
 const removeCLI = async function removeCLI(funcName, funcPath) {
-  const apiKey = getApiKey();
+  const apiKey = await getApiKey();
   if (funcName) {
     return remove(apiKey, funcName);
   }

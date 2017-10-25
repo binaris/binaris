@@ -10,7 +10,7 @@ const invokeCLI = async function invokeCLI(funcPath, funcName, funcData) {
   if (validFuncName !== funcName) {
     throw new Error(`${funcName} is not a deployed function!`);
   }
-  const apiKey = getApiKey();
+  const apiKey = await getApiKey();
   return invoke(apiKey, validFuncName, funcData);
 };
 
