@@ -1,4 +1,5 @@
 const YMLUtil = require('./binarisYML');
+const { getApiKey } = require('./userConf');
 const { invoke } = require('../sdk');
 
 // invokes a binaris function that has been previously
@@ -9,7 +10,8 @@ const invokeCLI = async function invokeCLI(funcPath, funcName, funcData) {
   if (validFuncName !== funcName) {
     throw new Error(`${funcName} is not a deployed function!`);
   }
-  return invoke(validFuncName, funcData);
+  const apiKey = getApiKey();
+  return invoke(apiKey, validFuncName, funcData);
 };
 
 module.exports = invokeCLI;
