@@ -56,7 +56,6 @@ const deployCLI = async function deployCLI(funcPath) {
   const funcTarPath = path.join(await genBinarisDir(funcPath), `${funcName}.tgz`);
   await genTarBall(funcPath, funcTarPath, fullIgnorePaths);
   const apiKey = await getApiKey();
-  console.log('got api key', apiKey);
   return deploy(apiKey, funcName, funcConf, funcTarPath);
 };
 
