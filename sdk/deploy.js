@@ -36,7 +36,7 @@ const deploy = async function deploy(apiKey, funcName, funcConf, tarPath) {
     throw new Error(`Error deploying function: ${response.statusCode} ${JSON.parse(response.body).error}`);
   }
   // TODO: deploy itself should return the run url / key
-  return urljoin(`https://${invokeEndpoint}`, 'v1', apiKey, funcName);
+  return urljoin(`https://${invokeEndpoint}`, 'v1', 'run', apiKey, funcName);
 };
 
 module.exports = deploy;
