@@ -113,7 +113,20 @@ test.serial('Just test init(good-path)', async (t) => {
   // start running tests/assertions
   t.true(await CLI(['', '', 'init', '-f', t.context.fName, '-p', t.context.fPath]));
   t.is(t.context.logger.getOutputString(),
-    `Initialized function ${t.context.fName} in ${t.context.fullPath}\n  (use "bn deploy" to deploy the function)`);
+`Initialized function ${t.context.fName} in ${t.context.fullPath}
+  (use "bn deploy" to deploy the function)`);
+
+  t.true(await CLI(['', '', 'init', '-p', t.context.fPath]));
+  // this may not be worth keeping or may be worth moving to a separate function
+  // it uses a few string replace tricks to determine the generated name of the
+  // CLI
+  const rawOutput = t.context.logger.getOutputString();
+  const tempOutput = rawOutput.replace('Initialized function ', '');
+  const dblName = tempOutput.slice(0, -(` in ${t.context.fPath}\n  (use "bn deploy" to deploy the function)`.length));
+  const name = dblName.slice(0, dblName.length / 2);
+  t.is(rawOutput,
+`Initialized function ${name} in ${path.join(t.context.fPath, name)}
+  (use "bn deploy" to deploy the function)`);
 });
 
 test.serial('Init/Deploy/Invoke/Remove(good-path)', async (t) => {
@@ -129,21 +142,27 @@ test.serial('Init/Deploy/Invoke/Remove(good-path)', async (t) => {
   // start running tests/assertions
   t.true(await CLI(['', '', 'init', '-f', t.context.fName, '-p', t.context.fPath]));
   t.is(t.context.logger.getOutputString(),
-    `Initialized function ${t.context.fName} in ${t.context.fullPath}\n  (use "bn deploy" to deploy the function)`);
+`Initialized function ${t.context.fName} in ${t.context.fullPath}
+  (use "bn deploy" to deploy the function)`);
 
   t.true(await CLI(['', '', 'deploy', '-p', t.context.fullPath]));
   t.is(t.context.logger.getOutputString(),
-    `Deploying function...\nFunction deployed. To invoke use:\n  curl ${deploySDKMockSuccess(apiKey, t.context.fName)}\nor\n  bn invoke`);
+`Deploying function...
+Function deployed. To invoke use:
+  curl ${deploySDKMockSuccess(apiKey, t.context.fName)}
+or
+  bn invoke`);
 
   t.true(await CLI(['', '', 'invoke', t.context.fName, '-p', t.context.fullPath]));
   t.is(t.context.logger.getOutputString(), `Hello ${t.context.fName}`);
 
   t.true(await CLI(['', '', 'remove', '-p', t.context.fullPath]));
   t.is(t.context.logger.getOutputString(),
-    `Removing function: ${t.context.fullPath}...\nFunction removed`);
+`Removing function: ${t.context.fullPath}...
+Function removed`);
 });
 
-test.serial('Uknown command(bad-path)', async (t) => {
+test.serial('Unknown command(bad-path)', async (t) => {
   const CLI = createCLIStub({}, t.context.logger);
   const badCMD = 'garbageCommand';
   // start running tests/assertions
@@ -151,7 +170,8 @@ test.serial('Uknown command(bad-path)', async (t) => {
   const unknownFailure = `Unknown command: ${badCMD}`;
   if (!process.env.BINARIS_LOG_LEVEL) {
     t.is(t.context.logger.getOutputString(),
-      `${unknownFailure}\nFor more information set the BINARIS_LOG_LEVEL environment variable to debug, verbose, info, warn or error`);
+`${unknownFailure}
+For more information set the BINARIS_LOG_LEVEL environment variable to debug, verbose, info, warn or error`);
   } else {
     t.is(t.context.logger.getOutputString(), unknownFailure);
   }
@@ -161,10 +181,13 @@ test.serial('Deploy with no function present(bad-path)', async (t) => {
   const CLI = createCLIStub({}, t.context.logger);
   // start running tests/assertions
   t.false(await CLI(['', '', 'deploy', '-p', t.context.fullPath]));
-  const deployFailure = `Deploying function...\n${t.context.fullPath} does not contain a valid binaris function!`;
+  const deployFailure =
+`Deploying function...
+${t.context.fullPath} does not contain a valid binaris function!`;
   if (!process.env.BINARIS_LOG_LEVEL) {
     t.is(t.context.logger.getOutputString(),
-      `${deployFailure}\nFor more information set the BINARIS_LOG_LEVEL environment variable to debug, verbose, info, warn or error`);
+`${deployFailure}
+For more information set the BINARIS_LOG_LEVEL environment variable to debug, verbose, info, warn or error`);
   } else {
     t.is(t.context.logger.getOutputString(), deployFailure);
   }
