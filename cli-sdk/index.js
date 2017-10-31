@@ -53,8 +53,10 @@ const initHandler = async function initHandler(options) {
   // evaluated to determine if was successfully completed
   const functionPath = getFuncPath(options);
   const finalName = await init(options.functionName, functionPath);
-  log.info(`Initialized function: ${finalName}`);
-  log.info(`To deploy: (cd ${functionPath}/${finalName}; bn deploy)`);
+  const initDialog =
+`Initialized function ${finalName} in ${path.join(functionPath, finalName)}
+  (use "bn deploy" to deploy the function)`;
+  log.info(initDialog);
 };
 
 // simply handles the process of deploying a function and its

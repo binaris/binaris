@@ -8,6 +8,10 @@ const urljoin = require('urljoin');
 const uuidv4 = require('uuid/v4');
 const fse = require('fs-extra');
 
+// allows the test invoker to control location of test output
+const binarisTestDir = process.env.BINARIS_TEST_DIR || process.cwd();
+const keepTestDirs = process.env.KEEP_TEST_DIRS || false;
+
 // constants/env
 const apiKey = 'FAKEKEY';
 const invokeEndpoint = 'run-faux.binaris.io';
@@ -73,27 +77,43 @@ let testDir;
 
 // here we create our pre & post test hooks
 test.before(async () => {
-  testDir = path.join(process.cwd(), `.binarisTestDir${uuidv4().substring(0, 8)}`);
+  testDir = path.join(binarisTestDir, `.binarisTestDir${uuidv4().substring(0, 8)}`);
   await fse.mkdir(testDir);
 });
 
 test.after(async () => {
-  await fse.remove(testDir);
+  // for some reason fs doesn't have an simple and clean method of
+  // removing a directory which contains any files. The fse package did
+  // appear to have an async version of the remove method that worked well
+  // but for some reason even when properly awaiting the method,
+  // directories would persist. Because of this I decided to use the
+  // fse sync method for now considering its a key part of the cleanup
+  // process and its only a single sync call
+  if (!keepTestDirs) {
+    fse.removeSync(testDir);
+  }
 });
 
 test.beforeEach((t) => {
-  // generate a random name for the tested Binaris function
-  const fName = `binarisFunction${uuidv4().substring(0, 8)}`;
   // eslint-disable-next-line no-param-reassign
   t.context = Object.assign({}, t.context, {
-    fName,
+    fName: `binarisFunction${uuidv4().substring(0, 8)}`,
     // this is a directory made strictly for a test run, expect it
     // to be removed after each test run
     fPath: testDir,
     // hook into logger to intercept dialog output
     logger: createLogger(),
-    fullPath: path.join(testDir, fName),
   });
+  // eslint-disable-next-line no-param-reassign
+  t.context.fullPath = path.join(testDir, t.context.fName);
+});
+
+test.serial('Just test init(good-path)', async (t) => {
+  const CLI = createCLIStub({}, t.context.logger);
+  // start running tests/assertions
+  t.true(await CLI(['', '', 'init', '-f', t.context.fName, '-p', t.context.fPath]));
+  t.is(t.context.logger.getOutputString(),
+    `Initialized function ${t.context.fName} in ${t.context.fullPath}\n  (use "bn deploy" to deploy the function)`);
 });
 
 test.serial('Init/Deploy/Invoke/Remove(good-path)', async (t) => {
@@ -109,7 +129,7 @@ test.serial('Init/Deploy/Invoke/Remove(good-path)', async (t) => {
   // start running tests/assertions
   t.true(await CLI(['', '', 'init', '-f', t.context.fName, '-p', t.context.fPath]));
   t.is(t.context.logger.getOutputString(),
-    `Initialized function: ${t.context.fName}\nTo deploy: (cd ${t.context.fullPath}; bn deploy)`);
+    `Initialized function ${t.context.fName} in ${t.context.fullPath}\n  (use "bn deploy" to deploy the function)`);
 
   t.true(await CLI(['', '', 'deploy', '-p', t.context.fullPath]));
   t.is(t.context.logger.getOutputString(),

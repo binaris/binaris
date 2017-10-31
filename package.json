@@ -42,6 +42,8 @@
       "**/*.{js,jsx}"
     ],
     "failFast": true,
-    "verbose": true
+    "verbose": true,
+    "serial": true,
+    "concurrency": 0
   }
 }
