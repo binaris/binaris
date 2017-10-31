@@ -7,6 +7,7 @@
     "bn": "./index.js"
   },
   "scripts": {
+    "test": "./node_modules/.bin/ava",
     "lint": "./node_modules/.bin/eslint -c .eslintrc.js ."
   },
   "author": "Binaris",
@@ -22,11 +23,27 @@
     "semver": "^5.4.1",
     "targz": "^1.0.1",
     "urljoin": "^0.1.5",
+    "uuid": "^3.1.0",
     "winston": "^2.3.1"
   },
   "devDependencies": {
+    "ava": "^0.23.0",
     "eslint": "^3.14.1",
     "eslint-config-airbnb-base": "^11.0.1",
-    "eslint-plugin-import": "^2.2.0"
+    "eslint-plugin-import": "^2.2.0",
+    "proxyquire": "^1.8.0"
+  },
+  "ava": {
+    "files": [
+      "test"
+    ],
+    "timeout": "180s",
+    "source": [
+      "**/*.{js,jsx}"
+    ],
+    "failFast": true,
+    "verbose": true,
+    "serial": true,
+    "concurrency": 0
   }
 }
