@@ -9,4 +9,8 @@ if (!semver.gte(process.version, minNodeVersion)) {
   process.exit(1);
 }
 
-require('./cli');
+// no await/async since this file needs to support lower versions
+// eslint-disable-next-line global-require
+Promise.resolve(require('./cli')(process.argv)).then((resolve) => {
+  process.exit(resolve);
+});

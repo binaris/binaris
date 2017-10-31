@@ -22,7 +22,9 @@ winston.loggers.add('binaris', {
       colorize: true,
       // eslint-disable-next-line arrow-body-style
       formatter: (options) => {
-        return config.colorize(options.level, ((options.message ? options.message : '') +
+        return config.colorize(options.level,
+          (((options.level === 'error') ? 'bn: ' : '') +
+          (options.message ? options.message : '') +
           // eslint-disable-next-line prefer-template
           (options.meta && Object.keys(options.meta).length ? '\n\t'
           + JSON.stringify(options.meta) : '')));

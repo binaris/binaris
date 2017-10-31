@@ -1,0 +1,10 @@
+#!/bin/bash -e
+
+docker build -f binaris.Dockerfile -t binaris .
+docker run \
+-e BINARIS_INVOKE_ENDPOINT=run-staging.binaris.io \
+-e BINARIS_DEPLOY_ENDPOINT=api-staging.binaris.io \
+-e BINARIS_API_KEY=APIKEYFAKE \
+-e BINARIS_MOCK_SDK=0 \
+--rm binaris \
+bash -c "mkdir -p /home/test && cd /opt/bn && ./node_modules/.bin/ava"
