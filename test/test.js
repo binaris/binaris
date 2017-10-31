@@ -114,7 +114,7 @@ test.serial('Just test init(good-path)', async (t) => {
   t.true(await CLI(['', '', 'init', '-f', t.context.fName, '-p', t.context.fPath]));
   t.is(t.context.logger.getOutputString(),
 `Initialized function ${t.context.fName} in ${t.context.fullPath}
-  (use "bn deploy" to deploy the function)`);
+  (use "bn deploy" -p ${t.context.fullPath} to deploy the function)`);
 
   t.true(await CLI(['', '', 'init', '-p', t.context.fPath]));
   // this may not be worth keeping or may be worth moving to a separate function
@@ -122,11 +122,12 @@ test.serial('Just test init(good-path)', async (t) => {
   // CLI
   const rawOutput = t.context.logger.getOutputString();
   const tempOutput = rawOutput.replace('Initialized function ', '');
-  const dblName = tempOutput.slice(0, -(` in ${t.context.fPath}\n  (use "bn deploy" to deploy the function)`.length));
-  const name = dblName.slice(0, dblName.length / 2);
+  const dblName = tempOutput.slice(0,
+    -(` in ${t.context.fPath}\n  (use "bn deploy" -p ${t.context.fPath} to deploy the function)`.length));
+  const name = dblName.slice(0, dblName.length / 3);
   t.is(rawOutput,
 `Initialized function ${name} in ${path.join(t.context.fPath, name)}
-  (use "bn deploy" to deploy the function)`);
+  (use "bn deploy" -p ${path.join(t.context.fPath, name)} to deploy the function)`);
 });
 
 test.serial('Init/Deploy/Invoke/Remove(good-path)', async (t) => {
@@ -143,7 +144,7 @@ test.serial('Init/Deploy/Invoke/Remove(good-path)', async (t) => {
   t.true(await CLI(['', '', 'init', '-f', t.context.fName, '-p', t.context.fPath]));
   t.is(t.context.logger.getOutputString(),
 `Initialized function ${t.context.fName} in ${t.context.fullPath}
-  (use "bn deploy" to deploy the function)`);
+  (use "bn deploy" -p ${t.context.fullPath} to deploy the function)`);
 
   t.true(await CLI(['', '', 'deploy', '-p', t.context.fullPath]));
   t.is(t.context.logger.getOutputString(),
