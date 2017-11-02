@@ -1,15 +1,13 @@
-const fs = require('mz/fs');
+const fse = require('fs-extra');
 const path = require('path');
 const { promisify } = require('util');
-
 const { compress } = require('targz');
 
 const tgzCompress = promisify(compress);
 
-const log = require('./logger');
-const YMLUtil = require('./binarisYML');
 const { getApiKey } = require('./userConf');
 const { deploy } = require('../sdk');
+const log = require('./logger');
 
 const binarisDir = '.binaris/';
 const ignoredTarFiles = ['.git', '.binaris', 'binaris.yml'];
@@ -17,46 +15,32 @@ const ignoredTarFiles = ['.git', '.binaris', 'binaris.yml'];
 // creates hidden .binaris directory in the users function
 // directory if it doesn't already exist
 const genBinarisDir = async function genBinarisDir(genPath) {
-  let fullPath;
   try {
-    fullPath = path.join(genPath, binarisDir);
-    if (!(await fs.exists(fullPath))) {
-      await fs.mkdir(fullPath);
-    }
+    const fullPath = path.join(genPath, binarisDir);
+    await fse.mkdirp(fullPath);
+    return fullPath;
   } catch (err) {
     log.debug(err);
     throw new Error(`Error creating working directory: ${binarisDir}`);
   }
-  return fullPath;
-};
-
-const genTarBall = async function genTarBall(dirToTar, dest, ignoredFiles) {
-  await tgzCompress({
-    src: dirToTar,
-    dest,
-    tar: {
-      ignore: name => ignoredFiles.includes(name),
-    },
-  });
 };
 
 // simply handles the process of deploying a function and its
 // associated metadata to the Binaris cloud
-const deployCLI = async function deployCLI(funcPath) {
+const deployCLI = async function deployCLI(funcName, funcPath, funcConf) {
   // this should throw an error when it fails
-  const fullIgnorePaths = [];
-  ignoredTarFiles.forEach((entry) => {
-    fullIgnorePaths.push(path.join(funcPath, entry));
-  });
-  const binarisConf = await YMLUtil.loadBinarisConf(funcPath);
-  const funcName = YMLUtil.getFuncName(binarisConf);
-  const funcConf = YMLUtil.getFuncConf(binarisConf, funcName);
-  log.debug({ funcConf });
-  await YMLUtil.checkFuncConf(funcConf, funcPath);
+  const fullIgnorePaths = ignoredTarFiles.map(file => path.join(funcPath, file));
   const funcTarPath = path.join(await genBinarisDir(funcPath), `${funcName}.tgz`);
-  await genTarBall(funcPath, funcTarPath, fullIgnorePaths);
+  // create the tar repr of the Binaris function
+  await tgzCompress({
+    src: funcPath,
+    dest: funcTarPath,
+    tar: {
+      ignore: name => fullIgnorePaths.includes(name),
+    },
+  });
   const apiKey = await getApiKey();
-  return deploy(apiKey, funcName, funcConf, funcTarPath);
+  await deploy(apiKey, funcName, funcConf, funcTarPath);
 };
 
 module.exports = deployCLI;

@@ -12,11 +12,11 @@ ENTRYPOINT ["/tini", "--"]
 
 RUN mkdir -p /opt/binaris
 RUN mkdir -p /opt/bn
-
-COPY ./package.json ./index.js /opt/bn/
-ADD sdk /opt/bn/sdk/
-ADD cli-sdk /opt/bn/cli-sdk/
 WORKDIR /opt/bn
+COPY ./package.json /opt/bn/
+RUN npm install --save-dev
+
+COPY . /opt/bn/
 RUN npm install -g
 
 WORKDIR /opt/binaris

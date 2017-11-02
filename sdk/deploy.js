@@ -1,7 +1,7 @@
 const fs = require('fs');
 const urljoin = require('urljoin');
 const request = require('request');
-const { deployEndpoint, invokeEndpoint } = require('./config');
+const { deployEndpoint } = require('./config');
 
 const deployFunction = async function uploadFunction(tarPath, conf, deployURL) {
   const options = {
@@ -35,8 +35,6 @@ const deploy = async function deploy(apiKey, funcName, funcConf, tarPath) {
   if (response.statusCode !== 200) {
     throw new Error(`Error deploying function: ${response.statusCode} ${JSON.parse(response.body).error}`);
   }
-  // TODO: deploy itself should return the run url / key
-  return urljoin(`https://${invokeEndpoint}`, 'v1', 'run', apiKey, funcName);
 };
 
 module.exports = deploy;

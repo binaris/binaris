@@ -1,4 +1,3 @@
-const fs = require('mz/fs');
 const fse = require('fs-extra');
 const path = require('path');
 
@@ -56,20 +55,10 @@ const init = async function init(functionName, functionPath) {
   // replace the generic function name with the actual name
   YMLUtil.addFuncConf(binarisConf, finalName, funcConf);
   YMLUtil.delFuncConf(binarisConf, templateName);
-  const newDir = path.join(functionPath, finalName);
-  // ensure that the function directory doesn't already exist
-  try {
-    await fs.mkdir(newDir);
-  } catch (err) {
-    log.debug(err);
-    throw new Error(`Function creation failed. Directory already exists: ${finalName}`);
-  }
-  log.debug('Replicating template files');
-
   // now write out all the files that have been modified
   const file = funcConf.file;
-  await fse.copy(path.join(__dirname, templateDir, file), path.join(newDir, file));
-  await YMLUtil.saveBinarisConf(newDir, binarisConf);
+  await fse.copy(path.join(__dirname, templateDir, file), path.join(functionPath, file));
+  await YMLUtil.saveBinarisConf(functionPath, binarisConf);
   return finalName;
 };
 

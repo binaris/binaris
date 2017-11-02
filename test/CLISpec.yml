@@ -1,0 +1,96 @@
+---
+- test: Test init(good-path)
+  work_dir: /home/test
+  steps:
+    -   in: bn init
+        out: |-
+            Initialized function * in /home/test
+              (use "bn deploy" to deploy the function)
+    -   in: bn init -f purplecannon -p /home/test/purplecannon
+        out: |-
+            Initialized function purplecannon in /home/test/purplecannon
+              (use "bn deploy -p /home/test/purplecannon -f purplecannon" to deploy the function)
+
+- test: Test deploy(good-path)
+  work_dir: /home/test
+  steps:
+    -   in: bn init -f rogerdodger -p /home/test/rogerdodger
+        out: |-
+            Initialized function rogerdodger in *rogerdodger
+              (use "bn deploy -p /home/test/rogerdodger -f rogerdodger" to deploy the function)
+    -   in: bn deploy -f rogerdodger -p /home/test/rogerdodger
+        out: |-
+            Deployed function rogerdodger
+              (use "bn invoke -p /home/test/rogerdodger -f rogerdodger" to invoke the function)
+
+- test: Test all commands(good-path)
+  work_dir: /home/test
+  steps:
+    -   in: bn init -f cherrycoke -p /home/test/cherrycoke
+        out: |-
+            Initialized function cherrycoke in /home/test/cherrycoke
+              (use "bn deploy -p /home/test/cherrycoke -f cherrycoke" to deploy the function)
+    -   in: bn deploy -p /home/test/cherrycoke
+        out: |-
+            Deployed function cherrycoke
+              (use "bn invoke -p /home/test/cherrycoke" to invoke the function)
+    -   in: bn invoke cherrycoke -p /home/test/cherrycoke
+        out: |-
+            Hello World!
+    -   in: bn remove -p /home/test/cherrycoke
+        out: |-
+            Removed function cherrycoke
+              (use "bn deploy -p /home/test/cherrycoke" to re-deploy the function)
+
+- test: Unknown command(bad-path)
+  work_dir: /home/test
+  steps:
+    -   in: bn alwaysbad
+        out: |-
+            bn: Unknown command: 'alwaysbad'. See 'bn --help'
+            For more information set the BINARIS_LOG_LEVEL environment variable to debug, verbose, info, warn or error
+        exit: 1
+
+- test: No such directory(bad-path)
+  work_dir: /home/test
+  steps:
+    -   in: bn deploy -p /home/test/bogus/comeon/really
+        out: |-
+            bn: No such directory: '/home/test/bogus/comeon/really'
+            For more information set the BINARIS_LOG_LEVEL environment variable to debug, verbose, info, warn or error
+        exit: 1
+    -   in: bn invoke -p /home/test/never/will/exist
+        out: |-
+            bn: No such directory: '/home/test/never/will/exist'
+            For more information set the BINARIS_LOG_LEVEL environment variable to debug, verbose, info, warn or error
+        exit: 1
+    -   in: bn remove -p /home/test/hocus/pocus/fairy
+        out: |-
+            bn: No such directory: '/home/test/hocus/pocus/fairy'
+            For more information set the BINARIS_LOG_LEVEL environment variable to debug, verbose, info, warn or error
+        exit: 1
+
+# yes clearly not a reliable test, but I will do setup next and then use a real dir
+- test: No binaris.yml in directory(bad-path)
+  work_dir: /home/test
+  setup:
+    - mkdir -p /home/test/trollycopter
+  steps:
+    -   in: bn invoke -p /home/test/trollycopter -f icydiceymolecule
+        out: |-
+            bn: Cannot find binaris.yml in directory: /home/test/trollycopter
+            For more information set the BINARIS_LOG_LEVEL environment variable to debug, verbose, info, warn or error
+        exit: 1
+
+- test: No matching function(bad-path)
+  work_dir: /home/test
+  steps:
+    -   in: bn init -f unrelatedname -p /home/test/grouchybear
+        out: |- 
+            Initialized function unrelatedname in /home/test/grouchybear
+              (use "bn deploy -p /home/test/grouchybear -f unrelatedname" to deploy the function)
+    -   in: bn deploy -p /home/test/grouchybear -f grouchybear
+        out: |-
+            bn: Cannot find function 'grouchybear' in binaris.yml
+            For more information set the BINARIS_LOG_LEVEL environment variable to debug, verbose, info, warn or error
+        exit: 1
