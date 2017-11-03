@@ -8,44 +8,28 @@ const YMLUtil = require('./binarisYML');
 
 const templateDir = './functionTemplates/nodejs/';
 
-// TODO: either export this or move it to shared file
-// currently the code ensures the name is valid syntatically and eventually
-// will also determine if it has been previously created
-const validateFunctionName = function validateFunctionName(name) {
-  // eslint issue but too annoying to fix given time
-  if (/[~`!#$%^&*+=\\[\]\\';,/{}|\\":<>?]/g.test(name)) {
-    return false;
-  }
-
-  // need to add an SDK? call to ensure that the name is not only
-  // syntatically valid but also unique
-  return true;
+/**
+ * Sanitize the name, removing any invalid or non-unicode
+ * characters.
+ *
+ * @param {string} name - the name to sanitize
+ * @returns {string} - the sanitized version of the input name
+ */
+const sanitizeName = function sanitizeName(name) {
+  return name.replace(/[~`!#$%^&*+-=\\[\]\\';,/{}|\\":<>?]/g, '');
 };
 
+/**
+ * Initializes a Binaris function with the given name at the
+ * provided path. If a name is not provided one will be randomly
+ * generated.
+ *
+ * @param {string} functionName - the name of the function to initialize
+ * @param {string} functionPath - the path to initialize the function at
+ * @returns {string} - the final name selected for the function
+ */
 const init = async function init(functionName, functionPath) {
-  let finalName;
-  if (functionName) {
-    const answer = validateFunctionName(functionName);
-    if (answer) {
-      finalName = functionName;
-    } else {
-      throw new Error(`Invalid function name: ${functionName}`);
-    }
-  } else {
-    while (!finalName) {
-      // until the system supports dashes in names
-      const potentialName = moniker.choose().replace(/-/g, '');
-      const answer = validateFunctionName(potentialName);
-      if (answer) {
-        finalName = potentialName;
-      }
-    }
-  }
-
-  if (!functionPath) {
-    throw new Error('Invalid function path');
-  }
-
+  const finalName = sanitizeName(functionName || moniker.choose());
   log.debug('Loading template files');
   // parse the templated yml and make the necessary modifications
   const templatePath = path.join(__dirname, templateDir);
