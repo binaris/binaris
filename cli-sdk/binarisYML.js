@@ -23,7 +23,7 @@ const loadBinarisConf = async function loadBinarisConf(funcDirPath) {
     return binarisConf;
   } catch (err) {
     log.debug(err);
-    throw new Error(`${funcDirPath} does not contain a valid binaris function!`);
+    throw new Error(`Cannot find ${binarisConfFile} in directory: ${funcDirPath}`);
   }
 };
 
@@ -82,7 +82,7 @@ const getFuncConf = function getFuncConf(binarisConf, funcName) {
   const funcSection = getFunctionsSection(binarisConf);
   // ensure configuration has the correct function
   if (!Object.prototype.hasOwnProperty.call(funcSection, funcName)) {
-    throw new Error(`${binarisConfFile}: function missing: ${funcName}`);
+    throw new Error(`Cannot find function '${funcName}' in ${binarisConfFile}`);
   }
   const funcConf = funcSection[funcName];
   return funcConf;

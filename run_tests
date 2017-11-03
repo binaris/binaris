@@ -4,6 +4,9 @@ docker build -f binaris.Dockerfile -t binaris .
 docker run \
 -e BINARIS_INVOKE_ENDPOINT=run-staging.binaris.io \
 -e BINARIS_DEPLOY_ENDPOINT=api-staging.binaris.io \
--e BINARIS_API_KEY=123456 \
+-e BINARIS_API_KEY=12345 \
 -e BINARIS_MOCK_SDK=0 \
---rm -it binaris bash\
+--rm binaris \
+bash -c "mkdir -p /home/dockeruser/test &&\
+  cd /home/dockeruser/binaris &&\
+  ./node_modules/.bin/ava"
