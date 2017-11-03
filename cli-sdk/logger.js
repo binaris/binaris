@@ -13,6 +13,16 @@ const colorLevels = {
 
 winston.addColors(colorLevels);
 
+const formatter = function formatter(options) {
+  const isError = (options.level === 'error');
+  const prefix = isError ? 'bn: ' : '';
+  const body = options.message ? options.message : '';
+  const sufix = (options.meta && Object.keys(options.meta).length
+   ? `\n\t${JSON.stringify(options.meta)}` : '');
+
+  return config.colorize(options.level, `${prefix}${body}${sufix}`);
+};
+
 winston.loggers.add('binaris', {
   transports: [
     new (winston.transports.Console)({
@@ -21,12 +31,7 @@ winston.loggers.add('binaris', {
       prettyPrint: true,
       colorize: true,
       // eslint-disable-next-line arrow-body-style
-      formatter: (options) => {
-        return config.colorize(options.level, ((options.message ? options.message : '') +
-          // eslint-disable-next-line prefer-template
-          (options.meta && Object.keys(options.meta).length ? '\n\t'
-          + JSON.stringify(options.meta) : '')));
-      },
+      formatter,
     }),
   ],
 });

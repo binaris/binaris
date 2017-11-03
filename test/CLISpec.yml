@@ -1,0 +1,141 @@
+---
+- test: Test init(good-path)
+  work_dir: /home/dockeruser/test
+  steps:
+    -   in: bn init
+        out: |-
+            Initialized function * in /home/dockeruser/test
+              (use "bn deploy" to deploy the function)
+    -   in: bn init -f purplecannon -p /home/dockeruser/test/purplecannon
+        out: |-
+            Initialized function purplecannon in /home/dockeruser/test/purplecannon
+              (use "bn deploy -p /home/dockeruser/test/purplecannon -f purplecannon" to deploy the function)
+
+- test: Test deploy(good-path)
+  work_dir: /home/dockeruser/test
+  steps:
+    -   in: bn init -f rogerdodger -p /home/dockeruser/test/rogerdodger
+        out: |-
+            Initialized function rogerdodger in *rogerdodger
+              (use "bn deploy -p /home/dockeruser/test/rogerdodger -f rogerdodger" to deploy the function)
+    -   in: bn deploy -f rogerdodger -p /home/dockeruser/test/rogerdodger
+        out: |-
+            Deployed function to *rogerdodger
+              (use "bn invoke -p /home/dockeruser/test/rogerdodger -f rogerdodger" to invoke the function)
+
+- test: Test all commands(good-path)
+  work_dir: /home/dockeruser/test
+  steps:
+    -   in: bn init -f cherrycoke -p /home/dockeruser/test/cherrycoke
+        out: |-
+            Initialized function cherrycoke in /home/dockeruser/test/cherrycoke
+              (use "bn deploy -p /home/dockeruser/test/cherrycoke -f cherrycoke" to deploy the function)
+    -   in: bn deploy -p /home/dockeruser/test/cherrycoke
+        out: |-
+            Deployed function to *cherrycoke
+              (use "bn invoke -p /home/dockeruser/test/cherrycoke" to invoke the function)
+    -   in: bn invoke -f cherrycoke -p /home/dockeruser/test/cherrycoke
+        out: |-
+            Hello World!
+        delay: 2000
+    -   in: bn remove -p /home/dockeruser/test/cherrycoke
+        out: |-
+            Removed function cherrycoke
+              (use "bn deploy -p /home/dockeruser/test/cherrycoke" to re-deploy the function)
+
+- test: Unknown command(bad-path)
+  work_dir: /home/dockeruser/test
+  steps:
+    -   in: bn alwaysbad
+        out: |-
+            bn: Unknown command: 'alwaysbad'. See 'bn --help'
+        exit: 1
+
+- test: No permission
+  work_dir: /home/dockeruser/test
+  setup:
+    - mkdir /home/dockeruser/test/securedir
+    - echo binaris | sudo  -p "" -S chown root:root /home/dockeruser/test/securedir
+    - echo binaris | sudo  -p "" -S chmod 700 /home/dockeruser/test/securedir
+  steps:
+    -   in: bn init -p /home/dockeruser/test/securedir
+        out: |-
+            bn: Permission denied writing to path: /home/dockeruser/test/securedir*
+        exit: 1
+
+- test: Superfluous output(bad-path)
+  work_dir: /home/dockeruser/test
+  steps:
+    -   in: bn init init init
+        out: |-
+            bn: Argument * is not a valid input to *
+        exit: 1
+    -   in: bn init sadmksad
+        out: |-
+            bn: Argument sadmksad is not a valid input to init
+        exit: 1
+    -   in: bn deploy init
+        out: |-
+            bn: Argument init is not a valid input to deploy
+        exit: 1
+
+- test: No such path(bad-path)
+  work_dir: /home/dockeruser/test
+  steps:
+    -   in: bn deploy -p /home/dockeruser/test/bogus/comeon/really/hello.js
+        out: |-
+            bn: No such path: '/home/dockeruser/test/bogus/comeon/really/hello.js'
+            For more information set the BINARIS_LOG_LEVEL environment variable to debug, verbose, info, warn or error
+        exit: 1
+    -   in: bn invoke -p /home/dockeruser/test/never/will/exist
+        out: |-
+            bn: No such path: '/home/dockeruser/test/never/will/exist'
+            For more information set the BINARIS_LOG_LEVEL environment variable to debug, verbose, info, warn or error
+        exit: 1
+    -   in: bn remove -p /home/dockeruser/test/hocus/pocus/fairy
+        out: |-
+            bn: No such path: '/home/dockeruser/test/hocus/pocus/fairy'
+            For more information set the BINARIS_LOG_LEVEL environment variable to debug, verbose, info, warn or error
+        exit: 1
+
+- test: No such directory(bad-path)
+  work_dir: /home/dockeruser/test
+  setup:
+    - touch /home/dockeruser/test/someFile.js
+    - mkdir -p /home/dockeruser/test/abcdefg
+    - touch /home/dockeruser/test/abcdefg/anotherFile.txt
+  steps:
+    -   in: bn deploy -p /home/dockeruser/test/someFile.js
+        out: |-
+            bn: No such directory: '/home/dockeruser/test/someFile.js'
+            For more information set the BINARIS_LOG_LEVEL environment variable to debug, verbose, info, warn or error
+        exit: 1
+    -   in: bn invoke -p /home/dockeruser/test/abcdefg/anotherFile.txt
+        out: |-
+            bn: No such directory: '/home/dockeruser/test/abcdefg/anotherFile.txt'
+            For more information set the BINARIS_LOG_LEVEL environment variable to debug, verbose, info, warn or error
+        exit: 1
+
+- test: No binaris.yml in directory(bad-path)
+  work_dir: /home/dockeruser/test
+  setup:
+    - mkdir -p /home/dockeruser/test/trollycopter
+  steps:
+    -   in: bn invoke -p /home/dockeruser/test/trollycopter -f icydiceymolecule
+        out: |-
+            bn: Cannot find binaris.yml in directory: /home/dockeruser/test/trollycopter
+            For more information set the BINARIS_LOG_LEVEL environment variable to debug, verbose, info, warn or error
+        exit: 1
+
+- test: No matching function(bad-path)
+  work_dir: /home/dockeruser/test
+  steps:
+    -   in: bn init -f unrelatedname -p /home/dockeruser/test/grouchybear
+        out: |- 
+            Initialized function unrelatedname in /home/dockeruser/test/grouchybear
+              (use "bn deploy -p /home/dockeruser/test/grouchybear -f unrelatedname" to deploy the function)
+    -   in: bn deploy -p /home/dockeruser/test/grouchybear -f grouchybear
+        out: |-
+            bn: Cannot find function 'grouchybear' in binaris.yml
+            For more information set the BINARIS_LOG_LEVEL environment variable to debug, verbose, info, warn or error
+        exit: 1
