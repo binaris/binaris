@@ -1,9 +1,13 @@
 #!/bin/bash -e
+CMD="docker run"
+DOCKER_IMG=binaris
+FLAGS="--rm --cap-add=NET_ADMIN -e BINARIS_INVOKE_ENDPOINT
+-e BINARIS_DEPLOY_ENDPOINT -e BINARIS_API_KEY -e BINARIS_MOCK_SDK=0"
+if [ $# -eq 0 ]; then
+	FLAGS=$FLAGS" -it"
+	RUN_ARG="bash"
+else
+	RUN_ARG="$@"
+fi
 
-docker build -f binaris.Dockerfile -t binaris .
-docker run \
--e BINARIS_INVOKE_ENDPOINT=run-staging.binaris.io \
--e BINARIS_DEPLOY_ENDPOINT=api-staging.binaris.io \
--e BINARIS_API_KEY=123456 \
--e BINARIS_MOCK_SDK=0 \
---rm -it binaris bash\
+$CMD $FLAGS $DOCKER_IMG bash -c "$RUN_ARG"

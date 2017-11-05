@@ -1,0 +1,4 @@
+#!/bin/bash -e
+
+docker build -f binaris.Dockerfile -t binaris .
+./node_modules/.bin/ava

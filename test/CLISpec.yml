@@ -55,8 +55,8 @@
   work_dir: /home/dockeruser/test
   setup:
     - mkdir /home/dockeruser/test/securedir
-    - echo binaris | sudo  -p "" -S chown root:root /home/dockeruser/test/securedir
-    - echo binaris | sudo  -p "" -S chmod 700 /home/dockeruser/test/securedir
+    - echo binaris | sudo  -S chown root:root /home/dockeruser/test/securedir
+    - echo binaris | sudo  -S chmod 700 /home/dockeruser/test/securedir
   steps:
     -   in: bn init -p /home/dockeruser/test/securedir
         out: |-
