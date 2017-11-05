@@ -133,23 +133,18 @@ const removeHandler = async function removeHandler(options) {
 const invokeHandler = async function invokeHandler(options) {
   const meta = await gatherMeta(options);
   if (options.data && options.json) {
-    log.error('Options json (-j) and data (-d) cannot be provided together');
-  }
-  let funcData;
-  let payloadJSON;
-  if (options.data) {
-    payloadJSON = options.data;
-  } else if (options.json) {
-    try {
-      payloadJSON = await fs.readFile(options.json, 'utf8');
-    } catch (err) {
-      throw new Error(`Invalid JSON file path: ${options.json}`);
-    }
+    throw new Error('Invoke flags --json(-j) and --data(-d) are mutually exclusive');
   }
 
-  if (payloadJSON) {
-    funcData = JSON.parse(payloadJSON);
-    log.debug({ funcData });
+  let funcData;
+  if (options.data) {
+    funcData = options.data;
+  } else if (options.json) {
+    try {
+      funcData = await fs.readFile(options.json, 'utf8');
+    } catch (err) {
+      throw new Error(`${options.json} is not a valid path to a JSON file`);
+    }
   }
 
   const response = await invoke(meta.path, meta.name, funcData);

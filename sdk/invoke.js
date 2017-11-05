@@ -6,9 +6,11 @@ const invoke = async function invoke(apiKey, funcName, funcData) {
   const endpoint = urljoin(`https://${invokeEndpoint}`, 'v1', 'run', apiKey, funcName);
   const options = {
     url: endpoint,
+    headers: {
+      'Content-Type': 'application/json',
+    },
     body: funcData,
     resolveWithFullResponse: true,
-    json: true,
   };
   return rp.post(options);
 };
