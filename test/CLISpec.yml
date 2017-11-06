@@ -1,4 +1,32 @@
 ---
+# Because login now verifies that the provided APIKey is correct
+# this test cannot run to completion with our current testing
+# environment. Once we have a more reliable way of responding to
+# prompts(in the tests) we can re-enable this test.
+#
+# - test: Test login(good-path)
+#   work_dir: /home/dockeruser/test
+#   env:
+#     BINARIS_API_KEY: unset
+#     BINARIS_CONF_DIR: /home/dockeruser/test
+#   steps:
+#     -   in: bn init -f regulatedguest -p /home/dockeruser/test/regulatedguest
+#         out: |-
+#             Initialized function regulatedguest in /home/dockeruser/test/regulatedguest
+#               (use "bn deploy -p /home/dockeruser/test/regulatedguest -f regulatedguest" to deploy the function)
+#     -   in: ((echo 12345) | bn login)
+#         out: |-
+#             Please enter your Binaris API key to deploy and invoke functions.
+#             If you don't have a key, head over to https://binaris.com to request one
+#             *API Key: 12345
+#             Authentication Succeeded
+#               (use "bn init" to initialize a template function in your current directory)
+#     -   in: bn deploy -f regulatedguest -p /home/dockeruser/test/regulatedguest
+#         out: |-
+#             Deployed function to *regulatedguest
+#               (use "bn invoke -p /home/dockeruser/test/regulatedguest -f regulatedguest" to invoke the function)
+#         delay: 300
+
 - test: Test init(good-path)
   work_dir: /home/dockeruser/test
   steps:
@@ -42,6 +70,21 @@
         out: |-
             Removed function cherrycoke
               (use "bn deploy -p /home/dockeruser/test/cherrycoke" to re-deploy the function)
+
+- test: Test login(bad-path)
+  work_dir: /home/dockeruser/test
+  env:
+    BINARIS_API_KEY: unset
+    BINARIS_CONF_DIR: /home/dockeruser/test
+  steps:
+    -   in: bn init -f regulatedguest -p /home/dockeruser/test/regulatedguest
+        out: |-
+            Initialized function regulatedguest in /home/dockeruser/test/regulatedguest
+              (use "bn deploy -p /home/dockeruser/test/regulatedguest -f regulatedguest" to deploy the function)
+    -   in: ((echo 9397312) | bn login)
+        out: |-
+            bn: Invalid API key, please try again
+        exit: 1
 
 - test: Test invoke(bad-path)
   work_dir: /home/dockeruser/test
@@ -147,4 +190,38 @@
     -   in: bn deploy -p /home/dockeruser/test/grouchybear -f grouchybear
         out: |-
             bn: Cannot find function 'grouchybear' in binaris.yml
+        exit: 1
+
+- test: No API key or conf file(bad-path)
+  work_dir: /home/dockeruser/test
+  env:
+    BINARIS_API_KEY: unset
+    BINARIS_CONF_DIR: /home/dockeruser/test
+  steps:
+    -   in: bn init -f banananasundae -p /home/dockeruser/test/banananasundae
+        out: |-
+            Initialized function * in *
+              (use "bn deploy*" to deploy the function)
+        exit: 0
+    -   in: bn deploy -f banananasundae -p /home/dockeruser/test/banananasundae
+        out: |-
+            bn: Binaris conf file could not be read and BINARIS_API_KEY is undefined, please use "bn login"
+        exit: 1
+
+- test: Corrupt binaris conf file(bad-path)
+  work_dir: /home/dockeruser/test
+  setup:
+    - echo 'INVALIDCONF' | tee /home/dockeruser/test/.binaris.yml > /dev/null
+  env:
+    BINARIS_API_KEY: unset
+    BINARIS_CONF_DIR: /home/dockeruser/test
+  steps:
+    -   in: bn init -f yogurtsalad -p /home/dockeruser/test/yogurtsalad
+        out: |-
+            Initialized function * in *
+              (use "bn deploy*" to deploy the function)
+        exit: 0
+    -   in: bn deploy -f yogurtsalad -p /home/dockeruser/test/yogurtsalad
+        out: |-
+            bn: Invalid Binaris conf file (missing API key) /home/dockeruser/test/.binaris.yml
         exit: 1

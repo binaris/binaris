@@ -24,10 +24,11 @@ const testMountDir = '/home/dockeruser/test';
 const flags = '--cap-add=NET_ADMIN';
 
 // The environment variables propagated to Docker
-const envVars = [
-  'BINARIS_INVOKE_ENDPOINT',
-  'BINARIS_DEPLOY_ENDPOINT',
-  'BINARIS_API_KEY'];
+const envVars = {
+  BINARIS_INVOKE_ENDPOINT: undefined,
+  BINARIS_DEPLOY_ENDPOINT: undefined,
+  BINARIS_API_KEY: undefined,
+};
 
 /**
  * Imitates stdc sleep behavior using es6 async/await
@@ -67,12 +68,24 @@ test.afterEach.always(async (t) => {
 const planYAML = yaml.safeLoad(fs.readFileSync(process.env.BINARIS_TEST_SPEC_PATH || './test/CLISpec.yml', 'utf8'));
 planYAML.forEach((rawSubTest) => {
   test(rawSubTest.test, async (t) => {
-    // Create environment variable string from the env list
-    const envs = `-e ${envVars.join(' -e ')}`;
+    const envMap = Object.assign({}, envVars, rawSubTest.env || {});
+    let envString = '';
+    for (const envKey in envMap) {
+      if (Object.prototype.hasOwnProperty.call(envMap, envKey)) {
+        if (envMap[envKey] !== 'unset') {
+          if (envMap[envKey] !== undefined) {
+            envString += ` -e "${envKey}=${envMap[envKey]}"`;
+          } else {
+            envString += ` -e ${envKey}`;
+          }
+        }
+      }
+    }
+
     if (rawSubTest.setup) {
       for (const setupStep of rawSubTest.setup) {
         // eslint-disable-next-line no-await-in-loop
-        await t.context.container.run(`${envs} ${flags}`, setupStep);
+        await t.context.container.run(`${envString} ${flags}`, setupStep);
       }
     }
 
@@ -84,7 +97,7 @@ planYAML.forEach((rawSubTest) => {
 
       try {
         // eslint-disable-next-line no-await-in-loop
-        const output = await t.context.container.run(`${envs} ${flags}`, step.in, true);
+        const output = await t.context.container.run(`${envString} ${flags}`, step.in, true);
         t.true(globToRegExp(step.out).test(output.slice(0, -1)));
       } catch (err) {
         t.true(globToRegExp(step.out).test(err.stderr.slice(0, -1)));
