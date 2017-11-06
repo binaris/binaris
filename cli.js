@@ -1,8 +1,8 @@
 const commander = require('commander');
 // grab the version to keep things consistent
 const { version } = require('./package.json');
-const { initHandler, deployHandler, removeHandler,
-   invokeHandler, unknownHandler } = require('./cli-sdk');
+const { deployHandler, initHandler, invokeHandler,
+  loginHandler, removeHandler, unknownHandler } = require('./cli-sdk');
 
 const runCLI = function runCLI(input) {
   const exitCode = new Promise((resolve) => {
@@ -24,6 +24,11 @@ const runCLI = function runCLI(input) {
       .option('-p, --path <path>',
         // eslint-disable-next-line quotes
         `Change to directory dir before doing anything else. Create if non-existent`);
+
+    commander
+      .command('login')
+      .description('Login to your Binaris account using an API key')
+      .action(actionWrapper(loginHandler, true));
 
     commander
       .command('init')

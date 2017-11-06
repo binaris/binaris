@@ -4,11 +4,13 @@ const invoke = require('./invoke');
 const log = require('./logger');
 const remove = require('./remove');
 const YMLUtil = require('./binarisYML');
+const userConf = require('./userConf');
 
 // core modules
 const fs = require('mz/fs');
 const fse = require('fs-extra');
 const path = require('path');
+const inquirer = require('inquirer');
 
 /**
  * Wrapper which centralizes the error handling/processing
@@ -148,6 +150,36 @@ const invokeHandler = async function invokeHandler(options) {
   log.info(response.body);
 };
 
+
+/**
+ * Authenticate the user by saving the provided Binaris
+ * api key in a well known .binaris directory.
+ */
+const loginHandler = async function loginHandler() {
+  log.info(
+`Please enter your Binaris API key to deploy and invoke functions.
+If you don't have a key, head over to https://binaris.com to request one`);
+
+  // this temporarily handles the errors/dialog until
+  // debugging help message from general commands is removed
+  try {
+    const answer = await inquirer.prompt([{
+      type: 'input',
+      name: 'apiKey',
+      message: 'API Key:',
+    }]);
+    await userConf.verifyAPIKey(answer.apiKey);
+    await userConf.saveUserConf(answer);
+    log.info(
+`Authentication Succeeded
+  (use "bn init" to initialize a template function in your current directory)`);
+  } catch (err) {
+    log.error(err.message);
+    return 1;
+  }
+  return 0;
+};
+
 /**
  * Handles the case of an unknown argument.
  *
@@ -162,6 +194,7 @@ module.exports = {
   deployHandler: exceptionWrapper(deployHandler),
   initHandler: exceptionWrapper(initHandler),
   invokeHandler: exceptionWrapper(invokeHandler),
+  loginHandler,
   removeHandler: exceptionWrapper(removeHandler),
   unknownHandler,
 };
