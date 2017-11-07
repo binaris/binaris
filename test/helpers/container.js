@@ -28,7 +28,7 @@ class Container {
     if (this.volumeName) {
       throw new Error('Container has already been created!');
     }
-    this.volumeName = `binaris${uuidv4().slice(0, 8)}`;
+    this.volumeName = `${this.imgName}${uuidv4().slice(0, 8)}`;
     const create = await execBash(
 `docker create -v ${this.mountDir} --name ${this.volumeName} \
 ${flags || ''} ${this.imgName} /bin/true`, false);
