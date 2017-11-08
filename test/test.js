@@ -9,10 +9,10 @@ const globToRegExp = require('glob-to-regexp');
 // Create/run and remove a Docker container.
 const Container = require('./helpers/container');
 
-// The name of our Docker image.
+// The name of the Docker image.
 const dockerImage = 'binaris';
 
-// Our docker user/group information.
+// The docker user/group information.
 const dockerUser = 'dockeruser';
 const dockerGroup = 'dockeruser';
 const dockerPassword = 'binaris';
@@ -23,7 +23,7 @@ const testMountDir = '/home/dockeruser/test';
 // This is needed to mess with the Docker network from inside
 const flags = '--cap-add=NET_ADMIN';
 
-// The environment variables we want propagated to Docker
+// The environment variables propagated to Docker
 const envVars = [
   'BINARIS_INVOKE_ENDPOINT',
   'BINARIS_DEPLOY_ENDPOINT',
@@ -52,7 +52,7 @@ test.beforeEach(async (t) => {
 });
 
 /**
- * Always call `remove` on your container before exit
+ * Always call `remove` on the container before exit
  */
 test.afterEach.always(async (t) => {
   if (t.context.container.isCreated()) {
@@ -67,7 +67,7 @@ test.afterEach.always(async (t) => {
 const planYAML = yaml.safeLoad(fs.readFileSync(process.env.BINARIS_TEST_SPEC_PATH || './test/CLISpec.yml', 'utf8'));
 planYAML.forEach((rawSubTest) => {
   test(rawSubTest.test, async (t) => {
-    // Create our environment variable string from the env list
+    // Create environment variable string from the env list
     const envs = `-e ${envVars.join(' -e ')}`;
     if (rawSubTest.setup) {
       for (const setupStep of rawSubTest.setup) {
@@ -86,9 +86,9 @@ planYAML.forEach((rawSubTest) => {
         const output = await t.context.container.run(`${envs} ${flags}`, step.in, true);
         t.true(globToRegExp(step.out).test(output.slice(0, -1)));
       } catch (err) {
-        // Annoying byproduct of the child_process in node. Because we
-        // have no guarantees regarding ordering, we must test both possible
-        // orderings to ensure we have a match.
+        // Annoying byproduct of the child_process in node. Because there
+        // are no guarantees regarding ordering, both possible
+        // orderings must be tested to ensure there is a match.
         const orderOne = `${err.stdout}${err.stderr}`.slice(0, -1);
         const orderTwo = `${err.stderr}${err.stdout}`.slice(0, -1);
         if (globToRegExp(step.out).test(orderOne)) {

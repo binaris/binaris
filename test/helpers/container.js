@@ -70,14 +70,14 @@ ${flags || ''} ${this.imageName} /bin/true`;
   }
 
   /**
-   * Runs your docker container and attempts to invoke the provided
+   * Runs a docker container and attempts to invoke the provided
    * command via bash. You will either receive and error object with
    * the stdout, stderr and exit code or the stdout and an implied
    * success.
    *
    * @param {string} flags -  extra flags to pass to run
    * @param {string} runArgs - the run arguments to pass to bash
-   * @returns {object} - stdout of your run
+   * @returns {object} - stdout of the run
    */
   async run(flags, runArgs, color = false) {
     if (!this.volumeName) {
