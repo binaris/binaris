@@ -26,7 +26,6 @@ function spawnWrapper(command, cmdArgs, debugId = '', options = {}) {
       let chunk;
       // eslint-disable-next-line no-cond-assign
       while ((chunk = cmd[stream].read()) !== null) {
-        /* Unfortunately, tests does not exercise this */
         RC[stream] += chunk;
       }
     };
