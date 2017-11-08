@@ -30,9 +30,6 @@ ENV NODE_PATH="$HOME/.node/lib/node_modules:$NODE_PATH"
 ENV MANPATH="$HOME/.node/share/man:$MANPATH"
 
 WORKDIR /home/dockeruser/binaris
-COPY ./package.json /home/dockeruser/binaris
-RUN npm install --save-dev
-
 COPY . /home/dockeruser/binaris
 RUN npm install -g
 
