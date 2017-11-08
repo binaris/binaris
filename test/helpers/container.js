@@ -7,18 +7,18 @@ class Container {
    * sudo user password and mount directory. The mount directory is
    * the location where the persistent volume should be mounted in the container.
    *
-   * @param {string} imgName - the docker image name to use when creating this container
+   * @param {string} imageName - the docker image name to use when creating this container
    * @param {string} sudoPassword - the password for the sudo user of the image
    * @param {string} mountDir - the dir to mount a volume on in the container
    */
-  constructor(imgName, sudoPassword, mountDir) {
+  constructor(imageName, sudoPassword, mountDir) {
     this.sudoCommand = `echo ${sudoPassword} | sudo -S `;
-    this.imgName = imgName;
+    this.imageName = imageName;
     this.mountDir = mountDir;
   }
 
   /**
-   * Creates a container with imgName and a defined volume.
+   * Creates a container with imageName and a defined volume.
    * The container will last until removed as there is no
    * Object lifetime management in JS.
    *
@@ -28,10 +28,10 @@ class Container {
     if (this.volumeName) {
       throw new Error('Container has already been created!');
     }
-    this.volumeName = `${this.imgName}${uuidv4().slice(0, 8)}`;
+    this.volumeName = `${this.imageName}${uuidv4().slice(0, 8)}`;
     const create = await execBash(
 `docker create -v ${this.mountDir} --name ${this.volumeName} \
-${flags || ''} ${this.imgName} /bin/true`, false);
+${flags || ''} ${this.imageName} /bin/true`, false);
     this.ID = create.slice(0, -1);
     return this.ID;
   }
@@ -83,7 +83,7 @@ ${flags || ''} ${this.imgName} /bin/true`, false);
       throw new Error('Please create container before trying to use run!');
     }
     return execBash(
-  `docker run --volumes-from ${this.volumeName} ${flags} ${this.imgName} bash -c \
+  `docker run --volumes-from ${this.volumeName} ${flags} ${this.imageName} bash -c \
   "cd ${this.mountDir} && ${runArgs}"`, color);
   }
 
