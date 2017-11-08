@@ -29,9 +29,10 @@ class Container {
       throw new Error('Container has already been created!');
     }
     this.volumeName = `${this.imageName}${uuidv4().slice(0, 8)}`;
-    const create = await execBash(
+    const execString =
 `docker create -v ${this.mountDir} --name ${this.volumeName} \
-${flags || ''} ${this.imageName} /bin/true`, false);
+${flags || ''} ${this.imageName} /bin/true`;
+    const create = await execBash(execString, false);
     this.ID = create.slice(0, -1);
     return this.ID;
   }
@@ -64,7 +65,7 @@ ${flags || ''} ${this.imageName} /bin/true`, false);
     const chownVolume =
 `${this.sudoCommand}chown ${user}${group ? ':' + group : ''} ${this.mountDir} > /dev/null 2>&1`;
     const chmodVolume =
-`${this.sudoCommand}chmod 700 ${this.mountDir} > /dev/null 2>&1`;
+`${this.sudoCommand}chmod 770 ${this.mountDir} > /dev/null 2>&1`;
     return this.run('', `${chownVolume} && ${chmodVolume}`, false);
   }
 
