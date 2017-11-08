@@ -72,7 +72,7 @@ planYAML.forEach((rawSubTest) => {
     if (rawSubTest.setup) {
       for (const setupStep of rawSubTest.setup) {
         // eslint-disable-next-line no-await-in-loop
-        await t.context.container.run(`${envs}${flags}`, setupStep);
+        await t.context.container.run(`${envs} ${flags}`, setupStep);
       }
     }
 
