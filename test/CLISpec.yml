@@ -103,7 +103,7 @@
         exit: 1
     -   in: bn invoke -p /home/dockeruser/test/alloftheoptions/ -j myFile.json
         out: |-
-            bn: *myFile.json is not a valid path to a JSON file
+            bn: ENOENT: no such file or directory, open 'myFile.json'
         exit: 1
 
 - test: Unknown command(bad-path)
@@ -147,31 +147,15 @@
   steps:
     -   in: bn deploy -p /home/dockeruser/test/bogus/comeon/really/hello.js
         out: |-
-            bn: No such path: '/home/dockeruser/test/bogus/comeon/really/hello.js'
+            bn: ENOENT: no such file or directory, open '/home/dockeruser/test/bogus/comeon/really/hello.js/binaris.yml'
         exit: 1
     -   in: bn invoke -p /home/dockeruser/test/never/will/exist
         out: |-
-            bn: No such path: '/home/dockeruser/test/never/will/exist'
+            bn: ENOENT: no such file or directory, open '/home/dockeruser/test/never/will/exist/binaris.yml'
         exit: 1
     -   in: bn remove -p /home/dockeruser/test/hocus/pocus/fairy
         out: |-
-            bn: No such path: '/home/dockeruser/test/hocus/pocus/fairy'
-        exit: 1
-
-- test: No such directory(bad-path)
-  work_dir: /home/dockeruser/test
-  setup:
-    - touch /home/dockeruser/test/someFile.js
-    - mkdir -p /home/dockeruser/test/abcdefg
-    - touch /home/dockeruser/test/abcdefg/anotherFile.txt
-  steps:
-    -   in: bn deploy -p /home/dockeruser/test/someFile.js
-        out: |-
-            bn: No such directory: '/home/dockeruser/test/someFile.js'
-        exit: 1
-    -   in: bn invoke -p /home/dockeruser/test/abcdefg/anotherFile.txt
-        out: |-
-            bn: No such directory: '/home/dockeruser/test/abcdefg/anotherFile.txt'
+            bn: ENOENT: no such file or directory, open '/home/dockeruser/test/hocus/pocus/fairy/binaris.yml'
         exit: 1
 
 - test: No binaris.yml in directory(bad-path)
@@ -181,7 +165,7 @@
   steps:
     -   in: bn invoke -p /home/dockeruser/test/trollycopter -f icydiceymolecule
         out: |-
-            bn: Cannot find binaris.yml in directory: /home/dockeruser/test/trollycopter
+            bn: ENOENT: no such file or directory, open '/home/dockeruser/test/trollycopter/binaris.yml'
         exit: 1
 
 - test: No matching function(bad-path)

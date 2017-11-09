@@ -56,18 +56,6 @@ const gatherMeta = async function gatherMeta(options) {
     path: path.resolve(options.path || process.cwd()),
   };
 
-  let innerError;
-  try {
-    if (!((await fs.lstat(metaObj.path)).isDirectory())) {
-      innerError = new Error(`No such directory: '${metaObj.path}'`);
-    }
-  } catch (err) {
-    innerError = new Error(`No such path: '${metaObj.path}'`);
-  }
-  if (innerError) {
-    throw innerError;
-  }
-
   const binarisConf = await YMLUtil.loadBinarisConf(metaObj.path);
   metaObj.name = options.function
     || YMLUtil.getFuncName(await YMLUtil.loadBinarisConf(metaObj.path));
@@ -139,11 +127,7 @@ const invokeHandler = async function invokeHandler(options) {
   if (options.data) {
     funcData = options.data;
   } else if (options.json) {
-    try {
-      funcData = await fs.readFile(options.json, 'utf8');
-    } catch (err) {
-      throw new Error(`${options.json} is not a valid path to a JSON file`);
-    }
+    funcData = await fs.readFile(options.json, 'utf8');
   }
 
   const response = await invoke(meta.name, meta.path, funcData);
