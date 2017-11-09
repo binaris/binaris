@@ -17,14 +17,8 @@ const fileStr = 'file';
 // location the object returned will have a false 'success'
 // field and a associated error field
 const loadBinarisConf = async function loadBinarisConf(funcDirPath) {
-  try {
-    const fullYAMLPath = path.join(funcDirPath, binarisConfFile);
-    const binarisConf = yaml.safeLoad(await fs.readFile(fullYAMLPath, 'utf8'));
-    return binarisConf;
-  } catch (err) {
-    log.debug(err);
-    throw new Error(`Cannot find ${binarisConfFile} in directory: ${funcDirPath}`);
-  }
+  const fullYAMLPath = path.join(funcDirPath, binarisConfFile);
+  return yaml.safeLoad(await fs.readFile(fullYAMLPath, 'utf8'));
 };
 
 const saveBinarisConf = async function saveBinarisConf(funcDirPath, binarisConf) {
