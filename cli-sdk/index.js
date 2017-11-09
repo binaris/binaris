@@ -1,6 +1,7 @@
 const deploy = require('./deploy');
 const init = require('./init');
 const invoke = require('./invoke');
+const log = require('./log');
 const logger = require('./logger');
 const remove = require('./remove');
 const YMLUtil = require('./binarisYML');
@@ -12,6 +13,7 @@ const fs = require('mz/fs');
 const fse = require('fs-extra');
 const path = require('path');
 const inquirer = require('inquirer');
+const PassThroughStream = require('stream').PassThrough;
 
 /**
  * Wrapper which centralizes the error handling/processing
@@ -129,6 +131,20 @@ const invokeHandler = async function invokeHandler(options) {
   logger.info(response.body);
 };
 
+/**
+ * Retrieve logs from a deployed Binaris function.
+ *
+ * @param {object} options - Command line options.
+ */
+const logHandler = async function logHandler(options) {
+  const meta = await gatherMeta(options);
+  const logStream = new PassThroughStream({ objectMode: true });
+  logStream.on('data', (currLog) => {
+    logger.info(`[${currLog.timestamp}]: ${currLog.message}`);
+  });
+  await log(meta.name, options.tail, logStream);
+};
+
 
 /**
  * Authenticate the user by saving the provided Binaris
@@ -154,6 +170,7 @@ module.exports = {
   deployHandler: exceptionWrapper(deployHandler),
   initHandler: exceptionWrapper(initHandler),
   invokeHandler: exceptionWrapper(invokeHandler),
+  logHandler: exceptionWrapper(logHandler),
   loginHandler: exceptionWrapper(loginHandler),
   removeHandler: exceptionWrapper(removeHandler),
   unknownHandler: exceptionWrapper(() => {}),

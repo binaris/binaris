@@ -8,4 +8,7 @@ const deployEndpoint =
 const invokeEndpoint =
       process.env.BINARIS_INVOKE_ENDPOINT || 'run.binaris.com';
 
-module.exports = { deployEndpoint, invokeEndpoint };
+const logEndpoint =
+      process.env.BINARIS_LOG_ENDPOINT || 'log.binaris.com';
+
+module.exports = { deployEndpoint, invokeEndpoint, logEndpoint };

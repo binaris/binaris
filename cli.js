@@ -2,7 +2,7 @@ const commander = require('commander');
 // grab the version to keep things consistent
 const { version } = require('./package.json');
 const { deployHandler, initHandler, invokeHandler,
-  loginHandler, removeHandler, unknownHandler } = require('./cli-sdk');
+  logHandler, loginHandler, removeHandler, unknownHandler } = require('./cli-sdk');
 
 const actionWrapper = function actionWrapper(action) {
   return async (options) => {
@@ -26,6 +26,15 @@ commander
   .command('login')
   .description('Login to your Binaris account using an API key')
   .action(actionWrapper(loginHandler));
+
+commander
+  .command('log')
+  .description('Print the logs of a function')
+  .option('-t, --tail',
+    'Outputs logs in "tail -f" fashion')
+  .option('-f, --function <name>',
+    'Name of the function to print the logs of')
+  .action(actionWrapper(logHandler));
 
 commander
   .command('init')
