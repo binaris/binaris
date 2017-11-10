@@ -53,7 +53,7 @@
     -   in: bn deploy -f rogerdodger -p /home/dockeruser/test/rogerdodger
         out: |-
             Deployed function to *rogerdodger
-                (use "bn invoke -p /home/dockeruser/test/rogerdodger -f rogerdodger" to invoke the function)
+              (use "bn invoke -p /home/dockeruser/test/rogerdodger -f rogerdodger" to invoke the function)
 
 - test: Test all commands(good-path)
   work_dir: /home/dockeruser/test
