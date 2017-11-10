@@ -81,21 +81,13 @@ planYAML.forEach((rawSubTest) => {
         // eslint-disable-next-line no-await-in-loop
         await msleep(step.delay);
       }
+
       try {
         // eslint-disable-next-line no-await-in-loop
         const output = await t.context.container.run(`${envs} ${flags}`, step.in, true);
         t.true(globToRegExp(step.out).test(output.slice(0, -1)));
       } catch (err) {
-        // Annoying byproduct of the child_process in node. Because there
-        // are no guarantees regarding ordering, both possible
-        // orderings must be tested to ensure there is a match.
-        const orderOne = `${err.stdout}${err.stderr}`.slice(0, -1);
-        const orderTwo = `${err.stderr}${err.stdout}`.slice(0, -1);
-        if (globToRegExp(step.out).test(orderOne)) {
-          t.true(globToRegExp(step.out).test(orderOne));
-        } else {
-          t.true(globToRegExp(step.out).test(orderTwo));
-        }
+        t.true(globToRegExp(step.out).test(err.stderr.slice(0, -1)));
         t.is(err.code, (step.exit || 0));
       }
     }

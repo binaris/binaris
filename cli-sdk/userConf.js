@@ -2,7 +2,6 @@ const fs = require('mz/fs');
 const { homedir } = require('os');
 const path = require('path');
 const yaml = require('js-yaml');
-const log = require('./logger');
 
 const userConfDirectory = process.env.BINARIS_CONF_DIR || process.env.HOME || homedir();
 const userConfFile = '.binaris.yml';
