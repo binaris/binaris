@@ -123,7 +123,7 @@
   steps:
     -   in: bn init -p /home/dockeruser/test/securedir
         out: |-
-            bn: Permission denied writing to path: /home/dockeruser/test/securedir*
+            bn: EACCES: permission denied, unlink '/home/dockeruser/test/securedir/function.js'
         exit: 1
 
 - test: Superfluous output(bad-path)
