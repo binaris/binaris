@@ -3,7 +3,6 @@ const path = require('path');
 
 const moniker = require('moniker');
 
-const log = require('./logger');
 const YMLUtil = require('./binarisYML');
 
 const templateDir = './functionTemplates/nodejs/';
@@ -30,7 +29,6 @@ const sanitizeName = function sanitizeName(name) {
  */
 const init = async function init(functionName, functionPath) {
   const finalName = sanitizeName(functionName || moniker.choose());
-  log.debug('Loading template files');
   // parse the templated yml and make the necessary modifications
   const templatePath = path.join(__dirname, templateDir);
   const binarisConf = await YMLUtil.loadBinarisConf(templatePath);

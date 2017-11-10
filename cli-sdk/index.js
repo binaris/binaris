@@ -41,9 +41,6 @@ const exceptionWrapper = function tryCatchWrapper(funcToWrap) {
         log.error(`Permission denied writing to path: ${err.path}`);
       } else {
         log.error(err.message);
-        if (!process.env.BINARIS_LOG_LEVEL) {
-          log.info('For more information set the BINARIS_LOG_LEVEL environment variable to debug, verbose, info, warn or error');
-        }
       }
       return 1;
     }

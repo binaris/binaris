@@ -53,12 +53,10 @@
     -   in: bn invoke -p /home/dockeruser/test/alloftheoptions -j myFile.json -d data
         out: |-
             bn: Invoke flags --json(-j) and --data(-d) are mutually exclusive
-            For more information set the BINARIS_LOG_LEVEL environment variable to debug, verbose, info, warn or error
         exit: 1
     -   in: bn invoke -p /home/dockeruser/test/alloftheoptions/ -j myFile.json
         out: |-
             bn: *myFile.json is not a valid path to a JSON file
-            For more information set the BINARIS_LOG_LEVEL environment variable to debug, verbose, info, warn or error
         exit: 1
 
 - test: Unknown command(bad-path)
@@ -103,17 +101,14 @@
     -   in: bn deploy -p /home/dockeruser/test/bogus/comeon/really/hello.js
         out: |-
             bn: No such path: '/home/dockeruser/test/bogus/comeon/really/hello.js'
-            For more information set the BINARIS_LOG_LEVEL environment variable to debug, verbose, info, warn or error
         exit: 1
     -   in: bn invoke -p /home/dockeruser/test/never/will/exist
         out: |-
             bn: No such path: '/home/dockeruser/test/never/will/exist'
-            For more information set the BINARIS_LOG_LEVEL environment variable to debug, verbose, info, warn or error
         exit: 1
     -   in: bn remove -p /home/dockeruser/test/hocus/pocus/fairy
         out: |-
             bn: No such path: '/home/dockeruser/test/hocus/pocus/fairy'
-            For more information set the BINARIS_LOG_LEVEL environment variable to debug, verbose, info, warn or error
         exit: 1
 
 - test: No such directory(bad-path)
@@ -126,12 +121,10 @@
     -   in: bn deploy -p /home/dockeruser/test/someFile.js
         out: |-
             bn: No such directory: '/home/dockeruser/test/someFile.js'
-            For more information set the BINARIS_LOG_LEVEL environment variable to debug, verbose, info, warn or error
         exit: 1
     -   in: bn invoke -p /home/dockeruser/test/abcdefg/anotherFile.txt
         out: |-
             bn: No such directory: '/home/dockeruser/test/abcdefg/anotherFile.txt'
-            For more information set the BINARIS_LOG_LEVEL environment variable to debug, verbose, info, warn or error
         exit: 1
 
 - test: No binaris.yml in directory(bad-path)
@@ -142,7 +135,6 @@
     -   in: bn invoke -p /home/dockeruser/test/trollycopter -f icydiceymolecule
         out: |-
             bn: Cannot find binaris.yml in directory: /home/dockeruser/test/trollycopter
-            For more information set the BINARIS_LOG_LEVEL environment variable to debug, verbose, info, warn or error
         exit: 1
 
 - test: No matching function(bad-path)
@@ -155,5 +147,4 @@
     -   in: bn deploy -p /home/dockeruser/test/grouchybear -f grouchybear
         out: |-
             bn: Cannot find function 'grouchybear' in binaris.yml
-            For more information set the BINARIS_LOG_LEVEL environment variable to debug, verbose, info, warn or error
         exit: 1
