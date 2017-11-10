@@ -1,4 +1,4 @@
-const fs = require('mz/fs');
+const fse = require('fs-extra');
 const path = require('path');
 const { promisify } = require('util');
 const { compress } = require('targz');
@@ -21,7 +21,7 @@ const ignoredTarFiles = ['.git', '.binaris', 'binaris.yml'];
  */
 const genBinarisDir = async function genBinarisDir(genPath) {
   const fullPath = path.join(genPath, binarisDir);
-  await fs.mkdir(fullPath);
+  await fse.mkdirp(fullPath);
   return fullPath;
 };
 
