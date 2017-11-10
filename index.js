@@ -9,9 +9,4 @@ if (!semver.gte(process.version, minNodeVersion)) {
   process.exit(1);
 }
 
-const cli = require('./cli');
-
-// no await/async since this file needs to support lower versions
-Promise.resolve(cli(process.argv)).then((resolve) => {
-  process.exit(resolve);
-});
+require('./cli');
