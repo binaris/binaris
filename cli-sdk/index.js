@@ -147,7 +147,7 @@ const invokeHandler = async function invokeHandler(options) {
     }
   }
 
-  const response = await invoke(meta.path, meta.name, funcData);
+  const response = await invoke(meta.name, meta.path, funcData);
   log.info(response.body);
 };
 
