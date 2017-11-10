@@ -25,26 +25,24 @@ const inquirer = require('inquirer');
  * @returns - error code of the command
  */
 const exceptionWrapper = function tryCatchWrapper(funcToWrap) {
-  const wrapped = async function wrapped(options) {
+  // eslint-disable-next-line consistent-return
+  return async function wrapped(argData) {
     try {
-      // We error in the case of extra unwanted sub-args being appended
-      // to a valid command. `options.args` contains commands provided
-      // to commander, by checking if there is more than 1 we will know
-      // if there were extra commands added.
-      //
-      // example of bad command: `bn init another command`
-      if (options.args.length > 1) {
-        log.error(`Argument ${options.args[0]} is not a valid input to ${options.rawArgs[2]}`);
-        return 1;
+      if (argData.name === '*') {
+        throw new Error(`Unknown command: '${argData.args[0]}'. See 'bn --help'`);
       }
-      await funcToWrap(options);
-      return 0;
+      // git style sub commands are strictly not supported
+      // ie: bn init notacommand
+      if (argData.args.length > 1) {
+        throw new Error(`Argument ${argData.args[0]} is not a valid input to ${argData.rawArgs[2]}`);
+      }
+      await funcToWrap(argData.options);
+      process.exit(0);
     } catch (err) {
       log.error(err.message);
-      return 1;
+      process.exit(1);
     }
   };
-  return wrapped;
 };
 
 /** Gather all of the relevant meta data about a function. */
@@ -140,42 +138,23 @@ const loginHandler = async function loginHandler() {
   log.info(
 `Please enter your Binaris API key to deploy and invoke functions.
 If you don't have a key, head over to https://binaris.com to request one`);
-
-  // this temporarily handles the errors/dialog until
-  // debugging help message from general commands is removed
-  try {
-    const answer = await inquirer.prompt([{
-      type: 'input',
-      name: 'apiKey',
-      message: 'API Key:',
-    }]);
-    await auth.verifyAPIKey(answer.apiKey);
-    await updateAPIKey(answer.apiKey);
-    log.info(
+  const answer = await inquirer.prompt([{
+    type: 'input',
+    name: 'apiKey',
+    message: 'API Key:',
+  }]);
+  await auth.verifyAPIKey(answer.apiKey);
+  await updateAPIKey(answer.apiKey);
+  log.info(
 `Authentication Succeeded
   (use "bn init" to initialize a template function in your current directory)`);
-  } catch (err) {
-    log.error(err.message);
-    return 1;
-  }
-  return 0;
-};
-
-/**
- * Handles the case of an unknown argument.
- *
- * @param {string} env - The unknown argument.
- */
-const unknownHandler = async function unknownHandler(env) {
-  log.error(`Unknown command: '${env}'. See 'bn --help'`);
-  return 1;
 };
 
 module.exports = {
   deployHandler: exceptionWrapper(deployHandler),
   initHandler: exceptionWrapper(initHandler),
   invokeHandler: exceptionWrapper(invokeHandler),
-  loginHandler,
+  loginHandler: exceptionWrapper(loginHandler),
   removeHandler: exceptionWrapper(removeHandler),
-  unknownHandler,
+  unknownHandler: exceptionWrapper(() => {}),
 };

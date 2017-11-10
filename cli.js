@@ -4,75 +4,67 @@ const { version } = require('./package.json');
 const { deployHandler, initHandler, invokeHandler,
   loginHandler, removeHandler, unknownHandler } = require('./cli-sdk');
 
-const runCLI = function runCLI(input) {
-  const exitCode = new Promise((resolve) => {
-    const actionWrapper = function actionWrapper(action, useGlobals) {
-      const aWrapper = async function aWrapper(options) {
-        let aggr = options;
-        if (useGlobals) {
-          aggr = Object.assign({}, options, commander);
-        }
-        const actionResult = await action(aggr);
-        resolve(actionResult);
-      };
-      return aWrapper;
-    };
-
-    commander
-      .version(version)
-      .description('Binaris command line interface')
-      .option('-p, --path <path>',
-        // eslint-disable-next-line quotes
-        `Change to directory dir before doing anything else. Create if non-existent`);
-
-    commander
-      .command('login')
-      .description('Login to your Binaris account using an API key')
-      .action(actionWrapper(loginHandler, true));
-
-    commander
-      .command('init')
-      .description('Initialize a function from template')
-      .option('-f, --function <name>',
-        'Name of the function to generate. If omitted, a name will be chosen at random')
-      .action(actionWrapper(initHandler, true));
-
-    commander
-      .command('deploy')
-      .description('Deploys a function to the cloud')
-      .option('-f, --function <name>',
-        'Name of the function to deploy')
-      .action(actionWrapper(deployHandler, true));
-
-    commander
-      .command('remove')
-      .description('Remove a previously deployed function')
-      .option('-f, --function <name>',
-        'Name of the function to remove')
-      .action(actionWrapper(removeHandler, true));
-
-    commander
-      .command('invoke')
-      .description('Invoke a Binaris function')
-      .option('-f, --function <name>',
-        'Name of the function to invoke')
-      .option('-d, --data <data>', 'Data to send with invocation')
-      .option('-j, --json <filePath>', 'Path to file containing JSON data')
-      .action(actionWrapper(invokeHandler, true));
-
-    commander
-      .command('*', null, { noHelp: true })
-      .description('')
-      .action(actionWrapper(unknownHandler, false));
-
-    commander
-      .parse(input);
-
-    if (!input.slice(2).length) {
-      commander.outputHelp();
-    }
-  });
-  return exitCode;
+const actionWrapper = function actionWrapper(action) {
+  return async (options) => {
+    await action({
+      options: Object.assign({}, options, { path: commander.path }),
+      args: commander.args,
+      rawArgs: commander.rawArgs,
+      name: commander.args[commander.args.length - 1]._name,
+    });
+  };
 };
 
-module.exports = runCLI;
+commander
+  .version(version)
+  .description('Binaris command line interface')
+  .option('-p, --path <path>',
+    // eslint-disable-next-line quotes
+    `Change to directory dir before doing anything else. Create if non-existent`);
+
+commander
+  .command('login')
+  .description('Login to your Binaris account using an API key')
+  .action(actionWrapper(loginHandler));
+
+commander
+  .command('init')
+  .description('Initialize a function from template')
+  .option('-f, --function <name>',
+    'Name of the function to generate. If omitted, a name will be chosen at random')
+  .action(actionWrapper(initHandler));
+
+commander
+  .command('deploy')
+  .description('Deploys a function to the cloud')
+  .option('-f, --function <name>',
+    'Name of the function to deploy')
+  .action(actionWrapper(deployHandler));
+
+commander
+  .command('remove')
+  .description('Remove a previously deployed function')
+  .option('-f, --function <name>',
+    'Name of the function to remove')
+  .action(actionWrapper(removeHandler));
+
+commander
+  .command('invoke')
+  .description('Invoke a Binaris function')
+  .option('-f, --function <name>',
+    'Name of the function to invoke')
+  .option('-d, --data <data>', 'Data to send with invocation')
+  .option('-j, --json <filePath>', 'Path to file containing JSON data')
+  .action(actionWrapper(invokeHandler));
+
+commander
+  .command('*', null, { noHelp: true })
+  .description('')
+  .action(actionWrapper(unknownHandler));
+
+commander
+  .parse(process.argv);
+
+if (!process.argv.slice(2).length) {
+  commander.outputHelp();
+}
