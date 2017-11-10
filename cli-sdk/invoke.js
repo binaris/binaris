@@ -1,11 +1,18 @@
 const { getApiKey } = require('./userConf');
 const { invoke } = require('../sdk');
 
-// invokes a binaris function that has been previously
-// deployed either through the CLI or other means
-const invokeCLI = async function invokeCLI(funcPath, funcName, funcData) {
+/**
+ * Invokes a previously deployed Binaris function.
+ *
+ * @param {string} funcName - name of the function to invoke
+ * @param {string} funcPath - path of the function to invoke
+ * @param {string} funcData - valid JSON string to send with function invocation
+ *
+ * @returns {object} - response of function invocation
+ */
+const invokeCLI = async function invokeCLI(funcName, funcPath, funcData) {
   const apiKey = await getApiKey();
-  return invoke(apiKey, funcName, funcData);
+  return invoke(funcName, apiKey, funcData);
 };
 
 module.exports = invokeCLI;
