@@ -2,17 +2,18 @@ const urljoin = require('urljoin');
 const rp = require('request-promise-native');
 const { deployEndpoint } = require('./config');
 
-const removeFunction = async function removeFunction(url) {
+/**
+ * Removes the function from the Binaris cloud.
+ *
+ * @param {string} funcName - the name of the function to remove
+ * @param {string} apiKey - the apiKey to authenticate the removal with
+ */
+const remove = async function remove(funcName, apiKey) {
   const options = {
-    url,
+    url: urljoin(`https://${deployEndpoint}`, 'v1', 'function', `${apiKey}-${funcName}`),
     resolveWithFullResponse: true,
   };
-  return rp.delete(options);
-};
-
-const remove = async function remove(apiKey, funcName) {
-  const endpoint = urljoin(`https://${deployEndpoint}`, 'v1', 'function', `${apiKey}-${funcName}`);
-  const response = await removeFunction(endpoint);
+  const response = await rp.delete(options);
   if (response.statusCode === 404) {
     throw new Error(`Function ${funcName} unknown`);
   }
