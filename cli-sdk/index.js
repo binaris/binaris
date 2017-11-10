@@ -39,11 +39,7 @@ const exceptionWrapper = function tryCatchWrapper(funcToWrap) {
       await funcToWrap(options);
       return 0;
     } catch (err) {
-      if (err.code === 'EACCES') {
-        log.error(`Permission denied writing to path: ${err.path}`);
-      } else {
-        log.error(err.message);
-      }
+      log.error(err.message);
       return 1;
     }
   };
