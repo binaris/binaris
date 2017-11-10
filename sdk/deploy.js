@@ -1,19 +1,31 @@
 const fs = require('fs');
 const urljoin = require('urljoin');
 const request = require('request');
+
 const { deployEndpoint, invokeEndpoint } = require('./config');
 
-const deployFunction = async function uploadFunction(tarPath, conf, deployURL) {
+/**
+ * Deploys the function to the Binaris cloud by streaming
+ * a tarball containing the function to the Binaris deployment
+ * endpoint.
+ *
+ * @param {string} tarPath - path of the tarball containing the function to deploy
+ * @param {string} funcConf -  configuration of the function to deploy
+ * @param {string} deployURL - URL of Binaris deployment endpoint
+ *
+ * @returns {object} - response of the deployment request
+ */
+const deployFunction = async function uploadFunction(tarPath, funcConf, deployURL) {
   const options = {
     url: deployURL,
-    qs: conf,
+    qs: funcConf,
   };
   try {
     // use raw request here(as opposed to rp) because the
     // request-promise module explicitly discourages using
     // request-promise for pipe
     // https://github.com/request/request-promise
-    const uploadPromise = new Promise((resolve, reject) => {
+    return new Promise((resolve, reject) => {
       fs.createReadStream(tarPath)
         .pipe(request.post(options, (uploadErr, uploadResponse) => {
           if (uploadErr) {
@@ -23,19 +35,29 @@ const deployFunction = async function uploadFunction(tarPath, conf, deployURL) {
           }
         }));
     });
-    return await uploadPromise;
   } catch (err) {
     throw new Error('Failed to upload function tar file to Binaris backend');
   }
 };
 
-const deploy = async function deploy(apiKey, funcName, funcConf, tarPath) {
-  const endpoint = urljoin(`https://${deployEndpoint}`, 'v1', 'function', `${apiKey}-${funcName}`);
-  const response = await deployFunction(tarPath, funcConf, endpoint);
-  if (response.statusCode !== 200) {
-    throw new Error(`Error deploying function: ${response.statusCode} ${JSON.parse(response.body).error}`);
+/**
+ * Deploy a function to the Binaris cloud.
+ *
+ * @param {string} funcName - name of the function to deploy
+ * @param {string} apiKey - Binaris API key used to authenticate function removal
+ * @param {object} funcConf - configuration of the function to deploy
+ * @param {string} tarPath - path of the tarball containing the function to deploy
+ *
+ * @returns {string} - curlable URL of the endpoint used to invoke your function
+ */
+const deploy = async function deploy(funcName, apiKey, funcConf, tarPath) {
+  const response = await deployFunction(tarPath, funcConf,
+    urljoin(`https://${deployEndpoint}`, 'v1', 'function', `${apiKey}-${funcName}`));
+  if (response.statusCode === 404) {
+    throw new Error(`Function ${funcName} unknown`);
+  } else if (response.statusCode !== 200) {
+    throw new Error(`Failed to deploy function ${funcName}`);
   }
-  // TODO: deploy itself should return the run url / key
   return urljoin(`https://${invokeEndpoint}`, 'v1', 'run', apiKey, funcName);
 };
 
