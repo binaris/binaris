@@ -2,10 +2,7 @@ const fs = require('mz/fs');
 const { homedir } = require('os');
 const path = require('path');
 const yaml = require('js-yaml');
-
-const urljoin = require('urljoin');
-const rp = require('request-promise-native');
-const { invokeEndpoint } = require('../sdk/config');
+const { auth } = require('../sdk');
 
 const userConfDirectory = process.env.BINARIS_CONF_DIR || process.env.HOME || homedir();
 const userConfFile = '.binaris.yml';
@@ -23,27 +20,19 @@ const saveUserConf = async function saveUserConf(userConf) {
 };
 
 /**
- * Verifies that the provided Binaris API key is correct by
- * querying the remote authentication server.
+ * Updates the API key of the users Binaris conf file.
+ * If no conf file exists when the key update request
+ * is sent, one will be created.
  *
- * @param {string} apiKey - the apiKey to validate
+ * @param {string} apiKey - apiKey to update conf file with
  */
-const verifyAPIKey = async function verifyAPIKey(apiKey) {
-  const options = {
-    url: urljoin(`https://${invokeEndpoint}`, 'v1', 'apikey', apiKey),
-    json: true,
-    resolveWithFullResponse: true,
-  };
+const updateAPIKey = async function updateAPIKey(apiKey) {
+  await auth.verifyAPIKey(apiKey);
+  let currentConf = {};
   try {
-    await rp.get(options);
-  } catch (err) {
-    // if the key is simply invalid respond with a constructive and
-    // direct error message, otherwise just pass back the original
-    if (err.error && err.error.valid === false) {
-      throw new Error('Invalid API key, please try again');
-    }
-    throw err;
-  }
+    currentConf = await loadUserConf();
+  } catch (err) {} // eslint-disable-line no-empty
+  await saveUserConf(Object.assign({}, currentConf, { apiKey }));
 };
 
 const getApiKey = async function getApiKey() {
@@ -66,6 +55,5 @@ const getApiKey = async function getApiKey() {
 
 module.exports = {
   getApiKey,
-  saveUserConf,
-  verifyAPIKey,
+  updateAPIKey,
 };
