@@ -23,13 +23,6 @@ const testMountDir = '/home/dockeruser/test';
 // This is needed to mess with the Docker network from inside
 const flags = '--cap-add=NET_ADMIN';
 
-// The environment variables propagated to Docker
-const envVars = {
-  BINARIS_INVOKE_ENDPOINT: undefined,
-  BINARIS_DEPLOY_ENDPOINT: undefined,
-  BINARIS_API_KEY: undefined,
-};
-
 /**
  * Imitates stdc sleep behavior using es6 async/await
  *
@@ -37,6 +30,29 @@ const envVars = {
  */
 const msleep = function msleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
+};
+
+/**
+ * Generates a Docker friendly string representing all of the
+ * environment variables(and corresponding values) defined in
+ * the provided test entry.
+ *
+ * Note: If an environment variable is defined without a value the
+ *       value is pulled from the invokers shell.
+ *
+ * @param {string} testEntry - parsed YML test to parse envs from
+ * @returns {string} - Docker friendly string with all environment vars
+ */
+const genEnvString = function genEnvString(testEntry) {
+  if (Object.prototype.hasOwnProperty.call(testEntry, 'env')) {
+    return testEntry.env.reduce((envString, envEntry) => {
+      if (Object.prototype.hasOwnProperty.call(envEntry, 'value')) {
+        return `${envString || ''} -e "${envEntry.name}=${envEntry.value}"`;
+      }
+      return `${envString || ''} -e ${envEntry.name}`;
+    }, '');
+  }
+  return '';
 };
 
 /**
@@ -68,19 +84,7 @@ test.afterEach.always(async (t) => {
 const planYAML = yaml.safeLoad(fs.readFileSync(process.env.BINARIS_TEST_SPEC_PATH || './test/CLISpec.yml', 'utf8'));
 planYAML.forEach((rawSubTest) => {
   test(rawSubTest.test, async (t) => {
-    const envMap = Object.assign({}, envVars, rawSubTest.env || {});
-    let envString = '';
-    for (const envKey in envMap) {
-      if (Object.prototype.hasOwnProperty.call(envMap, envKey)) {
-        if (envMap[envKey] !== 'unset') {
-          if (envMap[envKey] !== undefined) {
-            envString += ` -e "${envKey}=${envMap[envKey]}"`;
-          } else {
-            envString += ` -e ${envKey}`;
-          }
-        }
-      }
-    }
+    const envString = genEnvString(rawSubTest);
 
     if (rawSubTest.setup) {
       for (const setupStep of rawSubTest.setup) {

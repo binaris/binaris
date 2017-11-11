@@ -7,8 +7,8 @@
 # - test: Test login(good-path)
 #   work_dir: /home/dockeruser/test
 #   env:
-#     BINARIS_API_KEY: unset
-#     BINARIS_CONF_DIR: /home/dockeruser/test
+#     - name: BINARIS_CONF_DIR
+#       value: /home/dockeruser/test
 #   steps:
 #     -   in: bn init -f regulatedguest -p /home/dockeruser/test/regulatedguest
 #         out: |-
@@ -41,6 +41,9 @@
 
 - test: Test deploy(good-path)
   work_dir: /home/dockeruser/test
+  env:
+    - name: BINARIS_DEPLOY_ENDPOINT
+    - name: BINARIS_API_KEY
   steps:
     -   in: bn init -f rogerdodger -p /home/dockeruser/test/rogerdodger
         out: |-
@@ -57,6 +60,10 @@
 
 - test: Test all commands(good-path)
   work_dir: /home/dockeruser/test
+  env:
+    - name: BINARIS_DEPLOY_ENDPOINT
+    - name: BINARIS_INVOKE_ENDPOINT
+    - name: BINARIS_API_KEY
   steps:
     -   in: bn init -f cherrycoke -p /home/dockeruser/test/cherrycoke
         out: |-
@@ -78,8 +85,9 @@
 - test: Test login(bad-path)
   work_dir: /home/dockeruser/test
   env:
-    BINARIS_API_KEY: unset
-    BINARIS_CONF_DIR: /home/dockeruser/test
+    - name: BINARIS_CONF_DIR
+      value: /home/dockeruser/test/
+    - name: BINARIS_INVOKE_ENDPOINT
   steps:
     -   in: bn init -f regulatedguest -p /home/dockeruser/test/regulatedguest
         out: |-
@@ -183,8 +191,8 @@
 - test: No API key or conf file(bad-path)
   work_dir: /home/dockeruser/test
   env:
-    BINARIS_API_KEY: unset
-    BINARIS_CONF_DIR: /home/dockeruser/test
+    - name: BINARIS_CONF_DIR
+      value: /home/dockeruser/test
   steps:
     -   in: bn init -f banananasundae -p /home/dockeruser/test/banananasundae
         out: |-
@@ -201,8 +209,8 @@
   setup:
     - echo 'INVALIDCONF' | tee /home/dockeruser/test/.binaris.yml > /dev/null
   env:
-    BINARIS_API_KEY: unset
-    BINARIS_CONF_DIR: /home/dockeruser/test
+    - name: BINARIS_CONF_DIR
+      value: /home/dockeruser/test
   steps:
     -   in: bn init -f yogurtsalad -p /home/dockeruser/test/yogurtsalad
         out: |-
