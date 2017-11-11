@@ -1,4 +1,4 @@
-const { getApiKey } = require('./userConf');
+const { getAPIKey } = require('./userConf');
 const { invoke } = require('../sdk');
 
 /**
@@ -11,7 +11,7 @@ const { invoke } = require('../sdk');
  * @returns {object} - response of function invocation
  */
 const invokeCLI = async function invokeCLI(funcName, funcPath, funcData) {
-  const apiKey = await getApiKey();
+  const apiKey = await getAPIKey();
   return invoke(funcName, apiKey, funcData);
 };
 

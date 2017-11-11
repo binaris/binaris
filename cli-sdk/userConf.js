@@ -33,7 +33,7 @@ const updateAPIKey = async function updateAPIKey(apiKey) {
   await saveUserConf(Object.assign({}, currentConf, { apiKey }));
 };
 
-const getApiKey = async function getApiKey() {
+const getAPIKey = async function getAPIKey() {
   const apiKey = process.env.BINARIS_API_KEY;
   if (apiKey) return apiKey;
 
@@ -52,6 +52,6 @@ const getApiKey = async function getApiKey() {
 };
 
 module.exports = {
-  getApiKey,
+  getAPIKey,
   updateAPIKey,
 };
