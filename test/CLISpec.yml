@@ -1,31 +1,27 @@
 ---
-# Because login now verifies that the provided APIKey is correct
-# this test cannot run to completion with our current testing
-# environment. Once we have a more reliable way of responding to
-# prompts(in the tests) we can re-enable this test.
-#
-# - test: Test login(good-path)
-#   work_dir: /home/dockeruser/test
-#   env:
-#     BINARIS_API_KEY: unset
-#     BINARIS_CONF_DIR: /home/dockeruser/test
-#   steps:
-#     -   in: bn init -f regulatedguest -p /home/dockeruser/test/regulatedguest
-#         out: |-
-#             Initialized function regulatedguest in /home/dockeruser/test/regulatedguest
-#               (use "bn deploy -p /home/dockeruser/test/regulatedguest -f regulatedguest" to deploy the function)
-#     -   in: ((echo 12345) | bn login)
-#         out: |-
-#             Please enter your Binaris API key to deploy and invoke functions.
-#             If you don't have a key, head over to https://binaris.com to request one
-#             *API Key: 12345
-#             Authentication Succeeded
-#               (use "bn init" to initialize a template function in your current directory)
-#     -   in: bn deploy -f regulatedguest -p /home/dockeruser/test/regulatedguest
-#         out: |-
-#             Deployed function to *regulatedguest
-#               (use "bn invoke -p /home/dockeruser/test/regulatedguest -f regulatedguest" to invoke the function)
-#         delay: 300
+- test: Test login(good-path)
+  work_dir: /home/dockeruser/test
+  env:
+    BINARIS_CONF_DIR: /home/dockeruser/test
+  setup:
+    - echo $BINARIS_API_KEY > /home/dockeruser/test/apikey
+  steps:
+    -   in: bn init -f regulatedguest -p /home/dockeruser/test/regulatedguest
+        out: |-
+            Initialized function regulatedguest in /home/dockeruser/test/regulatedguest
+              (use "bn deploy -p /home/dockeruser/test/regulatedguest -f regulatedguest" to deploy the function)
+    -   in: ((cat /home/dockeruser/test/apikey) | bn login)
+        out: |-
+            Please enter your Binaris API key to deploy and invoke functions.
+            If you don't have a key, head over to https://binaris.com to request one
+            *API Key: *
+            Authentication Succeeded
+              (use "bn init" to initialize a template function in your current directory)
+    -   in: unset BINARIS_API_KEY && bn deploy -f regulatedguest -p /home/dockeruser/test/regulatedguest
+        out: |-
+            Deployed function to *regulatedguest
+              (use "bn invoke -p /home/dockeruser/test/regulatedguest -f regulatedguest" to invoke the function)
+        delay: 300
 
 - test: Test init(good-path)
   work_dir: /home/dockeruser/test
