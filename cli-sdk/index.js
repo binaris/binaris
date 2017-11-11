@@ -4,7 +4,7 @@ const invoke = require('./invoke');
 const log = require('./logger');
 const remove = require('./remove');
 const YMLUtil = require('./binarisYML');
-const userConf = require('./userConf');
+const { updateAPIKey } = require('./userConf');
 
 // core modules
 const fs = require('mz/fs');
@@ -168,8 +168,7 @@ If you don't have a key, head over to https://binaris.com to request one`);
       name: 'apiKey',
       message: 'API Key:',
     }]);
-    await userConf.verifyAPIKey(answer.apiKey);
-    await userConf.saveUserConf(answer);
+    await updateAPIKey(answer.apiKey);
     log.info(
 `Authentication Succeeded
   (use "bn init" to initialize a template function in your current directory)`);
