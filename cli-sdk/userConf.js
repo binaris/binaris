@@ -2,7 +2,6 @@ const fs = require('mz/fs');
 const { homedir } = require('os');
 const path = require('path');
 const yaml = require('js-yaml');
-const { auth } = require('../sdk');
 
 const userConfDirectory = process.env.BINARIS_CONF_DIR || process.env.HOME || homedir();
 const userConfFile = '.binaris.yml';
@@ -27,7 +26,6 @@ const saveUserConf = async function saveUserConf(userConf) {
  * @param {string} apiKey - apiKey to update conf file with
  */
 const updateAPIKey = async function updateAPIKey(apiKey) {
-  await auth.verifyAPIKey(apiKey);
   let currentConf = {};
   try {
     currentConf = await loadUserConf();
