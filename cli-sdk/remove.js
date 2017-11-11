@@ -1,5 +1,5 @@
 const { remove } = require('../sdk');
-const { getApiKey } = require('./userConf');
+const { getAPIKey } = require('./userConf');
 
 /**
  * Removes the function from the Binaris cloud.
@@ -7,7 +7,7 @@ const { getApiKey } = require('./userConf');
  * @param {string} funcName - the name of the function to remove
  */
 const removeCLI = async function removeCLI(funcName) {
-  const apiKey = await getApiKey();
+  const apiKey = await getAPIKey();
   return remove(funcName, apiKey);
 };
 

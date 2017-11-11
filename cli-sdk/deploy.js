@@ -5,7 +5,7 @@ const { compress } = require('targz');
 
 const tgzCompress = promisify(compress);
 
-const { getApiKey } = require('./userConf');
+const { getAPIKey } = require('./userConf');
 const { deploy } = require('../sdk');
 
 const binarisDir = '.binaris/';
@@ -46,7 +46,7 @@ const deployCLI = async function deployCLI(funcName, funcPath, funcConf) {
       ignore: name => fullIgnorePaths.includes(name),
     },
   });
-  const apiKey = await getApiKey();
+  const apiKey = await getAPIKey();
   return deploy(funcName, apiKey, funcConf, funcTarPath);
 };
 
