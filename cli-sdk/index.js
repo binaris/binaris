@@ -5,6 +5,7 @@ const log = require('./logger');
 const remove = require('./remove');
 const YMLUtil = require('./binarisYML');
 const { updateAPIKey } = require('./userConf');
+const { auth } = require('../sdk');
 
 // core modules
 const fs = require('mz/fs');
@@ -168,6 +169,7 @@ If you don't have a key, head over to https://binaris.com to request one`);
       name: 'apiKey',
       message: 'API Key:',
     }]);
+    await auth.verifyAPIKey(answer.apiKey);
     await updateAPIKey(answer.apiKey);
     log.info(
 `Authentication Succeeded
