@@ -1,7 +1,7 @@
 const deploy = require('./deploy');
 const init = require('./init');
 const invoke = require('./invoke');
-const log = require('./logger');
+const logger = require('./logger');
 const remove = require('./remove');
 const YMLUtil = require('./binarisYML');
 const { updateAPIKey } = require('./userConf');
@@ -39,7 +39,7 @@ const exceptionWrapper = function tryCatchWrapper(funcToWrap) {
       await funcToWrap(argData.options);
       process.exit(0);
     } catch (err) {
-      log.error(err.message);
+      logger.error(err.message);
       process.exit(1);
     }
   };
@@ -76,7 +76,7 @@ const initHandler = async function initHandler(options) {
   const funcName = await init(options.function, funcPath);
   const optPath = options.path ? ` -p ${funcPath}` : '';
   const optName = options.function ? ` -f ${funcName}` : '';
-  log.info(
+  logger.info(
 `Initialized function ${funcName} in ${funcPath}
   (use "bn deploy${optPath}${optName}" to deploy the function)`);
 };
@@ -89,7 +89,7 @@ const initHandler = async function initHandler(options) {
 const deployHandler = async function deployHandler(options) {
   const meta = await gatherMeta(options);
   const endpoint = await deploy(meta.name, meta.path, meta.conf);
-  log.info(
+  logger.info(
 `Deployed function to ${endpoint}
   (use "bn invoke${meta.printPath}${meta.printName}" to invoke the function)`);
 };
@@ -102,7 +102,7 @@ const deployHandler = async function deployHandler(options) {
 const removeHandler = async function removeHandler(options) {
   const meta = await gatherMeta(options);
   await remove(meta.name, meta.path);
-  log.info(
+  logger.info(
 `Removed function ${meta.name}
   (use "bn deploy${meta.printPath}${meta.printName}" to re-deploy the function)`);
 };
@@ -126,7 +126,7 @@ const invokeHandler = async function invokeHandler(options) {
   }
 
   const response = await invoke(meta.name, meta.path, funcData);
-  log.info(response.body);
+  logger.info(response.body);
 };
 
 
@@ -135,7 +135,7 @@ const invokeHandler = async function invokeHandler(options) {
  * api key in a well known .binaris directory.
  */
 const loginHandler = async function loginHandler() {
-  log.info(
+  logger.info(
 `Please enter your Binaris API key to deploy and invoke functions.
 If you don't have a key, head over to https://binaris.com to request one`);
   const answer = await inquirer.prompt([{
@@ -145,7 +145,7 @@ If you don't have a key, head over to https://binaris.com to request one`);
   }]);
   await auth.verifyAPIKey(answer.apiKey);
   await updateAPIKey(answer.apiKey);
-  log.info(
+  logger.info(
 `Authentication Succeeded
   (use "bn init" to initialize a template function in your current directory)`);
 };
