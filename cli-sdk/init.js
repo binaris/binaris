@@ -15,7 +15,7 @@ const templateDir = './functionTemplates/nodejs/';
  * @returns {string} - the sanitized version of the input name
  */
 const sanitizeName = function sanitizeName(name) {
-  return name.replace(/[~`!#$%^&*+-=\\[\]\\';,/{}|\\":<>?]/g, '');
+  return name.replace(/[-~`!#$%^&*+=\\[\]\\';,/{}|\\":<>?]/g, '');
 };
 
 /**
