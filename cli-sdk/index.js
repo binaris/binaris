@@ -159,7 +159,9 @@ If you don't have a key, head over to https://binaris.com to request one`);
     name: 'apiKey',
     message: 'API Key:',
   }]);
-  await auth.verifyAPIKey(answer.apiKey);
+  if (!await auth.verifyAPIKey(answer.apiKey)) {
+    throw new Error('Invalid API key');
+  }
   await updateAPIKey(answer.apiKey);
   logger.info(
 `Authentication Succeeded
