@@ -16,18 +16,14 @@ const verifyAPIKey = async function verifyAPIKey(apiKey) {
     resolveWithFullResponse: true,
   };
   try {
-    const response = await rp.get(options);
-    if (response.statusCode !== 200) {
-      throw new Error('Failed to verify API key');
-    }
+    await rp.get(options);
   } catch (err) {
-    // if the key is simply invalid respond with a constructive and
-    // direct error message, otherwise just pass back the original
     if (err.error && err.error.valid === false) {
-      throw new Error('Invalid API key, please try again');
+      return false;
     }
     throw err;
   }
+  return true;
 };
 
 module.exports = {
