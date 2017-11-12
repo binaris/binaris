@@ -1,4 +1,5 @@
 const { log } = require('../sdk');
+const { getAPIKey } = require('./userConf');
 
 // time(ms) it takes between log retrievals
 const msLogPollInterval = 1000;
@@ -20,11 +21,12 @@ const msSleep = function msSleep(ms) {
  * @param {string} startingEntry - the log entry to start from(but not including)
  */
 const logCLI = async function logCLI(funcName, tail, logStream) {
+  const apiKey = await getAPIKey();
   let latestLog;
   let streamingLogs = true;
   while (streamingLogs) {
     // eslint-disable-next-line no-await-in-loop
-    const logs = await log(funcName, latestLog);
+    const logs = await log(funcName, apiKey, latestLog);
     if (logs.length !== 0) {
       latestLog = logs[logs.length - 1];
       logs.forEach(logEntry =>
