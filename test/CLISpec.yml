@@ -51,6 +51,37 @@
             Deployed function to *rogerdodger
               (use "bn invoke -p /home/dockeruser/test/rogerdodger -f rogerdodger" to invoke the function)
 
+- test: Test invoke(good-path)
+  work_dir: /home/dockeruser/test
+  setup:
+    - |-
+      echo '{\"name\": \"unguessable\"}' > invoke.json
+  steps:
+    -   in: bn init -f skippymcgee -p /home/dockeruser/test/skippymcgee
+        out: |-
+            Initialized function skippymcgee in /home/dockeruser/test/skippymcgee
+              (use "bn deploy -p /home/dockeruser/test/skippymcgee -f skippymcgee" to deploy the function)
+    -   in: bn deploy -p /home/dockeruser/test/skippymcgee
+        out: |-
+            Deployed function to *skippymcgee
+              (use "bn invoke -p /home/dockeruser/test/skippymcgee" to invoke the function)
+    -   in: bn invoke -f skippymcgee -p /home/dockeruser/test/skippymcgee
+        out: |-
+            Hello World!
+        delay: 2000
+    -   in: |-
+            bn invoke -f skippymcgee -p /home/dockeruser/test/skippymcgee -d '{\"name\": \"unguessable\"}'
+        out: |-
+            Hello unguessable!
+    -   in: |-
+            bn invoke -f skippymcgee -p /home/dockeruser/test/skippymcgee -j invoke.json
+        out: |-
+            Hello unguessable!
+    -   in: bn remove -p /home/dockeruser/test/skippymcgee
+        out: |-
+            Removed function skippymcgee
+              (use "bn deploy -p /home/dockeruser/test/skippymcgee" to re-deploy the function)
+
 - test: Test all commands(good-path)
   work_dir: /home/dockeruser/test
   steps:
