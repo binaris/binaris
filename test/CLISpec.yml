@@ -84,7 +84,49 @@
         out: |-
             Hello unguessable!
 
-- test: Test all commands(good-path)
+- test: Test logs(good-path)
+  work_dir: /home/dockeruser/test
+  cleanup:
+    - bn remove
+  steps:
+    -   in: bn init
+        out: |-
+            Initialized function * in /home/dockeruser/test
+              (use "bn deploy" to deploy the function)
+    -   in: bn deploy
+        out: |-
+            Deployed function to *
+              (use "bn invoke" to invoke the function)
+    -   in: bn invoke
+        out: |-
+           Hello World!
+        delay: 3000
+    -   in: bn logs
+        out: |-
+          [201*-*-*T*:*:*Z] Hello World!
+        delay: 10000
+    -   in: |-
+            bn invoke -d '{\"name\": \"again\"}' 
+        out: |-
+            Hello again!
+    -   in: bn logs
+        out: |-
+          [201*-*-*T*:*:*Z] Hello World!
+          [201*-*-*T*:*:*Z] Hello again!
+        delay: 10000
+    -   in: |-
+            bn invoke -d '{\"name\": \"for the last time\"}' 
+        out: |-
+            Hello for the last time!
+    -   in: bn logs
+        out: |-
+          [201*-*-*T*:*:*Z] Hello World!
+          [201*-*-*T*:*:*Z] Hello again!
+          [201*-*-*T*:*:*Z] Hello for the last time!
+        delay: 10000
+
+
+- test: Test deploy invoke remove cycle commands(good-path)
   work_dir: /home/dockeruser/test
   steps:
     -   in: bn init
@@ -195,6 +237,10 @@
         out: |-
             bn: Argument "init" is not a valid input to deploy
         exit: 1
+    -   in: bn logs notlogs
+        out: |-
+            bn: Argument "notlogs" is not a valid input to logs
+        exit: 1
 
 - test: No such path(bad-path)
   work_dir: /home/dockeruser/test
@@ -210,6 +256,10 @@
     -   in: bn remove -p /home/dockeruser/test/hocus/pocus/fairy
         out: |-
             bn: ENOENT: no such file or directory, open '/home/dockeruser/test/hocus/pocus/fairy/binaris.yml'
+        exit: 1
+    -   in: bn logs -p /home/dockeruser/test/what/ifitdidnt/exist
+        out: |-
+            bn: ENOENT: no such file or directory, open '/home/dockeruser/test/what/ifitdidnt/exist/binaris.yml'
         exit: 1
 
 - test: No binaris.yml in directory(bad-path)

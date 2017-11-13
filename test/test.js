@@ -25,6 +25,7 @@ const flags = '--cap-add=NET_ADMIN';
 
 // The environment variables propagated to Docker
 const envVars = {
+  BINARIS_LOG_ENDPOINT: undefined,
   BINARIS_INVOKE_ENDPOINT: undefined,
   BINARIS_DEPLOY_ENDPOINT: undefined,
   BINARIS_API_KEY: undefined,
