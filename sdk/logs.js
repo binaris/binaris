@@ -10,7 +10,7 @@ const { logEndpoint } = require('./config');
  * @param {string} apiKey - Binaris API key used to authenticate function invocation
  * @param {string} startingEntry - the log entry to start from(but not including)
  */
-const log = async function log(functionName, apiKey, startingEntry) {
+const logs = async function logs(functionName, apiKey, startingEntry) {
   const options = {
     json: true,
     forever: true,
@@ -31,4 +31,4 @@ const log = async function log(functionName, apiKey, startingEntry) {
   return (await rp.get(options)).body || [];
 };
 
-module.exports = log;
+module.exports = logs;
