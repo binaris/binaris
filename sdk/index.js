@@ -2,13 +2,13 @@
 const auth = require('./auth');
 const deploy = require('./deploy');
 const invoke = require('./invoke');
-const log = require('./log');
+const logs = require('./logs');
 const remove = require('./remove');
 
 module.exports = {
   auth,
   deploy,
   invoke,
-  log,
+  logs,
   remove,
 };

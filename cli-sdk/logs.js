@@ -1,4 +1,4 @@
-const { log } = require('../sdk');
+const { logs } = require('../sdk');
 const { getAPIKey } = require('./userConf');
 
 // time(ms) it takes between log retrievals
@@ -26,10 +26,10 @@ const logCLI = async function logCLI(funcName, tail, logStream) {
   let streamingLogs = true;
   while (streamingLogs) {
     // eslint-disable-next-line no-await-in-loop
-    const logs = await log(funcName, apiKey, latestLog);
-    if (logs.length !== 0) {
-      latestLog = logs[logs.length - 1];
-      logs.forEach(logEntry =>
+    const aggrLogs = await logs(funcName, apiKey, latestLog);
+    if (aggrLogs.length !== 0) {
+      latestLog = aggrLogs[aggrLogs.length - 1];
+      aggrLogs.forEach(logEntry =>
         logStream.push(logEntry));
     }
     if (tail) {

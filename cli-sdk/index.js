@@ -1,7 +1,7 @@
 const deploy = require('./deploy');
 const init = require('./init');
 const invoke = require('./invoke');
-const log = require('./log');
+const logs = require('./logs');
 const logger = require('./logger');
 const remove = require('./remove');
 const YMLUtil = require('./binarisYML');
@@ -142,7 +142,7 @@ const logHandler = async function logHandler(options) {
   logStream.on('data', (currLog) => {
     logger.info(`[${currLog.timestamp}]: ${currLog.message}`);
   });
-  await log(meta.name, options.tail, logStream);
+  await logs(meta.name, options.tail, logStream);
 };
 
 

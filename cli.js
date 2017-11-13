@@ -28,7 +28,7 @@ commander
   .action(actionWrapper(loginHandler));
 
 commander
-  .command('log')
+  .command('logs')
   .description('Print the logs of a function')
   .option('-t, --tail',
     'Outputs logs in "tail -f" fashion')
