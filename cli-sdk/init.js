@@ -34,8 +34,7 @@ const init = async function init(functionName, functionPath) {
   const finalName = sanitizeName(functionName || moniker.choose());
   if (functionName) {
     if (functionName.length !== finalName.length) {
-      const badChars = functionName.replace(/[A-Za-z-.0-9]/g, '').split('').join('" "');
-      throw new Error(`Function name ${functionName} contains invalid characters [ "${badChars}" ]`);
+      throw new Error(`Invalid characters in function name ${functionName}. Use only letters, digits, and "-."`);
     }
   }
 

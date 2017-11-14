@@ -131,20 +131,20 @@
   steps:
     -   in: bn init -f a*b*c*
         out: |-
-            bn: Function name a*b*c* contains invalid characters [ "*" "*" "*" ]
+            bn: Invalid characters in function name a*b*c*. Use only letters, digits, and "-."
         exit: 1
     -   in: bn init -f a_b%c#d@e+
         out: |-
-            bn: Function name a_b%c#d@e+ contains invalid characters [ "_" "%" "#" "@" "+" ]
+            bn: Invalid characters in function name a_b%c#d@e+. Use only letters, digits, and "-."
         exit: 1
     -   in: |-
            bn init -f a=b~c,
         out: |-
-            bn: Function name a=b~c, contains invalid characters [ "=" "~" "," ]
+            bn: Invalid characters in function name a=b~c,. Use only letters, digits, and "-."
         exit: 1
     -   in: bn init -f a:b?c!
         out: |-
-            bn: Function name a:b?c! contains invalid characters [ ":" "?" "!" ]
+            bn: Invalid characters in function name a:b?c!. Use only letters, digits, and "-."
         exit: 1
     -   in: bn init -f tooooooooooooooooooooooooooooooooooooooooooooooolongggggggggggggggggggggggggggggggggggggggggggggggggggggggggg
         out: |-
