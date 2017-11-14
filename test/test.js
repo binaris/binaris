@@ -98,9 +98,13 @@ planYAML.forEach((rawSubTest) => {
       try {
         // eslint-disable-next-line no-await-in-loop
         const output = await t.context.container.run(`${envString} ${flags}`, step.in, true);
-        t.true(globToRegExp(step.out).test(output.slice(0, -1)));
+        if (step.out) {
+	        t.true(globToRegExp(step.out).test(output.slice(0, -1)));
+	      }
       } catch (err) {
-        t.true(globToRegExp(step.out).test(err.stderr.slice(0, -1)));
+        if (step.out) {
+          t.true(globToRegExp(step.out).test(err.stderr.slice(0, -1)));
+        }
         t.is(err.code, (step.exit || 0));
       }
     }
