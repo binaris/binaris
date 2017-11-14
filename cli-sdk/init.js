@@ -39,7 +39,7 @@ const init = async function init(functionName, functionPath) {
   }
 
   if (finalName.length > maxNameLength) {
-    throw new Error(`Function name ${finalName} length(${finalName.length}) exceeds max length(${maxNameLength})`);
+    throw new Error(`Function names cannot be longer than ${maxNameLength} characters.`);
   }
 
   // parse the templated yml and make the necessary modifications
