@@ -1,6 +1,5 @@
 const fse = require('fs-extra');
 const path = require('path');
-const validator = require('validator');
 const moniker = require('moniker');
 
 const YMLUtil = require('./binarisYML');
@@ -18,7 +17,7 @@ const maxNameLength = 58;
  * @returns {string} - the sanitized version of the input name
  */
 const sanitizeName = function sanitizeName(name) {
-  return validator.whitelist(name, '\\[^A-Za-z-.0-9\\]');
+  return name.replace(new RegExp('[^A-Za-z-.0-9]', 'g'), '');
 };
 
 /**
