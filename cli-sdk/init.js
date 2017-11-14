@@ -1,11 +1,14 @@
 const fse = require('fs-extra');
 const path = require('path');
-
+const validator = require('validator');
 const moniker = require('moniker');
 
 const YMLUtil = require('./binarisYML');
 
 const templateDir = './functionTemplates/nodejs/';
+
+// 63 total minus 5 used for 'bolt-' which is prepended
+const maxNameLength = 58;
 
 /**
  * Sanitize the name, removing any invalid or non-unicode
@@ -15,7 +18,7 @@ const templateDir = './functionTemplates/nodejs/';
  * @returns {string} - the sanitized version of the input name
  */
 const sanitizeName = function sanitizeName(name) {
-  return name.replace(/[-~`!#$%^&*+=\\[\]\\';,/{}|\\":<>?]/g, '');
+  return validator.whitelist(name, '\\[^A-Za-z-.0-9\\]');
 };
 
 /**
@@ -29,6 +32,17 @@ const sanitizeName = function sanitizeName(name) {
  */
 const init = async function init(functionName, functionPath) {
   const finalName = sanitizeName(functionName || moniker.choose());
+  if (functionName) {
+    if (functionName.length !== finalName.length) {
+      const badChars = functionName.replace(/[A-Za-z-.0-9]/g, '').split('').join('" "');
+      throw new Error(`Function name ${functionName} contains invalid characters [ "${badChars}" ]`);
+    }
+  }
+
+  if (finalName.length > maxNameLength) {
+    throw new Error(`Function name ${finalName} length(${finalName.length}) exceeds max length(${maxNameLength})`);
+  }
+
   // parse the templated yml and make the necessary modifications
   const templatePath = path.join(__dirname, templateDir);
   const binarisConf = await YMLUtil.loadBinarisConf(templatePath);

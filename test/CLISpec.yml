@@ -34,6 +34,15 @@
         out: |-
             Initialized function purplecannon in /home/dockeruser/test/purplecannon
               (use "bn deploy -p /home/dockeruser/test/purplecannon -f purplecannon" to deploy the function)
+    -   in: bn init -f hyphen-function -p /home/dockeruser/test/hyphen-function
+        out: |-
+            Initialized function hyphen-function in /home/dockeruser/test/hyphen-function
+              (use "bn deploy -p /home/dockeruser/test/hyphen-function -f hyphen-function" to deploy the function)
+    -   in: bn init -f dot.function -p /home/dockeruser/test/dot.function
+        out: |-
+            Initialized function dot.function in /home/dockeruser/test/dot.function
+              (use "bn deploy -p /home/dockeruser/test/dot.function -f dot.function" to deploy the function)
+
 
 - test: Test deploy(good-path)
   work_dir: /home/dockeruser/test
@@ -115,6 +124,31 @@
     -   in: (echo 9397312) | bn login
         out: |-
             bn: Invalid API key
+        exit: 1
+
+- test: Test init(bad-path)
+  work_dir: /home/dockeruser/test
+  steps:
+    -   in: bn init -f a*b*c*
+        out: |-
+            bn: Function name a*b*c* contains invalid characters [ "*" "*" "*" ]
+        exit: 1
+    -   in: bn init -f a_b%c#d@e+
+        out: |-
+            bn: Function name a_b%c#d@e+ contains invalid characters [ "_" "%" "#" "@" "+" ]
+        exit: 1
+    -   in: |-
+           bn init -f a=b~c,
+        out: |-
+            bn: Function name a=b~c, contains invalid characters [ "=" "~" "," ]
+        exit: 1
+    -   in: bn init -f a:b?c!
+        out: |-
+            bn: Function name a:b?c! contains invalid characters [ ":" "?" "!" ]
+        exit: 1
+    -   in: bn init -f tooooooooooooooooooooooooooooooooooooooooooooooolongggggggggggggggggggggggggggggggggggggggggggggggggggggggggg
+        out: |-
+            bn: Function name tooooooooooooooooooooooooooooooooooooooooooooooolongggggggggggggggggggggggggggggggggggggggggggggggggggggggggg length(109) exceeds max length(58)
         exit: 1
 
 - test: Test invoke(bad-path)
