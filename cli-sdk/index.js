@@ -141,7 +141,7 @@ const logHandler = async function logHandler(options) {
   const logStream = new PassThroughStream({ objectMode: true });
   logStream.on('data', (currLog) => {
     const timeCode = new Date(currLog.timestamp);
-    logger.info(`[${timeCode.toISOString()}]: ${currLog.message}`);
+    logger.info(`[${timeCode.toISOString()}] ${currLog.message}`);
   });
   await logs(meta.name, options.tail, logStream);
 };
