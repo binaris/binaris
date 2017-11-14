@@ -140,7 +140,8 @@ const logHandler = async function logHandler(options) {
   const meta = await gatherMeta(options);
   const logStream = new PassThroughStream({ objectMode: true });
   logStream.on('data', (currLog) => {
-    logger.info(`[${currLog.timestamp}]: ${currLog.message}`);
+    const timeCode = new Date(currLog.timestamp);
+    logger.info(`[${timeCode.toISOString()}]: ${currLog.message}`);
   });
   await logs(meta.name, options.tail, logStream);
 };
