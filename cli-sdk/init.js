@@ -31,12 +31,9 @@ const sanitizeName = function sanitizeName(name) {
  */
 const init = async function init(functionName, functionPath) {
   const finalName = sanitizeName(functionName || moniker.choose());
-  if (functionName) {
-    if (functionName.length !== finalName.length) {
-      throw new Error(`Invalid characters in function name ${functionName}. Use only letters, digits, and "-."`);
-    }
+  if (functionName && functionName !== finalName) {
+    throw new Error(`Invalid characters in function name ${functionName}. Use only letters, digits, and "-."`);
   }
-
   if (finalName.length > maxNameLength) {
     throw new Error(`Function names cannot be longer than ${maxNameLength} characters.`);
   }
