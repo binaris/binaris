@@ -5,6 +5,8 @@
     BINARIS_CONF_DIR: /home/dockeruser/test
   setup:
     - echo $BINARIS_API_KEY > /home/dockeruser/test/apikey
+  cleanup:
+    - bn remove -p /home/dockeruser/test/regulatedguest
   steps:
     -   in: bn init -f regulatedguest -p /home/dockeruser/test/regulatedguest
         out: |-
@@ -46,6 +48,8 @@
 
 - test: Test deploy(good-path)
   work_dir: /home/dockeruser/test
+  cleanup:
+    - bn remove -p /home/dockeruser/test/rogerdodger
   steps:
     -   in: bn init -f rogerdodger -p /home/dockeruser/test/rogerdodger
         out: |-
@@ -65,6 +69,8 @@
   setup:
     - |-
       echo '{\"name\": \"unguessable\"}' > invoke.json
+  cleanup:
+    - bn remove -p /home/dockeruser/test/skippymcgee
   steps:
     -   in: bn init -f skippymcgee -p /home/dockeruser/test/skippymcgee
         out: |-
@@ -86,10 +92,6 @@
             bn invoke -f skippymcgee -p /home/dockeruser/test/skippymcgee -j invoke.json
         out: |-
             Hello unguessable!
-    -   in: bn remove -p /home/dockeruser/test/skippymcgee
-        out: |-
-            Removed function skippymcgee
-              (use "bn deploy -p /home/dockeruser/test/skippymcgee" to re-deploy the function)
 
 - test: Test all commands(good-path)
   work_dir: /home/dockeruser/test
