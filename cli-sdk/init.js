@@ -17,7 +17,7 @@ const maxNameLength = 58;
  * @returns {string} - the sanitized version of the input name
  */
 const sanitizeName = function sanitizeName(name) {
-  return name.replace(new RegExp('[^A-Za-z-.0-9]', 'g'), '');
+  return name.replace(/[^-A-Za-z.0-9]/g, '');
 };
 
 /**
