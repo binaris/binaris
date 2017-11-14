@@ -56,6 +56,13 @@ test.beforeEach(async (t) => {
  * Always call `remove` on the container before exit
  */
 test.afterEach.always(async (t) => {
+  if (t.context.cleanup) {
+    for (const cleanupStep of t.context.cleanup) {
+      // eslint-disable-next-line no-await-in-loop
+      await t.context.container.run(`${t.context.envString} ${flags}`, cleanupStep);
+    }
+  }
+
   if (t.context.container.isCreated()) {
     await t.context.container.remove();
   }
@@ -88,6 +95,9 @@ planYAML.forEach((rawSubTest) => {
         await t.context.container.run(`${envString} ${flags}`, setupStep);
       }
     }
+
+    t.context.envString = envString;
+    t.context.cleanup = rawSubTest.cleanup;
 
     for (const step of rawSubTest.steps) {
       if (step.delay) {
