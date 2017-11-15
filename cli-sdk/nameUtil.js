@@ -17,5 +17,6 @@ const validateName = function validateName(functionName) {
   }
 }
 
-module.exports = validateName;
-
+module.exports = {
+  validateName,
+};
