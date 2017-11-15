@@ -6,12 +6,12 @@
   setup:
     - echo $BINARIS_API_KEY > /home/dockeruser/test/apikey
   cleanup:
-    - bn remove -p /home/dockeruser/test/regulatedguest
+    - bn remove
   steps:
-    -   in: bn init -f regulatedguest -p /home/dockeruser/test/regulatedguest
+    -   in: bn init
         out: |-
-            Initialized function regulatedguest in /home/dockeruser/test/regulatedguest
-              (use "bn deploy -p /home/dockeruser/test/regulatedguest -f regulatedguest" to deploy the function)
+            Initialized function * in /home/dockeruser/test
+              (use "bn deploy" to deploy the function)
     -   in: ((cat /home/dockeruser/test/apikey) | bn login)
         out: |-
             Please enter your Binaris API key to deploy and invoke functions.
@@ -19,10 +19,10 @@
             *API Key: *
             Authentication Succeeded
               (use "bn init" to initialize a template function in your current directory)
-    -   in: unset BINARIS_API_KEY && bn deploy -f regulatedguest -p /home/dockeruser/test/regulatedguest
+    -   in: unset BINARIS_API_KEY && bn deploy
         out: |-
-            Deployed function to *regulatedguest
-              (use "bn invoke -p /home/dockeruser/test/regulatedguest -f regulatedguest" to invoke the function)
+            Deployed function to *
+              (use "bn invoke" to invoke the function)
         delay: 300
 
 - test: Test init(good-path)
@@ -36,33 +36,24 @@
         out: |-
             Initialized function purplecannon in /home/dockeruser/test/purplecannon
               (use "bn deploy -p /home/dockeruser/test/purplecannon -f purplecannon" to deploy the function)
-    -   in: bn init -f hyphen-function -p /home/dockeruser/test/hyphen-function
-        out: |-
-            Initialized function hyphen-function in /home/dockeruser/test/hyphen-function
-              (use "bn deploy -p /home/dockeruser/test/hyphen-function -f hyphen-function" to deploy the function)
-    -   in: bn init -f dot.function -p /home/dockeruser/test/dot.function
-        out: |-
-            Initialized function dot.function in /home/dockeruser/test/dot.function
-              (use "bn deploy -p /home/dockeruser/test/dot.function -f dot.function" to deploy the function)
-
 
 - test: Test deploy(good-path)
   work_dir: /home/dockeruser/test
   cleanup:
-    - bn remove -p /home/dockeruser/test/rogerdodger
+    - bn remove
   steps:
-    -   in: bn init -f rogerdodger -p /home/dockeruser/test/rogerdodger
+    -   in: bn init
         out: |-
-            Initialized function rogerdodger in *rogerdodger
-              (use "bn deploy -p /home/dockeruser/test/rogerdodger -f rogerdodger" to deploy the function)
-    -   in: bn deploy -f rogerdodger -p /home/dockeruser/test/rogerdodger
+            Initialized function * in /home/dockeruser/test
+              (use "bn deploy" to deploy the function)
+    -   in: bn deploy
         out: |-
-            Deployed function to *rogerdodger
-              (use "bn invoke -p /home/dockeruser/test/rogerdodger -f rogerdodger" to invoke the function)
-    -   in: bn deploy -f rogerdodger -p /home/dockeruser/test/rogerdodger
+            Deployed function to *
+              (use "bn invoke" to invoke the function)
+    -   in: bn deploy
         out: |-
-            Deployed function to *rogerdodger
-              (use "bn invoke -p /home/dockeruser/test/rogerdodger -f rogerdodger" to invoke the function)
+            Deployed function to *
+              (use "bn invoke" to invoke the function)
 
 - test: Test invoke(good-path)
   work_dir: /home/dockeruser/test
@@ -70,48 +61,48 @@
     - |-
       echo '{\"name\": \"unguessable\"}' > invoke.json
   cleanup:
-    - bn remove -p /home/dockeruser/test/skippymcgee
+    - bn remove
   steps:
-    -   in: bn init -f skippymcgee -p /home/dockeruser/test/skippymcgee
+    -   in: bn init
         out: |-
-            Initialized function skippymcgee in /home/dockeruser/test/skippymcgee
-              (use "bn deploy -p /home/dockeruser/test/skippymcgee -f skippymcgee" to deploy the function)
-    -   in: bn deploy -p /home/dockeruser/test/skippymcgee
+            Initialized function * in /home/dockeruser/test
+              (use "bn deploy" to deploy the function)
+    -   in: bn deploy
         out: |-
-            Deployed function to *skippymcgee
-              (use "bn invoke -p /home/dockeruser/test/skippymcgee" to invoke the function)
-    -   in: bn invoke -f skippymcgee -p /home/dockeruser/test/skippymcgee
+            Deployed function to *
+              (use "bn invoke" to invoke the function)
+    -   in: bn invoke
         out: |-
             Hello World!
         delay: 2000
     -   in: |-
-            bn invoke -f skippymcgee -p /home/dockeruser/test/skippymcgee -d '{\"name\": \"unguessable\"}'
+            bn invoke -d '{\"name\": \"unguessable\"}'
         out: |-
             Hello unguessable!
     -   in: |-
-            bn invoke -f skippymcgee -p /home/dockeruser/test/skippymcgee -j invoke.json
+            bn invoke -j invoke.json
         out: |-
             Hello unguessable!
 
 - test: Test all commands(good-path)
   work_dir: /home/dockeruser/test
   steps:
-    -   in: bn init -f cherrycoke -p /home/dockeruser/test/cherrycoke
+    -   in: bn init
         out: |-
-            Initialized function cherrycoke in /home/dockeruser/test/cherrycoke
-              (use "bn deploy -p /home/dockeruser/test/cherrycoke -f cherrycoke" to deploy the function)
-    -   in: bn deploy -p /home/dockeruser/test/cherrycoke
+            Initialized function * in /home/dockeruser/test
+              (use "bn deploy" to deploy the function)
+    -   in: bn deploy
         out: |-
-            Deployed function to *cherrycoke
-              (use "bn invoke -p /home/dockeruser/test/cherrycoke" to invoke the function)
-    -   in: bn invoke -f cherrycoke -p /home/dockeruser/test/cherrycoke
+            Deployed function to *
+              (use "bn invoke" to invoke the function)
+    -   in: bn invoke
         out: |-
             Hello World!
         delay: 2000
-    -   in: bn remove -p /home/dockeruser/test/cherrycoke
+    -   in: bn remove
         out: |-
-            Removed function cherrycoke
-              (use "bn deploy -p /home/dockeruser/test/cherrycoke" to re-deploy the function)
+            Removed function *
+              (use "bn deploy" to re-deploy the function)
 
 - test: Test login(bad-path)
   work_dir: /home/dockeruser/test
@@ -119,10 +110,10 @@
     BINARIS_API_KEY: unset
     BINARIS_CONF_DIR: /home/dockeruser/test
   steps:
-    -   in: bn init -f regulatedguest -p /home/dockeruser/test/regulatedguest
+    -   in: bn init
         out: |-
-            Initialized function regulatedguest in /home/dockeruser/test/regulatedguest
-              (use "bn deploy -p /home/dockeruser/test/regulatedguest -f regulatedguest" to deploy the function)
+            Initialized function * in /home/dockeruser/test
+              (use "bn deploy" to deploy the function)
     -   in: (echo 9397312) | bn login
         out: |-
             bn: Invalid API key
@@ -133,20 +124,20 @@
   steps:
     -   in: bn init -f a*b*c*
         out: |-
-            bn: Invalid characters in function name a*b*c*. Use only letters, digits, and "-."
+            bn: Invalid characters in function name a*b*c*. Use only letters and digits
         exit: 1
     -   in: bn init -f a_b%c#d@e+
         out: |-
-            bn: Invalid characters in function name a_b%c#d@e+. Use only letters, digits, and "-."
+            bn: Invalid characters in function name a_b%c#d@e+. Use only letters and digits
         exit: 1
     -   in: |-
-           bn init -f a=b~c,
+           bn init -f a=b~c,d.
         out: |-
-            bn: Invalid characters in function name a=b~c,. Use only letters, digits, and "-."
+            bn: Invalid characters in function name a=b~c,d.. Use only letters and digits
         exit: 1
-    -   in: bn init -f a:b?c!
+    -   in: bn init -f a:b?c!d-
         out: |-
-            bn: Invalid characters in function name a:b?c!. Use only letters, digits, and "-."
+            bn: Invalid characters in function name a:b?c!d-. Use only letters and digits
         exit: 1
     -   in: bn init -f tooooooooooooooooooooooooooooooooooooooooooooooolongggggggggggggggggggggggggggggggggggggggggggggggggggggggggg
         out: |-
@@ -234,11 +225,11 @@
 - test: No matching function(bad-path)
   work_dir: /home/dockeruser/test
   steps:
-    -   in: bn init -f unrelatedname -p /home/dockeruser/test/grouchybear
+    -   in: bn init -f unrelatedname
         out: |- 
-            Initialized function unrelatedname in /home/dockeruser/test/grouchybear
-              (use "bn deploy -p /home/dockeruser/test/grouchybear -f unrelatedname" to deploy the function)
-    -   in: bn deploy -p /home/dockeruser/test/grouchybear -f grouchybear
+            Initialized function unrelatedname in /home/dockeruser/test
+              (use "bn deploy -f unrelatedname" to deploy the function)
+    -   in: bn deploy -f grouchybear
         out: |-
             bn: Cannot find function 'grouchybear' in binaris.yml
         exit: 1
@@ -249,12 +240,11 @@
     BINARIS_API_KEY: unset
     BINARIS_CONF_DIR: /home/dockeruser/test
   steps:
-    -   in: bn init -f banananasundae -p /home/dockeruser/test/banananasundae
+    -   in: bn init
         out: |-
-            Initialized function * in *
-              (use "bn deploy*" to deploy the function)
-        exit: 0
-    -   in: bn deploy -f banananasundae -p /home/dockeruser/test/banananasundae
+            Initialized function * in /home/dockeruser/test
+              (use "bn deploy" to deploy the function)
+    -   in: bn deploy
         out: |-
             bn: Binaris conf file could not be read and BINARIS_API_KEY is undefined, please use "bn login"
         exit: 1
@@ -267,12 +257,11 @@
     BINARIS_API_KEY: unset
     BINARIS_CONF_DIR: /home/dockeruser/test
   steps:
-    -   in: bn init -f yogurtsalad -p /home/dockeruser/test/yogurtsalad
+    -   in: bn init
         out: |-
-            Initialized function * in *
-              (use "bn deploy*" to deploy the function)
-        exit: 0
-    -   in: bn deploy -f yogurtsalad -p /home/dockeruser/test/yogurtsalad
+            Initialized function * in /home/dockeruser/test
+              (use "bn deploy" to deploy the function)
+    -   in: bn deploy
         out: |-
             bn: Invalid Binaris conf file (missing API key) /home/dockeruser/test/.binaris.yml
         exit: 1

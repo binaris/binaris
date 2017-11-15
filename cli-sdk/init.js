@@ -17,7 +17,7 @@ const maxNameLength = 58;
  * @returns {string} - the sanitized version of the input name
  */
 const sanitizeName = function sanitizeName(name) {
-  return name.replace(/[^-A-Za-z.0-9]/g, '');
+  return name.replace(/[^A-Za-z0-9]/g, '');
 };
 
 /**
@@ -32,7 +32,7 @@ const sanitizeName = function sanitizeName(name) {
 const init = async function init(functionName, functionPath) {
   const finalName = sanitizeName(functionName || moniker.choose());
   if (functionName && functionName !== finalName) {
-    throw new Error(`Invalid characters in function name ${functionName}. Use only letters, digits, and "-."`);
+    throw new Error(`Invalid characters in function name ${functionName}. Use only letters and digits`);
   }
   if (finalName.length > maxNameLength) {
     throw new Error(`Function names cannot be longer than ${maxNameLength} characters.`);
