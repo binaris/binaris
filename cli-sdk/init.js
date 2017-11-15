@@ -2,7 +2,7 @@ const fse = require('fs-extra');
 const path = require('path');
 const moniker = require('moniker');
 
-const { validateName } = require('./nameUtil');
+const { validateName, makeNameValid } = require('./nameUtil');
 const YMLUtil = require('./binarisYML');
 
 const templateDir = './functionTemplates/nodejs/';
@@ -19,7 +19,7 @@ const templateDir = './functionTemplates/nodejs/';
 const init = async function init(functionName, functionPath) {
   // removing the '-' from monikers string is required because they
   // don't allow the glue string to be empty.
-  const finalName = functionName || moniker.choose().replace(/-/g, '');
+  const finalName = functionName || makeNameValid(moniker.choose());
   validateName(finalName);
   // parse the templated yml and make the necessary modifications
   const templatePath = path.join(__dirname, templateDir);

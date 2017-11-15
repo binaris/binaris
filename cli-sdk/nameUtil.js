@@ -1,5 +1,7 @@
 // 63 total minus 5 used for 'bolt-' which is prepended
 const maxNameLength = 58;
+// allows only letters and numbers
+const validNameRegex = /[^A-Za-z0-9]/g;
 
 /**
  * Verifies whether the provided function name meets
@@ -9,7 +11,7 @@ const maxNameLength = 58;
  * @param {string} functionName - name of function to validate
  */
 const validateName = function validateName(functionName) {
-  if (/[^A-Za-z0-9]/g.test(functionName)) {
+  if (validNameRegex.test(functionName)) {
     throw new Error(`Invalid characters in function name ${functionName}. Use only letters and digits`);
   }
   if (functionName.length > maxNameLength) {
@@ -17,6 +19,18 @@ const validateName = function validateName(functionName) {
   }
 }
 
+/**
+ * Removes any illegal characters from the provided name
+ * thereby making it valid to use for a Binaris function.
+ *
+ * @param {string} functionName - name to remove potential bad chars from
+ * @returns {string} - input name minus any illegal characters
+ */
+const makeNameValid = function makeNameValid(functionName) {
+  return functionName.replace(validNameRegex, '');
+};
+
 module.exports = {
+  makeNameValid,
   validateName,
 };
