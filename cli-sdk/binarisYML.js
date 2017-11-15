@@ -6,6 +6,8 @@ const path = require('path');
 const yaml = require('js-yaml');
 
 const log = require('./logger');
+const validateName = require('./validateName');
+
 
 const binarisConfFile = 'binaris.yml';
 const funcStr = 'functions';
@@ -58,6 +60,7 @@ const getFuncName = function getFuncName(binarisConf) {
     throw new Error(`${binarisConfFile}: ${funcStr}, only one function supported!`);
   }
   const funcName = funcKeys[0];
+  validateName(funcName);
   return funcName;
 };
 
