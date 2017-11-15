@@ -8,7 +8,6 @@ const yaml = require('js-yaml');
 const log = require('./logger');
 const { validateName } = require('./nameUtil');
 
-
 const binarisConfFile = 'binaris.yml';
 const funcStr = 'functions';
 const entryStr = 'entrypoint';
