@@ -36,7 +36,7 @@ const exceptionWrapper = function tryCatchWrapper(funcToWrap) {
       // git style sub commands are strictly not supported
       // ie: bn init notacommand
       if (argData.args.length > 1) {
-        throw new Error(`Argument ${argData.args[0]} is not a valid input to ${argData.rawArgs[2]}`);
+        throw new Error(`Argument "${argData.args[0]}" is not a valid input to ${argData.rawArgs[2]}`);
       }
       await funcToWrap(argData.options);
       process.exit(0);

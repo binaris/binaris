@@ -192,15 +192,15 @@
   steps:
     -   in: bn init init init
         out: |-
-            bn: Argument * is not a valid input to *
+            bn: Argument "*" is not a valid input to *
         exit: 1
     -   in: bn init sadmksad
         out: |-
-            bn: Argument sadmksad is not a valid input to init
+            bn: Argument "sadmksad" is not a valid input to init
         exit: 1
     -   in: bn deploy init
         out: |-
-            bn: Argument init is not a valid input to deploy
+            bn: Argument "init" is not a valid input to deploy
         exit: 1
 
 - test: No such path(bad-path)
@@ -274,3 +274,4 @@
         out: |-
             bn: Invalid Binaris conf file (missing API key) /home/dockeruser/test/.binaris.yml
         exit: 1
+
