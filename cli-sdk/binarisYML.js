@@ -6,7 +6,7 @@ const path = require('path');
 const yaml = require('js-yaml');
 
 const log = require('./logger');
-const validateName = require('./validateName');
+const { validateName } = require('./nameUtil');
 
 
 const binarisConfFile = 'binaris.yml';

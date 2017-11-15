@@ -2,7 +2,7 @@ const fse = require('fs-extra');
 const path = require('path');
 const moniker = require('moniker');
 
-const validateName = require('./validateName');
+const { validateName } = require('./nameUtil');
 const YMLUtil = require('./binarisYML');
 
 const templateDir = './functionTemplates/nodejs/';
