@@ -202,6 +202,18 @@
             bn: ENOENT: no such file or directory, open 'myFile.json'
         exit: 1
 
+- test: Invalid name in binaris.yml (bad-path)
+  work_dir: /home/dockeruser/test
+  setup:
+    - bn init
+    # replace line 2 of binaris.yml(function name) with a bad function name
+    - sed -i '2 c \  inv*a#l@i-d:' binaris.yml
+  steps:
+    - in: bn deploy
+      out: |-
+          bn: Invalid characters in function name inv*a#l@i-d. Use only letters and digits
+      exit: 1
+
 - test: Unknown command(bad-path)
   work_dir: /home/dockeruser/test
   steps:
