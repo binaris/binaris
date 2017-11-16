@@ -1,4 +1,32 @@
 ---
+- test: Test help output
+  work_dir: /home/dockeruser/test
+  steps:
+    -   in: |-
+           bn --help | sed 's/^.\{2\}//' # remove 2 space indent(YML parse quirk)
+        out: |-
+
+            Usage: bn [options] [command]
+
+            Binaris command line interface
+
+
+            Options:
+
+              -V, --version      output the version number
+              -p, --path <path>  Use directory dir. "init" will create this directory if needed.
+              -h, --help         output usage information
+
+
+            Commands:
+
+              login              Login to your Binaris account using an API key
+              logs [options]     Print the logs of a function
+              init [options]     Initialize a function from template
+              deploy [options]   Deploys a function to the cloud
+              remove [options]   Remove a previously deployed function
+              invoke [options]   Invoke a Binaris function
+
 - test: Test login(good-path)
   work_dir: /home/dockeruser/test
   env:
