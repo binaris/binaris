@@ -1,7 +1,7 @@
 const commander = require('commander');
 // grab the version to keep things consistent
 const { version } = require('./package.json');
-const { deployHandler, initHandler, invokeHandler,
+const { deployHandler, createHandler, invokeHandler,
   logHandler, loginHandler, removeHandler, unknownHandler } = require('./cli-sdk');
 
 const actionWrapper = function actionWrapper(action) {
@@ -37,11 +37,11 @@ commander
   .action(actionWrapper(logHandler));
 
 commander
-  .command('init')
-  .description('Initialize a function from template')
+  .command('create')
+  .description('Create a function from template')
   .option('-f, --function <name>',
     'Name of the function to generate. If omitted, a name will be chosen at random')
-  .action(actionWrapper(initHandler));
+  .action(actionWrapper(createHandler));
 
 commander
   .command('deploy')

@@ -8,15 +8,15 @@ const YMLUtil = require('./binarisYML');
 const templateDir = './functionTemplates/nodejs/';
 
 /**
- * Initializes a Binaris function with the given name at the
+ * Creates a Binaris function with the given name at the
  * provided path. If a name is not provided one will be randomly
  * generated.
  *
- * @param {string} functionName - the name of the function to initialize
- * @param {string} functionPath - the path to initialize the function at
+ * @param {string} functionName - the name of the function to create
+ * @param {string} functionPath - the path to create the function at
  * @returns {string} - the final name selected for the function
  */
-const init = async function init(functionName, functionPath) {
+const create = async function create(functionName, functionPath) {
   // removing the '-' from monikers string is required because they
   // don't allow the glue string to be empty.
   const finalName = functionName || makeNameValid(moniker.choose());
@@ -36,4 +36,4 @@ const init = async function init(functionName, functionPath) {
   return finalName;
 };
 
-module.exports = init;
+module.exports = create;

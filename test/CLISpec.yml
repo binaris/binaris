@@ -36,9 +36,9 @@
   cleanup:
     - bn remove
   steps:
-    -   in: bn init
+    -   in: bn create
         out: |-
-            Initialized function * in /home/dockeruser/test
+            Created function * in /home/dockeruser/test
               (use "bn deploy" to deploy the function)
     -   in: ((cat /home/dockeruser/test/apikey) | bn login)
         out: |-
@@ -46,23 +46,23 @@
             If you don't have a key, head over to https://binaris.com to request one
             *API Key: *
             Authentication Succeeded
-              (use "bn init" to initialize a template function in your current directory)
+              (use "bn create" to create a template function in your current directory)
     -   in: unset BINARIS_API_KEY && bn deploy
         out: |-
             Deployed function to *
               (use "bn invoke" to invoke the function)
         delay: 300
 
-- test: Test init(good-path)
+- test: Test create(good-path)
   work_dir: /home/dockeruser/test
   steps:
-    -   in: bn init
+    -   in: bn create
         out: |-
-            Initialized function * in /home/dockeruser/test
+            Created function * in /home/dockeruser/test
               (use "bn deploy" to deploy the function)
-    -   in: bn init -f purplecannon -p /home/dockeruser/test/purplecannon
+    -   in: bn create -f purplecannon -p /home/dockeruser/test/purplecannon
         out: |-
-            Initialized function purplecannon in /home/dockeruser/test/purplecannon
+            Created function purplecannon in /home/dockeruser/test/purplecannon
               (use "bn deploy -p /home/dockeruser/test/purplecannon -f purplecannon" to deploy the function)
 
 - test: Test deploy(good-path)
@@ -70,9 +70,9 @@
   cleanup:
     - bn remove
   steps:
-    -   in: bn init
+    -   in: bn create
         out: |-
-            Initialized function * in /home/dockeruser/test
+            Created function * in /home/dockeruser/test
               (use "bn deploy" to deploy the function)
     -   in: bn deploy
         out: |-
@@ -91,9 +91,9 @@
   cleanup:
     - bn remove
   steps:
-    -   in: bn init
+    -   in: bn create
         out: |-
-            Initialized function * in /home/dockeruser/test
+            Created function * in /home/dockeruser/test
               (use "bn deploy" to deploy the function)
     -   in: bn deploy
         out: |-
@@ -117,9 +117,9 @@
   cleanup:
     - bn remove
   steps:
-    -   in: bn init
+    -   in: bn create
         out: |-
-            Initialized function * in /home/dockeruser/test
+            Created function * in /home/dockeruser/test
               (use "bn deploy" to deploy the function)
     -   in: bn deploy
         out: |-
@@ -157,9 +157,9 @@
 - test: Test deploy invoke remove cycle commands(good-path)
   work_dir: /home/dockeruser/test
   steps:
-    -   in: bn init
+    -   in: bn create
         out: |-
-            Initialized function * in /home/dockeruser/test
+            Created function * in /home/dockeruser/test
               (use "bn deploy" to deploy the function)
     -   in: bn deploy
         out: |-
@@ -180,36 +180,36 @@
     BINARIS_API_KEY: unset
     BINARIS_CONF_DIR: /home/dockeruser/test
   steps:
-    -   in: bn init
+    -   in: bn create
         out: |-
-            Initialized function * in /home/dockeruser/test
+            Created function * in /home/dockeruser/test
               (use "bn deploy" to deploy the function)
     -   in: (echo 9397312) | bn login
         out: |-
             bn: Invalid API key
         exit: 1
 
-- test: Test init(bad-path)
+- test: Test create(bad-path)
   work_dir: /home/dockeruser/test
   steps:
-    -   in: bn init -f a*b*c*
+    -   in: bn create -f a*b*c*
         out: |-
             bn: Invalid characters in function name a*b*c*. Use only letters and digits
         exit: 1
-    -   in: bn init -f a_b%c#d@e+
+    -   in: bn create -f a_b%c#d@e+
         out: |-
             bn: Invalid characters in function name a_b%c#d@e+. Use only letters and digits
         exit: 1
     -   in: |-
-           bn init -f a=b~c,d.
+           bn create -f a=b~c,d.
         out: |-
             bn: Invalid characters in function name a=b~c,d.. Use only letters and digits
         exit: 1
-    -   in: bn init -f a:b?c!d-
+    -   in: bn create -f a:b?c!d-
         out: |-
             bn: Invalid characters in function name a:b?c!d-. Use only letters and digits
         exit: 1
-    -   in: bn init -f tooooooooooooooooooooooooooooooooooooooooooooooolongggggggggggggggggggggggggggggggggggggggggggggggggggggggggg
+    -   in: bn create -f tooooooooooooooooooooooooooooooooooooooooooooooolongggggggggggggggggggggggggggggggggggggggggggggggggggggggggg
         out: |-
             bn: Function names cannot be longer than 58 characters.
         exit: 1
@@ -217,9 +217,9 @@
 - test: Test invoke(bad-path)
   work_dir: /home/dockeruser/test
   steps:
-    -   in: bn init -p /home/dockeruser/test/alloftheoptions
+    -   in: bn create -p /home/dockeruser/test/alloftheoptions
         out: |-
-            Initialized function * in *
+            Created function * in *
               (use "bn deploy*" to deploy the function)
     -   in: bn invoke -p /home/dockeruser/test/alloftheoptions -j myFile.json -d data
         out: |-
@@ -233,7 +233,7 @@
 - test: Invalid name in binaris.yml (bad-path)
   work_dir: /home/dockeruser/test
   setup:
-    - bn init
+    - bn create
     # replace line 2 of binaris.yml(function name) with a bad function name
     - sed -i '2 c \  inv*a#l@i-d:' binaris.yml
   steps:
@@ -257,7 +257,7 @@
     - echo binaris | sudo  -S chown root:root /home/dockeruser/test/securedir
     - echo binaris | sudo  -S chmod 700 /home/dockeruser/test/securedir
   steps:
-    -   in: bn init -p /home/dockeruser/test/securedir
+    -   in: bn create -p /home/dockeruser/test/securedir
         out: |-
             bn: EACCES: permission denied, unlink '/home/dockeruser/test/securedir/function.js'
         exit: 1
@@ -265,13 +265,13 @@
 - test: Superfluous output(bad-path)
   work_dir: /home/dockeruser/test
   steps:
-    -   in: bn init init init
+    -   in: bn create init init
         out: |-
             bn: Argument "*" is not a valid input to *
         exit: 1
-    -   in: bn init sadmksad
+    -   in: bn create sadmksad
         out: |-
-            bn: Argument "sadmksad" is not a valid input to init
+            bn: Argument "sadmksad" is not a valid input to create
         exit: 1
     -   in: bn deploy init
         out: |-
@@ -315,9 +315,9 @@
 - test: No matching function(bad-path)
   work_dir: /home/dockeruser/test
   steps:
-    -   in: bn init -f unrelatedname
+    -   in: bn create -f unrelatedname
         out: |- 
-            Initialized function unrelatedname in /home/dockeruser/test
+            Created function unrelatedname in /home/dockeruser/test
               (use "bn deploy -f unrelatedname" to deploy the function)
     -   in: bn deploy -f grouchybear
         out: |-
@@ -330,9 +330,9 @@
     BINARIS_API_KEY: unset
     BINARIS_CONF_DIR: /home/dockeruser/test
   steps:
-    -   in: bn init
+    -   in: bn create
         out: |-
-            Initialized function * in /home/dockeruser/test
+            Created function * in /home/dockeruser/test
               (use "bn deploy" to deploy the function)
     -   in: bn deploy
         out: |-
@@ -347,9 +347,9 @@
     BINARIS_API_KEY: unset
     BINARIS_CONF_DIR: /home/dockeruser/test
   steps:
-    -   in: bn init
+    -   in: bn create
         out: |-
-            Initialized function * in /home/dockeruser/test
+            Created function * in /home/dockeruser/test
               (use "bn deploy" to deploy the function)
     -   in: bn deploy
         out: |-

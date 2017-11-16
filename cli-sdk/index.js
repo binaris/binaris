@@ -1,5 +1,5 @@
 const deploy = require('./deploy');
-const init = require('./init');
+const create = require('./create');
 const invoke = require('./invoke');
 const logs = require('./logs');
 const logger = require('./logger');
@@ -34,7 +34,7 @@ const exceptionWrapper = function tryCatchWrapper(funcToWrap) {
         throw new Error(`Unknown command: '${argData.args[0]}'. See 'bn --help'`);
       }
       // git style sub commands are strictly not supported
-      // ie: bn init notacommand
+      // ie: bn create notacommand
       if (argData.args.length > 1) {
         throw new Error(`Argument "${argData.args[0]}" is not a valid input to ${argData.rawArgs[2]}`);
       }
@@ -64,27 +64,27 @@ const gatherMeta = async function gatherMeta(options) {
 };
 
 /**
- * Initializes a Binaris function based on the options given by
+ * Create a Binaris function based on the options given by
  * the user. This boils down to creating template files with the
  * correct information in the correct location.
  *
  * @param {object} options - Command line options.
  */
-const initHandler = async function initHandler(options) {
-  // this is where the actual initialize function is called and immediately
+const createHandler = async function createHandler(options) {
+  // this is where the actual create function is called and immediately
   // evaluated to determine if was successfully completed
   const funcPath = path.resolve(options.path || process.cwd());
   await fse.mkdirp(funcPath);
-  const funcName = await init(options.function, funcPath);
+  const funcName = await create(options.function, funcPath);
   const optPath = options.path ? ` -p ${funcPath}` : '';
   const optName = options.function ? ` -f ${funcName}` : '';
   logger.info(
-`Initialized function ${funcName} in ${funcPath}
+`Created function ${funcName} in ${funcPath}
   (use "bn deploy${optPath}${optName}" to deploy the function)`);
 };
 
 /**
- * Deploys a previously initialized function to the Binaris cloud.
+ * Deploys a previously created function to the Binaris cloud.
  *
  * @param {object} options - Command line options.
  */
@@ -166,12 +166,12 @@ If you don't have a key, head over to https://binaris.com to request one`);
   await updateAPIKey(answer.apiKey);
   logger.info(
 `Authentication Succeeded
-  (use "bn init" to initialize a template function in your current directory)`);
+  (use "bn create" to create a template function in your current directory)`);
 };
 
 module.exports = {
   deployHandler: exceptionWrapper(deployHandler),
-  initHandler: exceptionWrapper(initHandler),
+  createHandler: exceptionWrapper(createHandler),
   invokeHandler: exceptionWrapper(invokeHandler),
   logHandler: exceptionWrapper(logHandler),
   loginHandler: exceptionWrapper(loginHandler),
