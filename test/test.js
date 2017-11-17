@@ -6,22 +6,10 @@ const yaml = require('js-yaml');
 const fs = require('mz/fs');
 const globToRegExp = require('glob-to-regexp');
 
+
+const msleep = require('./helpers/msleep');
 // Create/run and remove a Docker container.
 const Container = require('./helpers/container');
-
-// The name of the Docker image.
-const dockerImage = 'binaris';
-
-// The docker user/group information.
-const dockerUser = 'dockeruser';
-const dockerGroup = 'dockeruser';
-const dockerPassword = 'binaris';
-
-// Directory to mount the test volume on inside Docker.
-const testMountDir = '/home/dockeruser/test';
-
-// This is needed to mess with the Docker network from inside
-const flags = '--cap-add=NET_ADMIN';
 
 // The environment variables propagated to Docker
 const envVars = {
@@ -32,25 +20,13 @@ const envVars = {
 };
 
 /**
- * Imitates stdc sleep behavior using es6 async/await
- *
- * @param {int} ms - the duration in milliseconds to sleep
- */
-const msleep = function msleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-};
-
-/**
  * Create a Docker container for each test before it runs.
  * This way all test runs are isolated thereby opening up
  * many testing avenues.
  */
 test.beforeEach(async (t) => {
   // eslint-disable-next-line no-param-reassign
-  t.context.container = new Container(dockerImage,
-    dockerPassword, testMountDir);
-  await t.context.container.create();
-  await t.context.container.giveUserVolumeAccess(dockerUser, dockerGroup);
+  t.context.ct = new Container('binaris');
 });
 
 /**
@@ -60,13 +36,10 @@ test.afterEach.always(async (t) => {
   if (t.context.cleanup) {
     for (const cleanupStep of t.context.cleanup) {
       // eslint-disable-next-line no-await-in-loop
-      await t.context.container.run(`${t.context.envString} ${flags}`, cleanupStep);
+      await t.context.ct.streamIn([cleanupStep]);
     }
   }
-
-  if (t.context.container.isCreated()) {
-    await t.context.container.remove();
-  }
+  await t.context.ct.stopAndKillContainer();
 });
 
 /**
@@ -77,27 +50,35 @@ const planYAML = yaml.safeLoad(fs.readFileSync(process.env.BINARIS_TEST_SPEC_PAT
 planYAML.forEach((rawSubTest) => {
   test(rawSubTest.test, async (t) => {
     const envMap = Object.assign({}, envVars, rawSubTest.env || {});
-    let envString = '';
+    const envs = [];
     for (const envKey in envMap) {
       if (Object.prototype.hasOwnProperty.call(envMap, envKey)) {
         if (envMap[envKey] !== 'unset') {
           if (envMap[envKey] !== undefined) {
-            envString += ` -e "${envKey}=${envMap[envKey]}"`;
+            envs.push(`${envKey}=${envMap[envKey]}`);
           } else {
-            envString += ` -e ${envKey}`;
+            envs.push(`${envKey}=${process.env[envKey]}`);
           }
         }
       }
     }
 
+    await t.context.ct.startContainer(envs);
+    if (rawSubTest.work_dir) {
+      const mkWorkDir = await t.context.ct.streamIn([`mkdir -p ${rawSubTest.work_dir}`]);
+      t.is(mkWorkDir.exitCode, 0);
+      const cdWorkDir = await t.context.ct.streamIn([`cd ${rawSubTest.work_dir}`]);
+      t.is(cdWorkDir.exitCode, 0);
+    }
+
     if (rawSubTest.setup) {
       for (const setupStep of rawSubTest.setup) {
         // eslint-disable-next-line no-await-in-loop
-        await t.context.container.run(`${envString} ${flags}`, setupStep);
+        const setupOut = await t.context.ct.streamIn([setupStep]);
+        t.is(setupOut.exitCode, 0);
       }
     }
-
-    t.context.envString = envString;
+    // eslint-disable-next-line no-param-reassign
     t.context.cleanup = rawSubTest.cleanup;
 
     for (const step of rawSubTest.steps) {
@@ -105,19 +86,20 @@ planYAML.forEach((rawSubTest) => {
         // eslint-disable-next-line no-await-in-loop
         await msleep(step.delay);
       }
-
-      try {
-        // eslint-disable-next-line no-await-in-loop
-        const output = await t.context.container.run(`${envString} ${flags}`, step.in, true);
-        if (step.out) {
-	        t.true(globToRegExp(step.out).test(output.slice(0, -1)));
-	      }
-      } catch (err) {
-        if (step.out) {
-          t.true(globToRegExp(step.out).test(err.stderr.slice(0, -1)));
-        }
-        t.is(err.code, (step.exit || 0));
+      let cmdSequence = [step.in];
+      if (step.input) {
+        cmdSequence = cmdSequence.concat(...step.input);
       }
+      // eslint-disable-next-line no-await-in-loop
+      const cmdOut = await t.context.ct.streamIn(cmdSequence);
+      if (step.out) {
+        t.true(globToRegExp(step.out).test(cmdOut.output));
+      } else if (step.stdout) {
+        t.true(globToRegExp(step.stdout).test(cmdOut.stdout));
+      } else if (step.stderr) {
+        t.true(globToRegExp(step.stderr).test(cmdOut.stderr));
+      }
+      t.is(cmdOut.exitCode, (step.exit || 0));
     }
   });
 });

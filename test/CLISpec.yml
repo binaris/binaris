@@ -41,12 +41,6 @@
             Created function * in /home/dockeruser/test
               (use "bn deploy" to deploy the function)
     -   in: ((cat /home/dockeruser/test/apikey) | bn login)
-        out: |-
-            Please enter your Binaris API key to deploy and invoke functions.
-            If you don't have a key, head over to https://binaris.com to request one
-            *API Key: *
-            Authentication Succeeded
-              (use "bn create" to create a template function in your current directory)
     -   in: unset BINARIS_API_KEY && bn deploy
         out: |-
             Deployed function to *
@@ -87,7 +81,7 @@
   work_dir: /home/dockeruser/test
   setup:
     - |-
-      echo '{\"name\": \"unguessable\"}' > invoke.json
+      echo '{"name": "unguessable"}' > invoke.json
   cleanup:
     - bn remove
   steps:
@@ -104,7 +98,7 @@
             Hello World!
         delay: 2000
     -   in: |-
-            bn invoke -d '{\"name\": \"unguessable\"}'
+            bn invoke -d '{"name": "unguessable"}'
         out: |-
             Hello unguessable!
     -   in: |-
@@ -127,14 +121,14 @@
               (use "bn invoke" to invoke the function)
     -   in: bn invoke
         out: |-
-           Hello World!
+            Hello World!
         delay: 3000
     -   in: bn logs
         out: |-
           [201*-*-*T*:*:*Z] Hello World!
-        delay: 10000
+        delay: 8000
     -   in: |-
-            bn invoke -d '{\"name\": \"again\"}' 
+            bn invoke -d '{"name": "again"}' 
         out: |-
             Hello again!
     -   in: bn logs
@@ -143,7 +137,7 @@
           [201*-*-*T*:*:*Z] Hello again!
         delay: 10000
     -   in: |-
-            bn invoke -d '{\"name\": \"for the last time\"}' 
+            bn invoke -d '{"name": "for the last time"}' 
         out: |-
             Hello for the last time!
     -   in: bn logs
@@ -151,7 +145,7 @@
           [201*-*-*T*:*:*Z] Hello World!
           [201*-*-*T*:*:*Z] Hello again!
           [201*-*-*T*:*:*Z] Hello for the last time!
-        delay: 10000
+        delay: 15000
 
 
 - test: Test deploy invoke remove cycle commands(good-path)
@@ -184,9 +178,10 @@
         out: |-
             Created function * in /home/dockeruser/test
               (use "bn deploy" to deploy the function)
-    -   in: (echo 9397312) | bn login
-        out: |-
-            Invalid API key
+    -   in: |- 
+           (echo "9239239") | bn login
+        stderr: |-
+                Invalid API key
         exit: 1
 
 - test: Test create(bad-path)
