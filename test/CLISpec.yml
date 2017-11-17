@@ -186,7 +186,7 @@
               (use "bn deploy" to deploy the function)
     -   in: (echo 9397312) | bn login
         out: |-
-            bn: Invalid API key
+            Invalid API key
         exit: 1
 
 - test: Test create(bad-path)
@@ -194,24 +194,24 @@
   steps:
     -   in: bn create -f a*b*c*
         out: |-
-            bn: Invalid characters in function name a*b*c*. Use only letters and digits
+            Invalid characters in function name a*b*c*. Use only letters and digits
         exit: 1
     -   in: bn create -f a_b%c#d@e+
         out: |-
-            bn: Invalid characters in function name a_b%c#d@e+. Use only letters and digits
+            Invalid characters in function name a_b%c#d@e+. Use only letters and digits
         exit: 1
     -   in: |-
            bn create -f a=b~c,d.
         out: |-
-            bn: Invalid characters in function name a=b~c,d.. Use only letters and digits
+            Invalid characters in function name a=b~c,d.. Use only letters and digits
         exit: 1
     -   in: bn create -f a:b?c!d-
         out: |-
-            bn: Invalid characters in function name a:b?c!d-. Use only letters and digits
+            Invalid characters in function name a:b?c!d-. Use only letters and digits
         exit: 1
     -   in: bn create -f tooooooooooooooooooooooooooooooooooooooooooooooolongggggggggggggggggggggggggggggggggggggggggggggggggggggggggg
         out: |-
-            bn: Function names cannot be longer than 58 characters.
+            Function names cannot be longer than 58 characters.
         exit: 1
 
 - test: Test invoke(bad-path)
@@ -223,11 +223,11 @@
               (use "bn deploy*" to deploy the function)
     -   in: bn invoke -p /home/dockeruser/test/alloftheoptions -j myFile.json -d data
         out: |-
-            bn: Invoke flags --json(-j) and --data(-d) are mutually exclusive
+            Invoke flags --json(-j) and --data(-d) are mutually exclusive
         exit: 1
     -   in: bn invoke -p /home/dockeruser/test/alloftheoptions/ -j myFile.json
         out: |-
-            bn: ENOENT: no such file or directory, open 'myFile.json'
+            ENOENT: no such file or directory, open 'myFile.json'
         exit: 1
 
 - test: Invalid name in binaris.yml (bad-path)
@@ -239,7 +239,7 @@
   steps:
     - in: bn deploy
       out: |-
-          bn: Invalid characters in function name inv*a#l@i-d. Use only letters and digits
+          Invalid characters in function name inv*a#l@i-d. Use only letters and digits
       exit: 1
 
 - test: Unknown command(bad-path)
@@ -247,7 +247,7 @@
   steps:
     -   in: bn alwaysbad
         out: |-
-            bn: Unknown command: 'alwaysbad'. See 'bn --help'
+            Unknown command: 'alwaysbad'. See 'bn --help'
         exit: 1
 
 - test: No permission
@@ -259,7 +259,7 @@
   steps:
     -   in: bn create -p /home/dockeruser/test/securedir
         out: |-
-            bn: EACCES: permission denied, unlink '/home/dockeruser/test/securedir/function.js'
+            EACCES: permission denied, unlink '/home/dockeruser/test/securedir/function.js'
         exit: 1
 
 - test: Superfluous output(bad-path)
@@ -267,19 +267,19 @@
   steps:
     -   in: bn create init init
         out: |-
-            bn: Argument "*" is not a valid input to *
+            Argument "*" is not a valid input to *
         exit: 1
     -   in: bn create sadmksad
         out: |-
-            bn: Argument "sadmksad" is not a valid input to create
+            Argument "sadmksad" is not a valid input to create
         exit: 1
     -   in: bn deploy init
         out: |-
-            bn: Argument "init" is not a valid input to deploy
+            Argument "init" is not a valid input to deploy
         exit: 1
     -   in: bn logs notlogs
         out: |-
-            bn: Argument "notlogs" is not a valid input to logs
+            Argument "notlogs" is not a valid input to logs
         exit: 1
 
 - test: No such path(bad-path)
@@ -287,19 +287,19 @@
   steps:
     -   in: bn deploy -p /home/dockeruser/test/bogus/comeon/really/hello.js
         out: |-
-            bn: ENOENT: no such file or directory, open '/home/dockeruser/test/bogus/comeon/really/hello.js/binaris.yml'
+            ENOENT: no such file or directory, open '/home/dockeruser/test/bogus/comeon/really/hello.js/binaris.yml'
         exit: 1
     -   in: bn invoke -p /home/dockeruser/test/never/will/exist
         out: |-
-            bn: ENOENT: no such file or directory, open '/home/dockeruser/test/never/will/exist/binaris.yml'
+            ENOENT: no such file or directory, open '/home/dockeruser/test/never/will/exist/binaris.yml'
         exit: 1
     -   in: bn remove -p /home/dockeruser/test/hocus/pocus/fairy
         out: |-
-            bn: ENOENT: no such file or directory, open '/home/dockeruser/test/hocus/pocus/fairy/binaris.yml'
+            ENOENT: no such file or directory, open '/home/dockeruser/test/hocus/pocus/fairy/binaris.yml'
         exit: 1
     -   in: bn logs -p /home/dockeruser/test/what/ifitdidnt/exist
         out: |-
-            bn: ENOENT: no such file or directory, open '/home/dockeruser/test/what/ifitdidnt/exist/binaris.yml'
+            ENOENT: no such file or directory, open '/home/dockeruser/test/what/ifitdidnt/exist/binaris.yml'
         exit: 1
 
 - test: No binaris.yml in directory(bad-path)
@@ -309,7 +309,7 @@
   steps:
     -   in: bn invoke -p /home/dockeruser/test/trollycopter -f icydiceymolecule
         out: |-
-            bn: ENOENT: no such file or directory, open '/home/dockeruser/test/trollycopter/binaris.yml'
+            ENOENT: no such file or directory, open '/home/dockeruser/test/trollycopter/binaris.yml'
         exit: 1
 
 - test: No matching function(bad-path)
@@ -321,7 +321,7 @@
               (use "bn deploy -f unrelatedname" to deploy the function)
     -   in: bn deploy -f grouchybear
         out: |-
-            bn: Cannot find function 'grouchybear' in binaris.yml
+            Cannot find function 'grouchybear' in binaris.yml
         exit: 1
 
 - test: No API key or conf file(bad-path)
@@ -336,7 +336,7 @@
               (use "bn deploy" to deploy the function)
     -   in: bn deploy
         out: |-
-            bn: Binaris conf file could not be read and BINARIS_API_KEY is undefined, please use "bn login"
+            Binaris conf file could not be read and BINARIS_API_KEY is undefined, please use "bn login"
         exit: 1
 
 - test: Corrupt binaris conf file(bad-path)
@@ -353,6 +353,6 @@
               (use "bn deploy" to deploy the function)
     -   in: bn deploy
         out: |-
-            bn: Invalid Binaris conf file (missing API key) /home/dockeruser/test/.binaris.yml
+            Invalid Binaris conf file (missing API key) /home/dockeruser/test/.binaris.yml
         exit: 1
 
