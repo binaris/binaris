@@ -20,7 +20,7 @@ commander
   .description('Binaris command line interface')
   .option('-p, --path <path>',
     // eslint-disable-next-line quotes
-    'Use directory dir. "init" will create this directory if needed.');
+    'Use directory dir. "create" will create this directory if needed.');
 
 commander
   .command('login')

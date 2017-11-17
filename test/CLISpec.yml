@@ -14,7 +14,7 @@
             Options:
 
               -V, --version      output the version number
-              -p, --path <path>  Use directory dir. "init" will create this directory if needed.
+              -p, --path <path>  Use directory dir. "create" will create this directory if needed.
               -h, --help         output usage information
 
 
@@ -22,7 +22,7 @@
 
               login              Login to your Binaris account using an API key
               logs [options]     Print the logs of a function
-              init [options]     Initialize a function from template
+              create [options]   Create a function from template
               deploy [options]   Deploys a function to the cloud
               remove [options]   Remove a previously deployed function
               invoke [options]   Invoke a Binaris function
