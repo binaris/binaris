@@ -1,100 +1,157 @@
-const { execBash } = require('./spawnUtils');
-const uuidv4 = require('uuid/v4');
+const Docker = require('dockerode');
+const docker = new Docker();
+
+const strip = require('strip-color');
+const PassThroughStream = require('stream').PassThrough;
+const msleep = require('./msleep');
+
+// interval(in ms) to check whether the current command
+// has finished running
+const msCmdPollInterval = 50;
+// bash is default because it's the most popular
+const defaultStartCommand = 'bash';
 
 class Container {
   /**
-   * Creates a container handle with the specified Docker image name,
-   * sudo user password and mount directory. The mount directory is
-   * the location where the persistent volume should be mounted in the container.
+   * Creates a container handle with the specified Docker image.
    *
-   * @param {string} imageName - the docker image name to use when creating this container
-   * @param {string} sudoPassword - the password for the sudo user of the image
-   * @param {string} mountDir - the dir to mount a volume on in the container
+   * @param {string} imageName - docker image name to use when creating this container
+   * @param {string} startCommand - command which will be run on container start(default 'bash')
    */
-  constructor(imageName, sudoPassword, mountDir) {
-    this.sudoCommand = `echo ${sudoPassword} | sudo -S `;
+  constructor(imageName, startCommand) {
+    if (!imageName) {
+      throw new Error('Image name must be provided');
+    }
     this.imageName = imageName;
-    this.mountDir = mountDir;
+    this.startCommand = startCommand || defaultStartCommand;
+    // eventually holds the stdio of the docker container
+    this.outDialog = [];
+    this.errDialog = [];
+    this.joinedDialog = [];
+    // streams are demuxed so separate err/out is required
+    this.outStream = new PassThroughStream();
+    this.errStream = new PassThroughStream();
+    this.started = false;
   }
 
   /**
-   * Creates a container with imageName and a defined volume.
-   * The container will last until removed as there is no
-   * Object lifetime management in JS.
+   * Starts a container based on the image name provided
+   * when this instance was intialized. The container
+   * must be removed before exiting your application or it
+   * will be left dangling.
    *
-   * @param {string} flags - extra flags to pass to create
+   * @param {string} envVars - environment vars to propagate
    */
-  async create(flags) {
-    if (this.volumeName) {
-      throw new Error('Container has already been created!');
+  async startContainer(envVars) {
+    this.container = await docker.createContainer({
+      Image: this.imageName,
+      Cmd: [this.startCommand],
+      Env: envVars,
+      Privileged: false, // by default don't allow docker access inside
+      Tty: false, // allocating the TTY completes messes up docker headers
+      OpenStdin: true,
+      StdinOnce: false,
+    });
+    const self = this;
+    const processPayload = function processPayload(payload, output) {
+      // the colors and trailing newline should both be removed
+      const strippedPayload = strip(payload.toString()).slice(0, -1);
+      // bug with dockerode/node/readline sometimes spits crap on stdin
+      if (strippedPayload !== '') {
+        if (!isNaN(Number.parseInt(strippedPayload, 10))) {
+          self.exitCode = strippedPayload;
+        } else {
+          output.push(strippedPayload);
+          // regardless of err/out it goes into the joinedDilog
+          self.joinedDialog.push(strippedPayload);
+        }
+      }
+    };
+    // handle all stdout from the readside of our HTTPDuplex
+    this.outStream.on('data', (chunk) => {
+      processPayload(chunk, this.outDialog);
+    });
+    // handle all stderr from the readside of our HTTPDuplex
+    this.errStream.on('data', (chunk) => {
+      processPayload(chunk, this.errDialog);
+    });
+
+    // attach to the newly created container w/ all stdio
+    this.dockerStream = await this.container.attach({
+      stream: true,
+      stdin: true,
+      stdout: true,
+      stderr: true,
+    });
+    // separates out stderr/stdout, this can also be done manually with the headers
+    this.container.modem.demuxStream(this.dockerStream, this.outStream, this.errStream);
+    // start the container and wait for the startup command to finish
+    await this.container.start();
+    this.started = true;
+  }
+
+  /**
+   * Streams a series of inputlines to the shell of
+   * this Docker container. The lines are required to
+   * generate a single bash exit code. The only real case
+   * where it makes sense to send more than 1 at once is
+   * for interacting with stdin.
+   *
+   * @param {array} inputLines - lines of input that will be fed to the Container
+   * @returns {object} - object containing output and error code of your input lines
+   */
+  async streamIn(inputLines) {
+    if (!this.started) {
+      throw new Error('Container must be started before streaming into it');
     }
-    this.volumeName = `${this.imageName}${uuidv4().slice(0, 8)}`;
-    const execString =
-`docker create -v ${this.mountDir} --name ${this.volumeName} \
-${flags || ''} ${this.imageName} /bin/true`;
-    const create = await execBash(execString, false);
-    this.ID = create.slice(0, -1);
-    return this.ID;
-  }
-
-  /**
-   * Removes previously created container. Volume
-   * and all data will be lost in the process.
-   *
-   * @param {string} flags - extra flags to pass to remove
-   */
-  async remove(flags) {
-    if (!this.volumeName) {
-      throw new Error('Container has already been removed!');
+    // set to undefined so streamed input doesn't
+    // return until an exit code has been received
+    this.exitCode = undefined;
+    for (const line of inputLines) {
+      this.dockerStream.write(`${line}\n`);
     }
-    const removed = await execBash(`docker rm ${flags || ''} ${this.ID}`, false);
-    this.volumeName = undefined;
-    this.ID = undefined;
-    return removed;
-  }
-
-  /**
-   * Gives the user and optional group access to the mounted
-   * volume of this container.
-   *
-   * @param {string} user - ubuntu user to give volume access to
-   * @param {string} group - ubuntu group to give volume access to
-   * @returns {string} - the output of the access modification attempt
-   */
-  async giveUserVolumeAccess(user, group) {
-    const chownVolume =
-`${this.sudoCommand}chown ${user}${group ? ':' + group : ''} ${this.mountDir} > /dev/null 2>&1`;
-    const chmodVolume =
-`${this.sudoCommand}chmod 770 ${this.mountDir} > /dev/null 2>&1`;
-    return this.run('', `${chownVolume} && ${chmodVolume}`, false);
-  }
-
-  /**
-   * Runs a docker container and attempts to invoke the provided
-   * command via bash. You will either receive and error object with
-   * the stdout, stderr and exit code or the stdout and an implied
-   * success.
-   *
-   * @param {string} flags -  extra flags to pass to run
-   * @param {string} runArgs - the run arguments to pass to bash
-   * @returns {object} - stdout of the run
-   */
-  async run(flags, runArgs, color = false) {
-    if (!this.volumeName) {
-      throw new Error('Please create container before trying to use run!');
+    // grabs exit code of last command executed in the shell
+    this.dockerStream.write('echo $?\n');
+    // Because some commands have no stdio it's safer
+    // to wait for the exit code to be printed.
+    while (this.exitCode === undefined) {
+      // eslint-disable-next-line no-await-in-loop
+      await msleep(msCmdPollInterval);
     }
-    return execBash(
-  `docker run --volumes-from ${this.volumeName} ${flags} ${this.imageName} bash -c \
-  "cd ${this.mountDir} && ${runArgs}"`, color);
+    return this.flushOutput();
   }
 
   /**
-   * Checks whether this container has beeen created.
+   * Flushes all of the collected output(stderr/stdout).
+   * To receive a non-empty array, actions must have been
+   * previously streamed to the container using 'streamIn'
    *
-   * @returns - whether or not this container has been created
+   * @returns {object} - object holding stdout/stderr and an exit code
    */
-  isCreated() {
-    return (this.volumeName !== undefined);
+  flushOutput() {
+    const output = {
+      // array spread allows for a fast and efficient deep copy
+      // join all output lines with \n
+      output: [...this.joinedDialog].join('\n'),
+      stdout: [...this.outDialog].join('\n'),
+      stderr: [...this.errDialog].join('\n'),
+      exitCode: parseInt(this.exitCode, 10),
+    };
+    // flush
+    this.joinedDialog.length = 0;
+    this.errDialog.length = 0;
+    this.outDialog.length = 0;
+    return output;
+  }
+
+  /**
+   * Attempts to stop and then kill this container.
+   */
+  async stopAndKillContainer() {
+    if (this.container && this.started) {
+      await this.container.stop();
+      await this.container.remove();
+    }
   }
 }
 
