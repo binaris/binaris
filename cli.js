@@ -2,7 +2,7 @@ const commander = require('commander');
 // grab the version to keep things consistent
 const { version } = require('./package.json');
 const { deployHandler, createHandler, invokeHandler,
-  logHandler, loginHandler, removeHandler, unknownHandler } = require('./cli-sdk');
+  logHandler, loginHandler, removeHandler, unknownHandler } = require('./lib');
 
 const actionWrapper = function actionWrapper(action) {
   return async (options) => {
