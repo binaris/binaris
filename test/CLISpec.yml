@@ -227,7 +227,7 @@
         exit: 1
     -   in: bn invoke -p /home/dockeruser/test/alloftheoptions/ -j myFile.json
         out: |-
-            ENOENT: no such file or directory, open 'myFile.json'
+            No such file or directory, open 'myFile.json'
         exit: 1
 
 - test: Invalid name in binaris.yml (bad-path)
@@ -259,7 +259,7 @@
   steps:
     -   in: bn create -p /home/dockeruser/test/securedir
         out: |-
-            EACCES: permission denied, unlink '/home/dockeruser/test/securedir/function.js'
+            Permission denied, unlink '/home/dockeruser/test/securedir/function.js'
         exit: 1
 
 - test: Superfluous output(bad-path)
@@ -287,19 +287,19 @@
   steps:
     -   in: bn deploy -p /home/dockeruser/test/bogus/comeon/really/hello.js
         out: |-
-            ENOENT: no such file or directory, open '/home/dockeruser/test/bogus/comeon/really/hello.js/binaris.yml'
+            No such file or directory, open '/home/dockeruser/test/bogus/comeon/really/hello.js/binaris.yml'
         exit: 1
     -   in: bn invoke -p /home/dockeruser/test/never/will/exist
         out: |-
-            ENOENT: no such file or directory, open '/home/dockeruser/test/never/will/exist/binaris.yml'
+            No such file or directory, open '/home/dockeruser/test/never/will/exist/binaris.yml'
         exit: 1
     -   in: bn remove -p /home/dockeruser/test/hocus/pocus/fairy
         out: |-
-            ENOENT: no such file or directory, open '/home/dockeruser/test/hocus/pocus/fairy/binaris.yml'
+            No such file or directory, open '/home/dockeruser/test/hocus/pocus/fairy/binaris.yml'
         exit: 1
     -   in: bn logs -p /home/dockeruser/test/what/ifitdidnt/exist
         out: |-
-            ENOENT: no such file or directory, open '/home/dockeruser/test/what/ifitdidnt/exist/binaris.yml'
+            No such file or directory, open '/home/dockeruser/test/what/ifitdidnt/exist/binaris.yml'
         exit: 1
 
 - test: No binaris.yml in directory(bad-path)
@@ -309,7 +309,7 @@
   steps:
     -   in: bn invoke -p /home/dockeruser/test/trollycopter -f icydiceymolecule
         out: |-
-            ENOENT: no such file or directory, open '/home/dockeruser/test/trollycopter/binaris.yml'
+            No such file or directory, open '/home/dockeruser/test/trollycopter/binaris.yml'
         exit: 1
 
 - test: No matching function(bad-path)
