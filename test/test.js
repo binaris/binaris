@@ -60,7 +60,7 @@ test.afterEach.always(async (t) => {
   if (t.context.cleanup) {
     for (const cleanupStep of t.context.cleanup) {
       // eslint-disable-next-line no-await-in-loop
-      await t.context.container.run(`${t.context.envString} ${flags}`, cleanupStep);
+      await t.context.container.run(`${t.context.workDirString || ''}${t.context.envString} ${flags}`, cleanupStep);
     }
   }
 
@@ -90,10 +90,16 @@ planYAML.forEach((rawSubTest) => {
       }
     }
 
+    let workDirString = '';
+    if (rawSubTest.workDir) {
+      workDirString = `cd ${rawSubTest.workDir} && `;
+      t.context.workDirString = rawSubTest.workDirString;
+    }
+
     if (rawSubTest.setup) {
       for (const setupStep of rawSubTest.setup) {
         // eslint-disable-next-line no-await-in-loop
-        await t.context.container.run(`${envString} ${flags}`, setupStep);
+        await t.context.container.run(`${envString} ${flags}`, `${workDirString}${setupStep}`);
       }
     }
 
@@ -108,7 +114,7 @@ planYAML.forEach((rawSubTest) => {
 
       try {
         // eslint-disable-next-line no-await-in-loop
-        const output = await t.context.container.run(`${envString} ${flags}`, step.in, true);
+        const output = await t.context.container.run(`${envString} ${flags}`, `${workDirString}${step.in}`, true);
         if (step.out) {
 	        t.true(globToRegExp(step.out).test(output.slice(0, -1)));
 	      }
