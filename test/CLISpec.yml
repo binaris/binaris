@@ -46,7 +46,6 @@
         out: |-
             Deployed function to *
               (use "bn invoke" to invoke the function)
-        delay: 300
 
 - test: Test create(good-path)
   work_dir: /home/dockeruser/test
@@ -102,10 +101,10 @@
         out: |-
             Deployed function to *
               (use "bn invoke" to invoke the function)
+    -   in: sleep 3
     -   in: bn invoke
         out: |-
             Hello World!
-        delay: 2000
     -   in: |-
             bn invoke -d '{"name": "unguessable"}'
         out: |-
@@ -134,34 +133,33 @@
         out: |-
             Deployed function to *
               (use "bn invoke" to invoke the function)
+    -   in: sleep 3
     -   in: bn invoke
         out: |-
             Hello World!
-        delay: 3000
+    -   in: sleep 8
     -   in: bn logs
         out: |-
           [201*-*-*T*:*:*Z] Hello World!
-        delay: 8000
     -   in: |-
             bn invoke -d '{"name": "again"}' 
         out: |-
             Hello again!
+    -   in: sleep 10
     -   in: bn logs
         out: |-
           [201*-*-*T*:*:*Z] Hello World!
           [201*-*-*T*:*:*Z] Hello again!
-        delay: 10000
     -   in: |-
             bn invoke -d '{"name": "for the last time"}' 
         out: |-
             Hello for the last time!
+    -   in: sleep 15
     -   in: bn logs
         out: |-
           [201*-*-*T*:*:*Z] Hello World!
           [201*-*-*T*:*:*Z] Hello again!
           [201*-*-*T*:*:*Z] Hello for the last time!
-        delay: 15000
-
 
 - test: Test deploy invoke remove cycle commands(good-path)
   work_dir: /home/dockeruser/test
@@ -179,10 +177,10 @@
         out: |-
             Deployed function to *
               (use "bn invoke" to invoke the function)
+    -   in: sleep 2
     -   in: bn invoke
         out: |-
             Hello World!
-        delay: 2000
     -   in: bn remove
         out: |-
             Removed function *

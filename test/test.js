@@ -60,10 +60,6 @@ planYAML.forEach((rawSubTest) => {
     t.context.cleanup = rawSubTest.cleanup;
 
     for (const step of rawSubTest.steps) {
-      if (step.delay) {
-        // eslint-disable-next-line no-await-in-loop
-        await msleep(step.delay);
-      }
       let cmdSequence = [step.in];
       if (step.input) {
         cmdSequence = cmdSequence.concat(...step.input);
