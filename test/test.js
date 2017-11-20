@@ -11,14 +11,6 @@ const msleep = require('./helpers/msleep');
 // Create/run and remove a Docker container.
 const Container = require('./helpers/container');
 
-// The environment variables propagated to Docker
-const envVars = {
-  BINARIS_LOG_ENDPOINT: undefined,
-  BINARIS_INVOKE_ENDPOINT: undefined,
-  BINARIS_DEPLOY_ENDPOINT: undefined,
-  BINARIS_API_KEY: undefined,
-};
-
 /**
  * Create a Docker container for each test before it runs.
  * This way all test runs are isolated thereby opening up
@@ -49,21 +41,7 @@ test.afterEach.always(async (t) => {
 const planYAML = yaml.safeLoad(fs.readFileSync(process.env.BINARIS_TEST_SPEC_PATH || './test/CLISpec.yml', 'utf8'));
 planYAML.forEach((rawSubTest) => {
   test(rawSubTest.test, async (t) => {
-    const envMap = Object.assign({}, envVars, rawSubTest.env || {});
-    const envs = [];
-    for (const envKey in envMap) {
-      if (Object.prototype.hasOwnProperty.call(envMap, envKey)) {
-        if (envMap[envKey] !== 'unset') {
-          if (envMap[envKey] !== undefined) {
-            envs.push(`${envKey}=${envMap[envKey]}`);
-          } else {
-            envs.push(`${envKey}=${process.env[envKey]}`);
-          }
-        }
-      }
-    }
-
-    await t.context.ct.startContainer(envs);
+    await t.context.ct.startContainer();
     if (rawSubTest.work_dir) {
       const mkWorkDir = await t.context.ct.streamIn([`mkdir -p ${rawSubTest.work_dir}`]);
       t.is(mkWorkDir.exitCode, 0);
