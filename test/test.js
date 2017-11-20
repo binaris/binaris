@@ -28,7 +28,7 @@ test.afterEach.always(async (t) => {
   if (t.context.cleanup) {
     for (const cleanupStep of t.context.cleanup) {
       // eslint-disable-next-line no-await-in-loop
-      await t.context.ct.streamIn([cleanupStep]);
+      await t.context.ct.streamIn(cleanupStep);
     }
   }
   await t.context.ct.stopAndKillContainer();
@@ -43,16 +43,16 @@ planYAML.forEach((rawSubTest) => {
   test(rawSubTest.test, async (t) => {
     await t.context.ct.startContainer();
     if (rawSubTest.work_dir) {
-      const mkWorkDir = await t.context.ct.streamIn([`mkdir -p ${rawSubTest.work_dir}`]);
+      const mkWorkDir = await t.context.ct.streamIn(`mkdir -p ${rawSubTest.work_dir}`);
       t.is(mkWorkDir.exitCode, 0);
-      const cdWorkDir = await t.context.ct.streamIn([`cd ${rawSubTest.work_dir}`]);
+      const cdWorkDir = await t.context.ct.streamIn(`cd ${rawSubTest.work_dir}`);
       t.is(cdWorkDir.exitCode, 0);
     }
 
     if (rawSubTest.setup) {
       for (const setupStep of rawSubTest.setup) {
         // eslint-disable-next-line no-await-in-loop
-        const setupOut = await t.context.ct.streamIn([setupStep]);
+        const setupOut = await t.context.ct.streamIn(setupStep);
         t.is(setupOut.exitCode, 0);
       }
     }
@@ -60,12 +60,8 @@ planYAML.forEach((rawSubTest) => {
     t.context.cleanup = rawSubTest.cleanup;
 
     for (const step of rawSubTest.steps) {
-      let cmdSequence = [step.in];
-      if (step.input) {
-        cmdSequence = cmdSequence.concat(...step.input);
-      }
       // eslint-disable-next-line no-await-in-loop
-      const cmdOut = await t.context.ct.streamIn(cmdSequence);
+      const cmdOut = await t.context.ct.streamIn(step.in);
       if (step.out) {
         t.true(globToRegExp(step.out).test(cmdOut.output));
       } else if (step.stdout) {

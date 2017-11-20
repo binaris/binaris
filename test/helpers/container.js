@@ -8,22 +8,19 @@ const msleep = require('./msleep');
 // interval(in ms) to check whether the current command
 // has finished running
 const msCmdPollInterval = 50;
-// bash is default because it's the most popular
-const defaultStartCommand = 'bash';
+const startCommand = 'bash';
 
 class Container {
   /**
    * Creates a container handle with the specified Docker image.
    *
    * @param {string} imageName - docker image name to use when creating this container
-   * @param {string} startCommand - command which will be run on container start(default 'bash')
    */
-  constructor(imageName, startCommand) {
+  constructor(imageName) {
     if (!imageName) {
       throw new Error('Image name must be provided');
     }
     this.imageName = imageName;
-    this.startCommand = startCommand || defaultStartCommand;
     // eventually holds the stdio of the docker container
     this.outDialog = [];
     this.errDialog = [];
@@ -43,7 +40,7 @@ class Container {
   async startContainer() {
     this.container = await docker.createContainer({
       Image: this.imageName,
-      Cmd: [this.startCommand],
+      Cmd: [startCommand],
       Privileged: false, // by default don't allow docker access inside
       Tty: false, // allocating the TTY completes messes up docker headers
       OpenStdin: true,
@@ -97,16 +94,14 @@ class Container {
    * @param {array} inputLines - lines of input that will be fed to the Container
    * @returns {object} - object containing output and error code of your input lines
    */
-  async streamIn(inputLines) {
+  async streamIn(inputLine) {
     if (!this.started) {
       throw new Error('Container must be started before streaming into it');
     }
     // set to undefined so streamed input doesn't
     // return until an exit code has been received
     this.exitCode = undefined;
-    for (const line of inputLines) {
-      this.dockerStream.write(`${line}\n`);
-    }
+    this.dockerStream.write(`${inputLine}\n`);
     // grabs exit code of last command executed in the shell
     this.dockerStream.write('echo $?\n');
     // Because some commands have no stdio it's safer
