@@ -56,7 +56,7 @@ const deploy = async function deploy(funcName, apiKey, funcConf, tarPath) {
   if (response.statusCode === 404) {
     throw new Error(`Function ${funcName} unknown`);
   } else if (response.statusCode === 405) {
-    throw new Error('Failed to deploy(Invalid API Key)');
+    throw new Error('Failed to deploy (Invalid API Key)');
   } else if (response.statusCode !== 200) {
     throw new Error(`Failed to deploy function ${funcName}`);
   }

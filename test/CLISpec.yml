@@ -222,7 +222,7 @@
     -   in: bn create
     -   in: bn deploy
         out: |-
-            Failed to deploy(Invalid API Key)
+            Failed to deploy (Invalid API Key)
         exit: 1
 
 - test: Test invoke(bad-path)
