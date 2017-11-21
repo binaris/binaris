@@ -42,13 +42,6 @@ const planYAML = yaml.safeLoad(fs.readFileSync(process.env.BINARIS_TEST_SPEC_PAT
 planYAML.forEach((rawSubTest) => {
   test(rawSubTest.test, async (t) => {
     await t.context.ct.startContainer();
-    if (rawSubTest.work_dir) {
-      const mkWorkDir = await t.context.ct.streamIn(`mkdir -p ${rawSubTest.work_dir}`);
-      t.is(mkWorkDir.exitCode, 0);
-      const cdWorkDir = await t.context.ct.streamIn(`cd ${rawSubTest.work_dir}`);
-      t.is(cdWorkDir.exitCode, 0);
-    }
-
     if (rawSubTest.setup) {
       for (const setupStep of rawSubTest.setup) {
         // eslint-disable-next-line no-await-in-loop
