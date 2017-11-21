@@ -1,6 +1,7 @@
 const Docker = require('dockerode');
 const docker = new Docker();
 
+const uuidv4 = require('uuid/v4');
 const PassThroughStream = require('stream').PassThrough;
 const msleep = require('./msleep');
 
@@ -45,27 +46,36 @@ class Container {
       OpenStdin: true,
       StdinOnce: false,
     });
-    const self = this;
-    const processPayload = function processPayload(payload, output) {
-      const rawPayload = payload.toString().slice(0, -1);
-      // bug with dockerode/node/readline sometimes spits crap on stdin
+
+    // handle all stdout from the readside of the HTTPDuplex
+    this.outStream.on('data', (chunk) => {
+      const rawPayload = chunk.toString().slice(0, -1);
       if (rawPayload !== '') {
-        if (!isNaN(Number.parseInt(rawPayload, 10))) {
-          self.exitCode = rawPayload;
-        } else {
-          output.push(rawPayload);
-          // regardless of err/out it goes into the joinedDilog
-          self.joinedDialog.push(rawPayload);
+        // every stdout line received is checked to see if
+        // it could signal an end of command sequence. The
+        // sequence is uniquely generated for each command.
+        if (rawPayload.length >= this.cmdUUID.length + 1) {
+          const possibleUUID = rawPayload.slice(-8);
+          if (possibleUUID === this.cmdUUID) {
+            // the UUID is only 8 characters, the rest is
+            // the exit code
+            this.exitCode = rawPayload.slice(0, -8);
+            this.cmdUUID = undefined;
+          }
+        }
+        if (this.cmdUUID !== undefined) {
+          this.outDialog.push(rawPayload);
+          this.joinedDialog.push(rawPayload);
         }
       }
-    };
-    // handle all stdout from the readside of our HTTPDuplex
-    this.outStream.on('data', (chunk) => {
-      processPayload(chunk, this.outDialog);
     });
-    // handle all stderr from the readside of our HTTPDuplex
+    // handle all stderr from the readside of the HTTPDuplex
     this.errStream.on('data', (chunk) => {
-      processPayload(chunk, this.errDialog);
+      const rawPayload = chunk.toString().slice(0, -1);
+      if (rawPayload !== '') {
+        this.errDialog.push(rawPayload);
+        this.joinedDialog.push(rawPayload);
+      }
     });
 
     // attach to the newly created container w/ all stdio
@@ -89,22 +99,23 @@ class Container {
    * where it makes sense to send more than 1 at once is
    * for interacting with stdin.
    *
-   * @param {array} inputLines - lines of input that will be fed to the Container
+   * @param {string} inputLine - line of input that will be fed to the Container
    * @returns {object} - object containing output and error code of your input lines
    */
   async streamIn(inputLine) {
     if (!this.started) {
       throw new Error('Container must be started before streaming into it');
     }
-    // set to undefined so streamed input doesn't
-    // return until an exit code has been received
-    this.exitCode = undefined;
+    // unqiue sequence that until received by stdout
+    // will cause this function to be block
+    this.cmdUUID = uuidv4().slice(0, 8);
     this.dockerStream.write(`${inputLine}\n`);
     // grabs exit code of last command executed in the shell
-    this.dockerStream.write('echo $?\n');
+    // the UUID ensures that we don't misinterpret it
+    this.dockerStream.write(`echo $?${this.cmdUUID}\n`);
     // Because some commands have no stdio it's safer
     // to wait for the exit code to be printed.
-    while (this.exitCode === undefined) {
+    while (this.cmdUUID !== undefined) {
       // eslint-disable-next-line no-await-in-loop
       await msleep(msCmdPollInterval);
     }
