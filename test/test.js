@@ -5,7 +5,7 @@ const { test } = require('ava');
 const yaml = require('js-yaml');
 const fs = require('mz/fs');
 const globToRegExp = require('glob-to-regexp');
-
+const strip = require('strip-color');
 
 const msleep = require('./helpers/msleep');
 // Create/run and remove a Docker container.
@@ -63,11 +63,11 @@ planYAML.forEach((rawSubTest) => {
       // eslint-disable-next-line no-await-in-loop
       const cmdOut = await t.context.ct.streamIn(step.in);
       if (step.out) {
-        t.true(globToRegExp(step.out).test(cmdOut.output));
+        t.true(globToRegExp(step.out).test(strip(cmdOut.output)));
       } else if (step.stdout) {
-        t.true(globToRegExp(step.stdout).test(cmdOut.stdout));
+        t.true(globToRegExp(step.stdout).test(strip(cmdOut.stdout)));
       } else if (step.stderr) {
-        t.true(globToRegExp(step.stderr).test(cmdOut.stderr));
+        t.true(globToRegExp(step.stderr).test(strip(cmdOut.stderr)));
       }
       t.is(cmdOut.exitCode, (step.exit || 0));
     }

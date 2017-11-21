@@ -1,7 +1,6 @@
 const Docker = require('dockerode');
 const docker = new Docker();
 
-const strip = require('strip-color');
 const PassThroughStream = require('stream').PassThrough;
 const msleep = require('./msleep');
 
@@ -48,16 +47,15 @@ class Container {
     });
     const self = this;
     const processPayload = function processPayload(payload, output) {
-      // the colors and trailing newline should both be removed
-      const strippedPayload = strip(payload.toString()).slice(0, -1);
+      const rawPayload = payload.toString().slice(0, -1);
       // bug with dockerode/node/readline sometimes spits crap on stdin
-      if (strippedPayload !== '') {
-        if (!isNaN(Number.parseInt(strippedPayload, 10))) {
-          self.exitCode = strippedPayload;
+      if (rawPayload !== '') {
+        if (!isNaN(Number.parseInt(rawPayload, 10))) {
+          self.exitCode = rawPayload;
         } else {
-          output.push(strippedPayload);
+          output.push(rawPayload);
           // regardless of err/out it goes into the joinedDilog
-          self.joinedDialog.push(strippedPayload);
+          self.joinedDialog.push(rawPayload);
         }
       }
     };
