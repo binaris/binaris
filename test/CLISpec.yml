@@ -28,10 +28,7 @@
 
 - test: Test login(good-path)
   setup:
-    - |-
-     export SOME_KEY=9557231848 \
-            BINARIS_DEPLOY_ENDPOINT=api-staging.binaris.io \
-            BINARIS_INVOKE_ENDPOINT=run-staging.binaris.io
+    - export SOME_KEY=9557231848
   cleanup:
     - bn remove
   steps:
@@ -58,9 +55,7 @@
 
 - test: Test deploy(good-path)
   setup:
-    - |-
-     export BINARIS_API_KEY=9557231848 \
-            BINARIS_DEPLOY_ENDPOINT=api-staging.binaris.io
+    - export BINARIS_API_KEY=9557231848
   cleanup:
     - bn remove
   steps:
@@ -79,10 +74,7 @@
 
 - test: Test invoke(good-path)
   setup:
-    - |-
-     export BINARIS_API_KEY=9557231848 \
-            BINARIS_DEPLOY_ENDPOINT=api-staging.binaris.io \
-            BINARIS_INVOKE_ENDPOINT=run-staging.binaris.io
+    - export BINARIS_API_KEY=9557231848
     - |-
       echo '{"name": "unguessable"}' > invoke.json
   cleanup:
@@ -111,11 +103,7 @@
 
 - test: Test logs(good-path)
   setup:
-    - |-
-     export BINARIS_API_KEY=9557231848 \
-            BINARIS_DEPLOY_ENDPOINT=api-staging.binaris.io \
-            BINARIS_INVOKE_ENDPOINT=run-staging.binaris.io \
-            BINARIS_LOG_ENDPOINT=logs-staging.binaris.io
+    - export BINARIS_API_KEY=9557231848
   cleanup:
     - bn remove
   steps:
@@ -157,10 +145,7 @@
 
 - test: Test deploy invoke remove cycle commands(good-path)
   setup:
-    - |-
-     export BINARIS_API_KEY=9557231848 \
-            BINARIS_DEPLOY_ENDPOINT=api-staging.binaris.io \
-            BINARIS_INVOKE_ENDPOINT=run-staging.binaris.io
+    - export BINARIS_API_KEY=9557231848
   steps:
     -   in: bn create
         out: |-

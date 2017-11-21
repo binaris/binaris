@@ -36,11 +36,14 @@ class Container {
    * when this instance was intialized. The container
    * must be removed before exiting your application or it
    * will be left dangling.
+   *
+   * @param {array} envVars - environment vars to propagate
    */
-  async startContainer() {
+  async startContainer(envVars) {
     this.container = await docker.createContainer({
       Image: this.imageName,
       Cmd: [startCommand],
+      Env: envVars,
       Privileged: false, // by default don't allow docker access inside
       Tty: false, // allocating the TTY completes messes up docker headers
       OpenStdin: true,
