@@ -297,8 +297,6 @@
         exit: 1
 
 - test: No API key or conf file(bad-path)
-  setup:
-    - export BINARIS_CONF_DIR=/home/dockeruser
   steps:
     -   in: bn create
     -   in: bn deploy
@@ -309,7 +307,6 @@
 - test: Corrupt binaris conf file(bad-path)
   setup:
     - echo 'INVALIDCONF' | tee /home/dockeruser/.binaris.yml > /dev/null
-    - export BINARIS_CONF_DIR=/home/dockeruser
   steps:
     -   in: bn create
     -   in: bn deploy
