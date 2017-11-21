@@ -172,46 +172,43 @@
               (use "bn deploy" to deploy the function)
     -   in: |- 
            (echo "9239239") | bn login
-        stderr: |-
+        err: |-
                 Invalid API key
         exit: 1
 
 - test: Test create(bad-path)
   steps:
     -   in: bn create -f a*b*c*
-        out: |-
+        err: |-
             Invalid characters in function name a*b*c*. Use only letters and digits
         exit: 1
     -   in: bn create -f a_b%c#d@e+
-        out: |-
+        err: |-
             Invalid characters in function name a_b%c#d@e+. Use only letters and digits
         exit: 1
     -   in: |-
            bn create -f a=b~c,d.
-        out: |-
+        err: |-
             Invalid characters in function name a=b~c,d.. Use only letters and digits
         exit: 1
     -   in: bn create -f a:b?c!d-
-        out: |-
+        err: |-
             Invalid characters in function name a:b?c!d-. Use only letters and digits
         exit: 1
     -   in: bn create -f tooooooooooooooooooooooooooooooooooooooooooooooolongggggggggggggggggggggggggggggggggggggggggggggggggggggggggg
-        out: |-
+        err: |-
             Function names cannot be longer than 58 characters.
         exit: 1
 
 - test: Test invoke(bad-path)
   steps:
     -   in: bn create -p /home/dockeruser/alloftheoptions
-        out: |-
-            Created function * in *
-              (use "bn deploy*" to deploy the function)
     -   in: bn invoke -p /home/dockeruser/alloftheoptions -j myFile.json -d data
-        out: |-
+        err: |-
             Invoke flags --json(-j) and --data(-d) are mutually exclusive
         exit: 1
     -   in: bn invoke -p /home/dockeruser/alloftheoptions/ -j myFile.json
-        out: |-
+        err: |-
             ENOENT: no such file or directory, open 'myFile.json'
         exit: 1
 
@@ -222,14 +219,14 @@
     - sed -i '2 c \  inv*a#l@i-d:' binaris.yml
   steps:
     - in: bn deploy
-      out: |-
+      err: |-
           Invalid characters in function name inv*a#l@i-d. Use only letters and digits
       exit: 1
 
 - test: Unknown command(bad-path)
   steps:
     -   in: bn alwaysbad
-        out: |-
+        err: |-
             Unknown command: 'alwaysbad'. See 'bn --help'
         exit: 1
 
@@ -240,45 +237,45 @@
     - echo binaris | sudo  -S chmod 700 /home/dockeruser/securedir
   steps:
     -   in: bn create -p /home/dockeruser/securedir
-        out: |-
+        err: |-
             EACCES: permission denied, unlink '/home/dockeruser/securedir/function.js'
         exit: 1
 
 - test: Superfluous output(bad-path)
   steps:
     -   in: bn create init init
-        out: |-
+        err: |-
             Argument "*" is not a valid input to *
         exit: 1
     -   in: bn create sadmksad
-        out: |-
+        err: |-
             Argument "sadmksad" is not a valid input to create
         exit: 1
     -   in: bn deploy init
-        out: |-
+        err: |-
             Argument "init" is not a valid input to deploy
         exit: 1
     -   in: bn logs notlogs
-        out: |-
+        err: |-
             Argument "notlogs" is not a valid input to logs
         exit: 1
 
 - test: No such path(bad-path)
   steps:
     -   in: bn deploy -p /home/dockeruser/bogus/comeon/really/hello.js
-        out: |-
+        err: |-
             ENOENT: no such file or directory, open '/home/dockeruser/bogus/comeon/really/hello.js/binaris.yml'
         exit: 1
     -   in: bn invoke -p /home/dockeruser/never/will/exist
-        out: |-
+        err: |-
             ENOENT: no such file or directory, open '/home/dockeruser/never/will/exist/binaris.yml'
         exit: 1
     -   in: bn remove -p /home/dockeruser/hocus/pocus/fairy
-        out: |-
+        err: |-
             ENOENT: no such file or directory, open '/home/dockeruser/hocus/pocus/fairy/binaris.yml'
         exit: 1
     -   in: bn logs -p /home/dockeruser/what/ifitdidnt/exist
-        out: |-
+        err: |-
             ENOENT: no such file or directory, open '/home/dockeruser/what/ifitdidnt/exist/binaris.yml'
         exit: 1
 
@@ -287,18 +284,15 @@
     - mkdir -p /home/dockeruser/trollycopter
   steps:
     -   in: bn invoke -p /home/dockeruser/trollycopter -f icydiceymolecule
-        out: |-
+        err: |-
             ENOENT: no such file or directory, open '/home/dockeruser/trollycopter/binaris.yml'
         exit: 1
 
 - test: No matching function(bad-path)
   steps:
     -   in: bn create -f unrelatedname
-        out: |- 
-            Created function unrelatedname in /home/dockeruser
-              (use "bn deploy -f unrelatedname" to deploy the function)
     -   in: bn deploy -f grouchybear
-        out: |-
+        err: |-
             Cannot find function 'grouchybear' in binaris.yml
         exit: 1
 
@@ -307,11 +301,8 @@
     - export BINARIS_CONF_DIR=/home/dockeruser
   steps:
     -   in: bn create
-        out: |-
-            Created function * in /home/dockeruser
-              (use "bn deploy" to deploy the function)
     -   in: bn deploy
-        out: |-
+        err: |-
             Binaris conf file could not be read and BINARIS_API_KEY is undefined, please use "bn login"
         exit: 1
 
@@ -321,11 +312,8 @@
     - export BINARIS_CONF_DIR=/home/dockeruser
   steps:
     -   in: bn create
-        out: |-
-            Created function * in /home/dockeruser
-              (use "bn deploy" to deploy the function)
     -   in: bn deploy
-        out: |-
+        err: |-
             Invalid Binaris conf file (missing API key) /home/dockeruser/.binaris.yml
         exit: 1
 
