@@ -24,7 +24,6 @@ class Container {
     // eventually holds the stdio of the docker container
     this.outDialog = [];
     this.errDialog = [];
-    this.joinedDialog = [];
     // streams are demuxed so separate err/out is required
     this.outStream = new PassThroughStream();
     this.errStream = new PassThroughStream();
@@ -68,7 +67,6 @@ class Container {
         }
         if (this.cmdUUID !== undefined) {
           this.outDialog.push(rawPayload);
-          this.joinedDialog.push(rawPayload);
         }
       }
     });
@@ -77,7 +75,6 @@ class Container {
       const rawPayload = chunk.toString().slice(0, -1);
       if (rawPayload !== '') {
         this.errDialog.push(rawPayload);
-        this.joinedDialog.push(rawPayload);
       }
     });
 
@@ -136,13 +133,11 @@ class Container {
     const output = {
       // array spread allows for a fast and efficient deep copy
       // join all output lines with \n
-      output: [...this.joinedDialog].join('\n'),
       stdout: [...this.outDialog].join('\n'),
       stderr: [...this.errDialog].join('\n'),
       exitCode: parseInt(this.exitCode, 10),
     };
     // flush
-    this.joinedDialog.length = 0;
     this.errDialog.length = 0;
     this.outDialog.length = 0;
     return output;
