@@ -66,9 +66,9 @@ planYAML.forEach((rawSubTest) => {
       // eslint-disable-next-line no-await-in-loop
       const cmdOut = await t.context.ct.streamIn(step.in);
       if (step.out) {
-        t.true(globToRegExp(step.out).test(strip(cmdOut.stdout)));
+        t.true(globToRegExp(step.out).test(strip(cmdOut.stdout.slice(0, -1))));
       } else if (step.err) {
-        t.true(globToRegExp(step.err).test(strip(cmdOut.stderr)));
+        t.true(globToRegExp(step.err).test(strip(cmdOut.stderr.slice(0, -1))));
       }
       t.is(cmdOut.exitCode, (step.exit || 0));
     }
