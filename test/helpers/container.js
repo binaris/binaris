@@ -51,17 +51,19 @@ class Container {
 
     // handle all stdout from the readside of the HTTPDuplex
     this.outStream.on('data', (chunk) => {
-      const rawPayload = chunk.toString().slice(0, -1);
+      const rawPayload = chunk.toString();
       if (rawPayload !== '') {
         // every stdout line received is checked to see if
         // it could signal an end of command sequence. The
         // sequence is uniquely generated for each command.
-        if (rawPayload.length >= this.cmdUUID.length + 1) {
-          const possibleUUID = rawPayload.slice(-8);
+        // 1 is added to the length for the minimum 1 exit
+        // char, an addtional 1 is added for the newline
+        if (rawPayload.length >= this.cmdUUID.length + 2) {
+          const possibleUUID = rawPayload.slice(-9, -1);
           if (possibleUUID === this.cmdUUID) {
             // the UUID is only 8 characters, the rest is
             // the exit code
-            this.exitCode = rawPayload.slice(0, -8);
+            this.exitCode = rawPayload.slice(0, -9);
             this.cmdUUID = undefined;
           }
         }
@@ -72,9 +74,8 @@ class Container {
     });
     // handle all stderr from the readside of the HTTPDuplex
     this.errStream.on('data', (chunk) => {
-      const rawPayload = chunk.toString().slice(0, -1);
-      if (rawPayload !== '') {
-        this.errDialog.push(rawPayload);
+      if (chunk.toString() !== '') {
+        this.errDialog.push(chunk.toString());
       }
     });
 
@@ -133,8 +134,8 @@ class Container {
     const output = {
       // array spread allows for a fast and efficient deep copy
       // join all output lines with \n
-      stdout: [...this.outDialog].join('\n'),
-      stderr: [...this.errDialog].join('\n'),
+      stdout: [...this.outDialog].join(),
+      stderr: [...this.errDialog].join(),
       exitCode: parseInt(this.exitCode, 10),
     };
     // flush
