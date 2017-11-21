@@ -11,6 +11,11 @@ const msleep = require('./helpers/msleep');
 // Create/run and remove a Docker container.
 const Container = require('./helpers/container');
 
+const propagatedEnvVars = [
+  'BINARIS_DEPLOY_ENDPOINT',
+  'BINARIS_INVOKE_ENDPOINT',
+  'BINARIS_LOG_ENDPOINT' ]
+
 /**
  * Create a Docker container for each test before it runs.
  * This way all test runs are isolated thereby opening up
@@ -41,7 +46,12 @@ test.afterEach.always(async (t) => {
 const planYAML = yaml.safeLoad(fs.readFileSync(process.env.BINARIS_TEST_SPEC_PATH || './test/CLISpec.yml', 'utf8'));
 planYAML.forEach((rawSubTest) => {
   test(rawSubTest.test, async (t) => {
-    await t.context.ct.startContainer();
+    const activeEnvs = propagatedEnvVars.filter((envKey) => {
+      return process.env[envKey] !== undefined;
+    }).map((envKey) => {
+      return `${envKey}=${process.env[envKey]}`;
+    });
+    await t.context.ct.startContainer(activeEnvs);
     if (rawSubTest.setup) {
       for (const setupStep of rawSubTest.setup) {
         // eslint-disable-next-line no-await-in-loop
