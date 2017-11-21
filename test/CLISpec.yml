@@ -155,7 +155,7 @@
         out: |-
             Deployed function to *
               (use "bn invoke" to invoke the function)
-    -   in: sleep 2
+    -   in: sleep 4
     -   in: bn invoke
         out: |-
             Hello World!
