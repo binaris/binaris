@@ -170,8 +170,7 @@
         out: |-
             Created function * in /home/dockeruser
               (use "bn deploy" to deploy the function)
-    -   in: |- 
-           (echo "9239239") | bn login
+    -   in: echo "9239239" | bn login
         err: |-
                 Invalid API key
         exit: 1
