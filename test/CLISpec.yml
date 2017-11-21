@@ -36,7 +36,7 @@
         out: |-
             Created function * in /home/dockeruser
               (use "bn deploy" to deploy the function)
-    -   in: (echo $SOME_KEY) | bn login
+    -   in: echo "$SOME_KEY" | bn login
     -   in: bn deploy
         out: |-
             Deployed function to *
