@@ -36,6 +36,12 @@
             Created function * in /home/dockeruser
               (use "bn deploy" to deploy the function)
     -   in: echo "$SOME_KEY" | bn login
+        out: |-
+            Please enter your Binaris API key to deploy and invoke functions.
+            If you don't have a key, head over to https://binaris.com to request one
+            *? API Key: 9557231848*
+            *Authentication Succeeded*
+              (use "bn create" to create a template function in your current directory)
     -   in: bn deploy
         out: |-
             Deployed function to *
