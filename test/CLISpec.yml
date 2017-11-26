@@ -182,6 +182,17 @@
         err: Function names cannot be longer than 58 characters.
         exit: 1
 
+- test: Test deploy(bad-path)
+  env:
+    BINARIS_API_KEY: 29342099
+  work_dir: /home/dockeruser/test
+  steps:
+    -   in: bn create
+    -   in: bn deploy
+        out: |-
+            Failed to deploy (Invalid API Key)
+        exit: 1
+
 - test: Test invoke(bad-path)
   steps:
     -   in: bn create -p /home/dockeruser/alloftheoptions
