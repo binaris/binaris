@@ -4,8 +4,8 @@ const { test } = require('ava');
 // External dependencies
 const yaml = require('js-yaml');
 const fs = require('mz/fs');
-const globToRegExp = require('glob-to-regexp');
 const strip = require('strip-color');
+const regEsc = require('escape-string-regexp');
 
 const msleep = require('./helpers/msleep');
 // Create/run and remove a Docker container.
@@ -62,13 +62,19 @@ planYAML.forEach((rawSubTest) => {
     // eslint-disable-next-line no-param-reassign
     t.context.cleanup = rawSubTest.cleanup;
 
+    const createRegTest = function createRegTest(expected) {
+      const escaped = expected.split('*').map((item) => regEsc(item));
+      const finalString = `^${escaped.join('[\\s\\S]*')}$`;
+      return new RegExp(finalString);
+    };
+
     for (const step of rawSubTest.steps) {
       // eslint-disable-next-line no-await-in-loop
       const cmdOut = await t.context.ct.streamIn(step.in);
       if (step.out) {
-        t.true(globToRegExp(step.out).test(strip(cmdOut.stdout.slice(0, -1))));
+        t.true(createRegTest(step.out).test(strip(cmdOut.stdout.slice(0, -1))));
       } else if (step.err) {
-        t.true(globToRegExp(step.err).test(strip(cmdOut.stderr.slice(0, -1))));
+        t.true(createRegTest(step.err).test(strip(cmdOut.stderr.slice(0, -1))));
       }
       t.is(cmdOut.exitCode, (step.exit || 0));
     }
