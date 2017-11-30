@@ -43,7 +43,6 @@ class Container {
       Image: this.imageName,
       Cmd: [startCommand],
       Env: envVars,
-      Privileged: false, // by default don't allow docker access inside
       Tty: false, // allocating the TTY completes messes up docker headers
       OpenStdin: true,
       StdinOnce: false,
