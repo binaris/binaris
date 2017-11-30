@@ -7,7 +7,7 @@
     "bn": "./index.js"
   },
   "scripts": {
-    "test": "./run_test",
+    "test": "./node_modules/.bin/ava",
     "lint": "./node_modules/.bin/eslint -c .eslintrc.js ."
   },
   "author": "Binaris",

@@ -1,9 +1,0 @@
-#!/bin/bash -e
-
-SUDO=""
-if docker info 2>&1 | grep "permission denied" >/dev/null; then
-  SUDO="sudo -E";
-fi
-
-$SUDO docker build -f binaris.Dockerfile -t binaris .
-$SUDO ./node_modules/.bin/ava
