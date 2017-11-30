@@ -17,7 +17,8 @@ RUN usermod -aG sudo dockeruser
 RUN chown -R dockeruser:dockeruser /home/dockeruser
 ENV HOME=/home/dockeruser
 
-
+RUN groupadd docker
+RUN gpasswd -a dockeruser docker
 USER dockeruser
 RUN chmod g+s /home/dockeruser
 RUN mkdir -p ~/.node
@@ -30,6 +31,8 @@ ENV NODE_PATH="$HOME/.node/lib/node_modules:$NODE_PATH"
 ENV MANPATH="$HOME/.node/share/man:$MANPATH"
 
 WORKDIR /home/dockeruser/binaris
+COPY ./package.json /home/dockeruser/binaris
+RUN npm install --save-dev
 COPY . /home/dockeruser/binaris
 RUN npm install -g
 
