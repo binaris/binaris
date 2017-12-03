@@ -57,12 +57,18 @@ class Container {
         // sequence is uniquely generated for each command.
         // 1 is added to the length for the minimum 1 exit
         // char, an addtional 1 is added for the newline
-        if (rawPayload.length >= this.cmdUUID.length + 2) {
+        if (rawPayload.length >= (this.cmdUUID.length * 2) + 2) {
           const possibleUUID = rawPayload.slice(-9, -1);
           if (possibleUUID === this.cmdUUID) {
             // the UUID is only 8 characters, the rest is
             // the exit code
-            this.exitCode = rawPayload.slice(0, -9);
+            const exitParts = rawPayload.split(this.cmdUUID);
+            // handle the case of stdout buffering
+            if (exitParts[0] !== '') {
+              this.outDialog.push(exitParts[0]);
+            }
+            // -2 is for the guaranteed newline after the UUIDS
+            this.exitCode = exitParts[exitParts.length - 2];
             this.cmdUUID = undefined;
           }
         }
@@ -112,7 +118,7 @@ class Container {
     this.dockerStream.write(`${inputLine}\n`);
     // grabs exit code of last command executed in the shell
     // the UUID ensures that we don't misinterpret it
-    this.dockerStream.write(`echo $?${this.cmdUUID}\n`);
+    this.dockerStream.write(`echo ${this.cmdUUID}$?${this.cmdUUID}\n`);
     // Because some commands have no stdio it's safer
     // to wait for the exit code to be printed.
     while (this.cmdUUID !== undefined) {
