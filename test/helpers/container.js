@@ -1,4 +1,5 @@
 const Docker = require('dockerode');
+
 const docker = new Docker();
 
 const uuidv4 = require('uuid/v4');
