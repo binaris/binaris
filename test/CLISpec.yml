@@ -119,13 +119,13 @@
     -   in: sleep 5
     -   in: bn invoke
         out: Hello World!
-    -   in: sleep 8
+    -   in: sleep 15
     -   in: bn logs
         out: "[201*-*-*T*:*:*Z] Hello World!"
     -   in: |-
             bn invoke -d '{"name": "again"}' 
         out: Hello again!
-    -   in: sleep 10
+    -   in: sleep 15
     -   in: bn logs
         out: |-
           [201*-*-*T*:*:*Z] Hello World!
