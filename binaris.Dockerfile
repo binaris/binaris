@@ -23,6 +23,7 @@ USER dockeruser
 RUN chmod g+s /home/dockeruser
 RUN mkdir -p ~/.node
 RUN mkdir -p ~/binaris
+RUN mkdir -p ~/test
 WORKDIR $HOME
 
 RUN echo "prefix = ~/.node" >> ~/.npmrc
@@ -36,4 +37,4 @@ RUN npm install --save-dev
 COPY . /home/dockeruser/binaris
 RUN npm install -g
 
-WORKDIR $HOME
+WORKDIR $HOME/test
