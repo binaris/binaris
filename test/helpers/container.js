@@ -140,8 +140,8 @@ class Container {
     const output = {
       // array spread allows for a fast and efficient deep copy
       // join all output lines with \n
-      stdout: [...this.outDialog].join(),
-      stderr: [...this.errDialog].join(),
+      stdout: [...this.outDialog].join(''),
+      stderr: [...this.errDialog].join(''),
       exitCode: parseInt(this.exitCode, 10),
     };
     // flush
