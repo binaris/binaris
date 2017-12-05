@@ -2,7 +2,8 @@ const fs = require('fs');
 const urljoin = require('urljoin');
 const request = require('request');
 
-const { deployEndpoint, invokeEndpoint } = require('./config');
+const { translateErrorCode } = require('./errorCodes');
+const { deployEndpoint } = require('./config');
 
 /**
  * Deploys the function to the Binaris cloud by streaming
@@ -19,6 +20,7 @@ const deployFunction = async function uploadFunction(tarPath, funcConf, deployUR
   const options = {
     url: deployURL,
     qs: funcConf,
+    json: true,
   };
   try {
     // use raw request here(as opposed to rp) because the
@@ -53,12 +55,15 @@ const deployFunction = async function uploadFunction(tarPath, funcConf, deployUR
 const deploy = async function deploy(funcName, apiKey, funcConf, tarPath) {
   const response = await deployFunction(tarPath, funcConf,
     urljoin(`https://${deployEndpoint}`, 'v1', 'function', `${apiKey}-${funcName}`));
-  if (response.statusCode === 404) {
-    throw new Error(`Function ${funcName} unknown`);
-  } else if (response.statusCode !== 200) {
-    throw new Error(`Failed to deploy function ${funcName}`);
+  if (response.statusCode !== 201) {
+    if (response.body.errorCode !== undefined) {
+      throw new Error(translateErrorCode(response.body.errorCode));
+    } else {
+      throw new Error(`Failed to deploy function ${funcName}`);
+    }
   }
-  return urljoin(`https://${invokeEndpoint}`, 'v1', 'run', apiKey, funcName);
+  // POST location header will hold invoke endpoint
+  return response.headers.location;
 };
 
 module.exports = deploy;
