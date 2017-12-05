@@ -13,15 +13,13 @@ const verifyAPIKey = async function verifyAPIKey(apiKey) {
   const options = {
     url: urljoin(`https://${invokeEndpoint}`, 'v1', 'apikey', apiKey),
     json: true,
+    simple: false,
     resolveWithFullResponse: true,
   };
-  try {
-    await rp.get(options);
-  } catch (err) {
-    if (err.error && err.error.valid === false) {
-      return false;
-    }
-    throw err;
+
+  const response = await rp.get(options);
+  if (response.statusCode !== 200) {
+    return false;
   }
   return true;
 };
