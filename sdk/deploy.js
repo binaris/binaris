@@ -56,7 +56,7 @@ const deploy = async function deploy(funcName, apiKey, funcConf, tarPath) {
   const response = await deployFunction(tarPath, funcConf,
     urljoin(`https://${deployEndpoint}`, 'v1', 'function', `${apiKey}-${funcName}`));
   if (response.statusCode !== 201) {
-    if (response.body.errorCode !== undefined) {
+    if (response.body.errorCode) {
       throw new Error(translateErrorCode(response.body.errorCode));
     } else {
       throw new Error(`Failed to deploy function ${funcName}`);
