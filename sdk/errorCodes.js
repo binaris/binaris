@@ -9,7 +9,7 @@ const errStringMap = {
 };
 
 /**
- * Translates a provided Binaris error code into it's more
+ * Translates a provided Binaris error code into its more
  * explicit and descriptive string representation.
  *
  * @param errCode - errCode to retrieve string of
