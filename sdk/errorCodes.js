@@ -1,8 +1,8 @@
 // Mapping between well known Binaris error codes and
 // their human-readable string representation. Error
 // strings should be concise informative and without
-// trailing punctuation(no !). The first letter should
-// be capital(barring abnormal circumstances).
+// trailing punctuation (no !). The first letter should
+// be capital (barring abnormal circumstances).
 const errStringMap = {
   ERR_BAD_KEY: 'Invalid API key',
   ERR_INTERNAL: 'Internal Binaris server error',
