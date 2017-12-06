@@ -16,12 +16,15 @@ const verifyAPIKey = async function verifyAPIKey(apiKey) {
     simple: false,
     resolveWithFullResponse: true,
   };
-
-  const response = await rp.get(options);
-  if (response.statusCode !== 200) {
+  try {
+    const response = await rp.get(options);
+    if (response.statusCode !== 200) {
+      return false;
+    }
+    return true;
+  } catch (err) {
     return false;
   }
-  return true;
 };
 
 module.exports = {
