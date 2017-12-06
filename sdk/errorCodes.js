@@ -15,10 +15,7 @@ const errStringMap = {
  * @param errCode - errCode to retrieve string of
  */
 const translateErrorCode = function translateErrorCode(errCode) {
-  if (Object.prototype.hasOwnProperty.call(errStringMap, errCode)) {
-    return errStringMap[errCode];
-  }
-  return errCode;
+  return errStringMap[errCode] || errCode;
 };
 
 // TODO(ryland): add template support
