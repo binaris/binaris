@@ -15,6 +15,9 @@ node {
             ]),
     ]);
     try {
+        def realm = params.realm;
+        if (!realm) { error('realm not defined'); }
+
         ansiColor('xterm') {
             stage('Build') {
                 echo 'Building docker image';
@@ -35,13 +38,13 @@ node {
                     job: "/realms/deploy",
                     wait: true,
                     parameters: [
-                    string(name: 'realm', value:realm),
-                    string(name: 'tag', value:"master")
+                    string(name: 'realm', value: "${realm}"),
+                    string(name: 'tag', value: "master")
                     ]
                 )
             }
             stage('Generate key') {
-               lock("${params.realm}-realm") {
+               lock("${realm}-realm") {
                    echo 'Generating API key'
                    sh """
                       REGION=`curl -Ls https://ubkw9cm2nh.execute-api.us-east-1.amazonaws.com/dev/fetch/${realm} | jq -r .region`
@@ -51,7 +54,7 @@ node {
                }
             }
             stage('Test') {
-                lock("${params.realm}-realm") {
+                lock("${realm}-realm") {
                     timeout(time: 5, unit: 'MINUTES') {
                       echo 'Running CLI tests'
                       sh """
