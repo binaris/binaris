@@ -1,6 +1,7 @@
 const fs = require('fs');
 const urljoin = require('urljoin');
 const request = require('request');
+const _ = require('lodash');
 
 const { translateErrorCode } = require('./errorCodes');
 const { deployEndpoint, invokeEndpoint } = require('./config');
@@ -58,7 +59,7 @@ const deploy = async function deploy(funcName, apiKey, funcConf, tarPath) {
   if (response.statusCode >= 200 && response.statusCode < 300) {
     return urljoin(`https://${invokeEndpoint}`, 'v1', 'run', apiKey, funcName);
   }
-  if (response.body.errorCode) {
+  if (_.get(response, 'body.errorCode')) {
     throw new Error(translateErrorCode(response.body.errorCode));
   } else {
     throw new Error(`Failed to deploy function ${funcName}`);
