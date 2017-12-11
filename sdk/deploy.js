@@ -23,24 +23,20 @@ const deployFunction = async function uploadFunction(tarPath, funcConf, deployUR
     qs: funcConf,
     json: true,
   };
-  try {
-    // use raw request here(as opposed to rp) because the
-    // request-promise module explicitly discourages using
-    // request-promise for pipe
-    // https://github.com/request/request-promise
-    return new Promise((resolve, reject) => {
-      fs.createReadStream(tarPath)
-        .pipe(request.post(options, (uploadErr, uploadResponse) => {
-          if (uploadErr) {
-            reject(uploadErr);
-          } else {
-            resolve(uploadResponse);
-          }
-        }));
-    });
-  } catch (err) {
-    throw new Error('Failed to upload function tar file to Binaris backend');
-  }
+  // use raw request here(as opposed to rp) because the
+  // request-promise module explicitly discourages using
+  // request-promise for pipe
+  // https://github.com/request/request-promise
+  return new Promise((resolve, reject) => {
+    fs.createReadStream(tarPath)
+      .pipe(request.post(options, (uploadErr, uploadResponse) => {
+        if (uploadErr) {
+          reject(uploadErr);
+        } else {
+          resolve(uploadResponse);
+        }
+      }));
+  });
 };
 
 /**
@@ -54,8 +50,14 @@ const deployFunction = async function uploadFunction(tarPath, funcConf, deployUR
  * @returns {string} - curlable URL of the endpoint used to invoke your function
  */
 const deploy = async function deploy(funcName, apiKey, funcConf, tarPath) {
-  const response = await deployFunction(tarPath, funcConf,
-    urljoin(`https://${deployEndpoint}`, 'v1', 'function', `${apiKey}-${funcName}`));
+  let response;
+  try {
+    response = await deployFunction(tarPath, funcConf,
+      urljoin(`https://${deployEndpoint}`, 'v1', 'function', `${apiKey}-${funcName}`));
+  } catch (err) {
+    throw new Error(translateErrorCode('ERR_NO_BACKEND'));
+  }
+
   if (response.statusCode >= 200 && response.statusCode < 300) {
     return urljoin(`https://${invokeEndpoint}`, 'v1', 'run', apiKey, funcName);
   }

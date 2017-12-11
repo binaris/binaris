@@ -269,6 +269,19 @@
         err: Cannot find function 'grouchybear' in binaris.yml
         exit: 1
 
+- test: No Binaris backend(bad-path)
+  setup:
+    - export BINARIS_API_KEY=9557231848
+    - export BINARIS_DEPLOY_ENDPOINT=fake.binaris.neverworks
+  steps:
+    -   in: bn create
+    -   in: bn deploy
+        err: Could not connect to Binaris backend
+        exit: 1
+    -   in: bn remove
+        err: Could not connect to Binaris backend
+        exit: 1
+
 - test: No API key or conf file(bad-path)
   steps:
     -   in: bn create
