@@ -1,5 +1,7 @@
 const urljoin = require('urljoin');
 const rp = require('request-promise-native');
+
+const { translateErrorCode } = require('./errorCodes');
 const { deployEndpoint } = require('./config');
 
 /**
@@ -12,12 +14,15 @@ const remove = async function remove(funcName, apiKey) {
   const options = {
     url: urljoin(`https://${deployEndpoint}`, 'v1', 'function', `${apiKey}-${funcName}`),
     resolveWithFullResponse: true,
+    simple: false,
   };
-  const response = await rp.delete(options);
-  if (response.statusCode === 404) {
-    throw new Error(`Function ${funcName} unknown`);
+  let response;
+  try {
+    response = await rp.delete(options);
+  } catch (err) {
+    throw new Error(translateErrorCode('ERR_NO_BACKEND'));
   }
-  if (response.statusCode !== 200) {
+  if (response.statusCode < 200 || response.statusCode >= 300) {
     throw new Error(`Failed to remove function ${funcName}`);
   }
 };
