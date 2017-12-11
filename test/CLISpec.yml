@@ -27,7 +27,7 @@
 
 - test: Test login(good-path)
   setup:
-    - export SOME_KEY=9557231848
+    - export SOME_KEY=bt0fycya2lozx9g8qkvu
   cleanup:
     - bn remove
   steps:
@@ -39,7 +39,7 @@
         out: |-
             Please enter your Binaris API key to deploy and invoke functions.
             If you don't have a key, head over to https://binaris.com to request one
-            *? API Key: 9557231848*
+            *? API Key: bt0fycya2lozx9g8qkvu*
             *Authentication Succeeded*
               (use "bn create" to create a template function in your current directory)
     -   in: bn deploy
@@ -60,7 +60,7 @@
 
 - test: Test deploy(good-path)
   setup:
-    - export BINARIS_API_KEY=9557231848
+    - export BINARIS_API_KEY=bt0fycya2lozx9g8qkvu
   cleanup:
     - bn remove
   steps:
@@ -79,7 +79,7 @@
 
 - test: Test invoke(good-path)
   setup:
-    - export BINARIS_API_KEY=9557231848
+    - export BINARIS_API_KEY=bt0fycya2lozx9g8qkvu
     - |-
       echo '{"name": "unguessable"}' > invoke.json
   cleanup:
@@ -104,7 +104,7 @@
 
 - test: Test logs(good-path)
   setup:
-    - export BINARIS_API_KEY=9557231848
+    - export BINARIS_API_KEY=bt0fycya2lozx9g8qkvu
   cleanup:
     - bn remove
   steps:
@@ -142,7 +142,7 @@
 
 - test: Test deploy invoke remove cycle commands(good-path)
   setup:
-    - export BINARIS_API_KEY=9557231848
+    - export BINARIS_API_KEY=bt0fycya2lozx9g8qkvu
   steps:
     -   in: bn create
         out: |-
@@ -271,7 +271,7 @@
 
 - test: No Binaris backend(bad-path)
   setup:
-    - export BINARIS_API_KEY=9557231848
+    - export BINARIS_API_KEY=bt0fycya2lozx9g8qkvu
     - export BINARIS_DEPLOY_ENDPOINT=fake.binaris.neverworks
   steps:
     -   in: bn create
