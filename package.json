@@ -19,7 +19,7 @@
     "fs-extra": "^4.0.2",
     "inquirer": "^3.3.0",
     "js-yaml": "^3.10.0",
-    "lodash": "^4.17.4",
+    "lodash.get": "^4.4.2",
     "moniker": "^0.1.2",
     "mz": "^2.7.0",
     "request": "^2.81.0",
