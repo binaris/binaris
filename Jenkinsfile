@@ -49,7 +49,7 @@ node {
                    sh """
                       REGION=`curl -Ls https://ubkw9cm2nh.execute-api.us-east-1.amazonaws.com/dev/fetch/${realm} | jq -r .region`
                       REALM_ZUUL=`aws --region "\$REGION" ec2 describe-instances --filters 'Name=tag:Name,Values=${realm}-zuul' 2>/dev/null | jq -r '.Reservations[].Instances[].PublicDnsName' | tail -1`
-                      sudo -E ssh -i /var/jenkins_home/.ssh/binaris-dev.pem -o StrictHostKeyChecking=no ubuntu@"\$REALM_ZUUL" 'curl -X POST localhost:80/v1/apikey/9557231848'
+                      sudo -E ssh -i /var/jenkins_home/.ssh/binaris-dev.pem -o StrictHostKeyChecking=no ubuntu@"\$REALM_ZUUL" 'curl -X POST localhost:80/v1/apikey/bt0fycya2lozx9g8qkvu'
                    """
                }
             }
