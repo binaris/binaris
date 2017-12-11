@@ -25,7 +25,7 @@
               remove [options]   Remove a previously deployed function
               invoke [options]   Invoke a Binaris function
 
-- test: Test login(good-path)
+- test: Test login (good-path)
   setup:
     - export SOME_KEY=bt0fycya2lozx9g8qkvu
   cleanup:
@@ -47,7 +47,7 @@
             Deployed function to *
               (use "bn invoke" to invoke the function)
 
-- test: Test create(good-path)
+- test: Test create (good-path)
   steps:
     -   in: bn create
         out: |-
@@ -58,7 +58,7 @@
             Created function purplecannon in /home/dockeruser/test/purplecannon
               (use "bn deploy -p /home/dockeruser/test/purplecannon -f purplecannon" to deploy the function)
 
-- test: Test deploy(good-path)
+- test: Test deploy (good-path)
   setup:
     - export BINARIS_API_KEY=bt0fycya2lozx9g8qkvu
   cleanup:
@@ -77,7 +77,7 @@
             Deployed function to *
               (use "bn invoke" to invoke the function)
 
-- test: Test invoke(good-path)
+- test: Test invoke (good-path)
   setup:
     - export BINARIS_API_KEY=bt0fycya2lozx9g8qkvu
     - |-
@@ -102,7 +102,7 @@
     -   in: bn invoke -j invoke.json
         out: Hello unguessable!
 
-- test: Test logs(good-path)
+- test: Test logs (good-path)
   setup:
     - export BINARIS_API_KEY=bt0fycya2lozx9g8qkvu
   cleanup:
@@ -140,7 +140,7 @@
           [201*-*-*T*:*:*Z] Hello again!
           [201*-*-*T*:*:*Z] Hello for the last time!
 
-- test: Test deploy invoke remove cycle commands(good-path)
+- test: Test deploy invoke remove cycle commands (good-path)
   setup:
     - export BINARIS_API_KEY=bt0fycya2lozx9g8qkvu
   steps:
@@ -160,7 +160,7 @@
             Removed function *
               (use "bn deploy" to re-deploy the function)
 
-- test: Test login(bad-path)
+- test: Test login (bad-path)
   steps:
     -   in: bn create
         out: |-
@@ -170,7 +170,7 @@
         err: Invalid API key
         exit: 1
 
-- test: Test create(bad-path)
+- test: Test create (bad-path)
   steps:
     -   in: bn create -f a*b*c*
         err: Invalid characters in function name a*b*c*. Use only letters and digits
@@ -188,7 +188,7 @@
         err: Function names cannot be longer than 58 characters.
         exit: 1
 
-- test: Test invoke(bad-path)
+- test: Test invoke (bad-path)
   steps:
     -   in: bn create -p /home/dockeruser/test/alloftheoptions
     -   in: bn invoke -p /home/dockeruser/test/alloftheoptions -j myFile.json -d data
@@ -198,7 +198,7 @@
         err: "ENOENT: no such file or directory, open 'myFile.json'"
         exit: 1
 
-- test: Invalid name in binaris.yml (bad-path)
+- test: Invalid name in binaris.yml  (bad-path)
   setup:
     - bn create
     # replace line 2 of binaris.yml(function name) with a bad function name
@@ -208,7 +208,7 @@
       err: Invalid characters in function name inv*a#l@i-d. Use only letters and digits
       exit: 1
 
-- test: Unknown command(bad-path)
+- test: Unknown command (bad-path)
   steps:
     -   in: bn alwaysbad
         err: "Unknown command: 'alwaysbad'. See 'bn --help'"
@@ -224,7 +224,7 @@
         err: "EACCES: permission denied, unlink '/home/dockeruser/test/securedir/function.js'"
         exit: 1
 
-- test: Superfluous output(bad-path)
+- test: Superfluous output (bad-path)
   steps:
     -   in: bn create init init
         err: Argument "*" is not a valid input to *
@@ -239,7 +239,7 @@
         err: Argument "notlogs" is not a valid input to logs
         exit: 1
 
-- test: No such path(bad-path)
+- test: No such path (bad-path)
   steps:
     -   in: bn deploy -p /home/dockeruser/test/bogus/comeon/really/hello.js
         err: "ENOENT: no such file or directory, open '/home/dockeruser/test/bogus/comeon/really/hello.js/binaris.yml'"
@@ -254,7 +254,7 @@
         err: "ENOENT: no such file or directory, open '/home/dockeruser/test/what/ifitdidnt/exist/binaris.yml'"
         exit: 1
 
-- test: No binaris.yml in directory(bad-path)
+- test: No binaris.yml in directory (bad-path)
   setup:
     - mkdir -p /home/dockeruser/test/trollycopter
   steps:
@@ -262,14 +262,14 @@
         err: "ENOENT: no such file or directory, open '/home/dockeruser/test/trollycopter/binaris.yml'"
         exit: 1
 
-- test: No matching function(bad-path)
+- test: No matching function (bad-path)
   steps:
     -   in: bn create -f unrelatedname
     -   in: bn deploy -f grouchybear
         err: Cannot find function 'grouchybear' in binaris.yml
         exit: 1
 
-- test: No Binaris backend(bad-path)
+- test: No Binaris backend (bad-path)
   setup:
     - export BINARIS_API_KEY=bt0fycya2lozx9g8qkvu
     - export BINARIS_DEPLOY_ENDPOINT=fake.binaris.neverworks
@@ -282,14 +282,14 @@
         err: Could not connect to Binaris backend
         exit: 1
 
-- test: No API key or conf file(bad-path)
+- test: No API key or conf file (bad-path)
   steps:
     -   in: bn create
     -   in: bn deploy
         err: Binaris conf file could not be read and BINARIS_API_KEY is undefined, please use "bn login"
         exit: 1
 
-- test: Corrupt binaris conf file(bad-path)
+- test: Corrupt binaris conf file (bad-path)
   setup:
     - echo 'INVALIDCONF' | tee /home/dockeruser/.binaris.yml > /dev/null
   steps:
