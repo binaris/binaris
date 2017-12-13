@@ -198,6 +198,21 @@
         err: "ENOENT: no such file or directory, open 'myFile.json'"
         exit: 1
 
+- test: Test remove (bad-path)
+  setup:
+    - export BINARIS_API_KEY=bt0fycya2lozx9g8qkvu
+  steps:
+    -   in: bn create
+    -   in: bn remove
+        err: No such function
+        exit: 1
+    -   in: bn deploy
+    -   in: bn remove
+    -   in: sleep 2
+    -   in: bn remove
+        err: No such function
+        exit: 1
+
 - test: Invalid name in binaris.yml  (bad-path)
   setup:
     - bn create
