@@ -7,6 +7,8 @@ const errStringMap = {
   ERR_BAD_KEY: 'Invalid API key',
   ERR_INTERNAL: 'Internal Binaris server error',
   ERR_NO_REQ_ID: 'Missing request ID header',
+  ERR_NO_SUCH_FUNCTION: 'No such function',
+  /** Here we define error codes which are local to the CLI. */
   ERR_NO_BACKEND: 'Could not connect to Binaris backend',
 };
 
@@ -38,4 +40,6 @@ const translateErrorCode = function translateErrorCode(errCode) {
 };
 
 // TODO(ryland): add template support
-module.exports = { translateErrorCode };
+module.exports = {
+  translateErrorCode
+};
