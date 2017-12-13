@@ -1,5 +1,6 @@
 const urljoin = require('urljoin');
 const rp = require('request-promise-native');
+const get = require('lodash.get');
 
 const { translateErrorCode } = require('./errorCodes');
 const { deployEndpoint } = require('./config');
@@ -13,6 +14,7 @@ const { deployEndpoint } = require('./config');
 const remove = async function remove(funcName, apiKey) {
   const options = {
     url: urljoin(`https://${deployEndpoint}`, 'v1', 'function', `${apiKey}-${funcName}`),
+    json: true,
     resolveWithFullResponse: true,
     simple: false,
   };
@@ -23,6 +25,9 @@ const remove = async function remove(funcName, apiKey) {
     throw new Error(translateErrorCode('ERR_NO_BACKEND'));
   }
   if (response.statusCode < 200 || response.statusCode >= 300) {
+    if (get(response, 'body.errorCode')) {
+      throw new Error(translateErrorCode(response.body.errorCode));
+    }
     throw new Error(`Failed to remove function ${funcName}`);
   }
 };
