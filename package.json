@@ -13,6 +13,7 @@
   "author": "Binaris",
   "license": "ISC",
   "dependencies": {
+    "pickle": "git+https://github.com:gobinaris/pickle.git#1.0.0",
     "commander": "^2.11.0",
     "dockerode": "^2.5.3",
     "escape-string-regexp": "^1.0.5",
