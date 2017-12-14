@@ -3,7 +3,7 @@ const urljoin = require('urljoin');
 const request = require('request');
 const get = require('lodash.get');
 
-const { translateErrorCode } = require('./errorCodes');
+const { translateErrorCode } = require('pickle');
 const { deployEndpoint, invokeEndpoint } = require('./config');
 
 /**
