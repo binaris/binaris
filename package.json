@@ -37,10 +37,13 @@
     "eslint": "^3.14.1",
     "eslint-config-airbnb-base": "^11.0.1",
     "eslint-plugin-import": "^2.2.0",
+    "nock": "^9.1.5",
+    "randomstring": "^1.1.5",
     "strip-color": "^0.1.0"
   },
   "ava": {
     "files": [
+      "sdk/test",
       "test"
     ],
     "timeout": "180s",
