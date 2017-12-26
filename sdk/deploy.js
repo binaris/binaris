@@ -1,10 +1,8 @@
 const fs = require('fs');
 const urljoin = require('urljoin');
 const request = require('request');
-const get = require('lodash.get');
 
-const { translateErrorCode } = require('pickle');
-const { deployEndpoint, invokeEndpoint } = require('./config');
+const { deployEndpoint } = require('./config');
 
 /**
  * Deploys the function to the Binaris cloud by streaming
@@ -50,22 +48,16 @@ const deployFunction = async function uploadFunction(tarPath, funcConf, deployUR
  * @returns {string} - curlable URL of the endpoint used to invoke your function
  */
 const deploy = async function deploy(funcName, apiKey, funcConf, tarPath) {
-  let response;
+  const response = {};
   try {
-    response = await deployFunction(tarPath, funcConf,
+    const rawResponse = await deployFunction(tarPath, funcConf,
       urljoin(`https://${deployEndpoint}`, 'v1', 'function', `${apiKey}-${funcName}`));
+    response.status = rawResponse.statusCode;
+    response.body = rawResponse.body;
   } catch (err) {
-    throw new Error(translateErrorCode('ERR_NO_BACKEND'));
+    response.error = err;
   }
-
-  if (response.statusCode >= 200 && response.statusCode < 300) {
-    return urljoin(`https://${invokeEndpoint}`, 'v1', 'run', apiKey, funcName);
-  }
-  if (get(response, 'body.errorCode')) {
-    throw new Error(translateErrorCode(response.body.errorCode));
-  } else {
-    throw new Error(`Failed to deploy function ${funcName}`);
-  }
+  return response;
 };
 
 module.exports = deploy;
