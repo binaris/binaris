@@ -53,6 +53,7 @@ const deploy = async function deploy(funcName, apiKey, funcConf, tarPath) {
       urljoin(`https://${deployEndpoint}`, 'v1', 'function', `${apiKey}-${funcName}`));
     return { status: rawResponse.statusCode, body: rawResponse.body };
   } catch (err) {
+    // NOTE: This 'err' returned in the error field is in NodeJS error format
     return { error: err };
   }
 };
