@@ -48,16 +48,13 @@ const deployFunction = async function uploadFunction(tarPath, funcConf, deployUR
  * @returns {string} - curlable URL of the endpoint used to invoke your function
  */
 const deploy = async function deploy(funcName, apiKey, funcConf, tarPath) {
-  const response = {};
   try {
     const rawResponse = await deployFunction(tarPath, funcConf,
       urljoin(`https://${deployEndpoint}`, 'v1', 'function', `${apiKey}-${funcName}`));
-    response.status = rawResponse.statusCode;
-    response.body = rawResponse.body;
+    return { status: rawResponse.statusCode, body: rawResponse.body };
   } catch (err) {
-    response.error = err;
+    return { error: err };
   }
-  return response;
 };
 
 module.exports = deploy;
