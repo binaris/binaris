@@ -28,7 +28,7 @@ test.afterEach.always(async (t) => {
   nock.cleanAll();
 });
 
-const justDeploy = async function justDeploy(t) {
+test('Just test deploy (good-path)', async (t) => {
   delete process.env.BINARIS_DEPLOY_ENDPOINT;
   // eslint-disable-next-line global-require
   const deploy = require('../deploy');
@@ -43,20 +43,9 @@ const justDeploy = async function justDeploy(t) {
     testFuncConf, t.context.fakeTarFileName);
   t.is(200, response.status);
   t.is('OK', response.body.status);
-};
+});
 
-const deployWithNoBackend = async function deployWithNoBackend(t) {
-  process.env.BINARIS_DEPLOY_ENDPOINT = 'invalidbinaris.endpoint';
-  // eslint-disable-next-line global-require
-  const deploy = require('../deploy');
-
-  const deployFuncName = generate(fakeNameLength);
-  const response = await deploy(deployFuncName, testApiKey,
-    testFuncConf, t.context.fakeTarFileName);
-  t.true(response.error !== undefined);
-};
-
-const deployWithBadKey = async function deployWithBadKey(t) {
+test('Test deploy with bad key (bad-path)', async (t) => {
   delete process.env.BINARIS_DEPLOY_ENDPOINT;
   // eslint-disable-next-line global-require
   const deploy = require('../deploy');
@@ -72,8 +61,16 @@ const deployWithBadKey = async function deployWithBadKey(t) {
     testFuncConf, t.context.fakeTarFileName);
   t.is(403, response.status);
   t.is('ERR_BAD_KEY', response.body.errorCode);
-};
+});
 
-test('Just test deploy (good-path)', justDeploy);
-test('Test deploy with bad key (bad-path)', deployWithBadKey);
-test('Test deploy with no backend (bad-path)', deployWithNoBackend);
+test('Test deploy with no backend (bad-path)', async (t) => {
+  process.env.BINARIS_DEPLOY_ENDPOINT = 'invalidbinaris.endpoint';
+  // eslint-disable-next-line global-require
+  const deploy = require('../deploy');
+
+  const deployFuncName = generate(fakeNameLength);
+  const response = await deploy(deployFuncName, testApiKey,
+    testFuncConf, t.context.fakeTarFileName);
+  t.true(response.error !== undefined);
+});
+
