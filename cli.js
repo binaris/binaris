@@ -4,10 +4,23 @@ const { version } = require('./package.json');
 const { deployHandler, createHandler, invokeHandler,
   logHandler, loginHandler, removeHandler, unknownHandler } = require('./lib');
 
-const actionWrapper = function actionWrapper(action) {
+const actionWrapper = function actionWrapper(action, actionOptions) {
   return async (options) => {
     await action({
-      options: Object.assign({}, options, { path: commander.path }),
+      options: Object.assign({}, actionOptions, options, { path: commander.path }),
+      args: commander.args,
+      rawArgs: commander.rawArgs,
+      name: commander.args[commander.args.length - 1]._name,
+    });
+  };
+};
+
+// again not the cleanest solution but the practical one while
+// still using commander instead of yargs
+const namedActionHandler = function namedActionHandler(action) {
+  return async (funcName, options) => {
+    await action({
+      options: Object.assign({}, { function: funcName }, options, { path: commander.path }),
       args: commander.args,
       rawArgs: commander.rawArgs,
       name: commander.args[commander.args.length - 1]._name,
@@ -28,13 +41,11 @@ commander
   .action(actionWrapper(loginHandler));
 
 commander
-  .command('logs')
+  .command('logs <function>')
   .description('Print the logs of a function')
   .option('-t, --tail',
     'Outputs logs in "tail -f" fashion')
-  .option('-f, --function <name>',
-    'Name of the function to print the logs of')
-  .action(actionWrapper(logHandler));
+  .action(namedActionHandler(logHandler));
 
 commander
   .command('create')
@@ -44,27 +55,21 @@ commander
   .action(actionWrapper(createHandler));
 
 commander
-  .command('deploy')
+  .command('deploy <function>')
   .description('Deploys a function to the cloud')
-  .option('-f, --function <name>',
-    'Name of the function to deploy')
-  .action(actionWrapper(deployHandler));
+  .action(namedActionHandler(deployHandler));
 
 commander
-  .command('remove')
+  .command('remove <function>')
   .description('Remove a previously deployed function')
-  .option('-f, --function <name>',
-    'Name of the function to remove')
-  .action(actionWrapper(removeHandler));
+  .action(namedActionHandler(removeHandler));
 
 commander
-  .command('invoke')
+  .command('invoke <function>')
   .description('Invoke a Binaris function')
-  .option('-f, --function <name>',
-    'Name of the function to invoke')
   .option('-d, --data <data>', 'Data to send with invocation')
   .option('-j, --json <filePath>', 'Path to file containing JSON data')
-  .action(actionWrapper(invokeHandler));
+  .action(namedActionHandler(invokeHandler));
 
 commander
   .command('*', null, { noHelp: true })
