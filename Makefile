@@ -1,3 +1,7 @@
+ifeq ($(tag),)
+  $(error `tag` variable is required)
+endif
+
 SHELL := /bin/bash
 
 .DEFAULT_GOAL = build
@@ -15,13 +19,13 @@ endef
 
 .PHONY: build
 build:
-		$(DOCKER) build $(NO_CACHE) -f binaris.Dockerfile -t $(DOCKER_IMAGE) .
+		$(DOCKER) build $(NO_CACHE) -f binaris.Dockerfile -t $(DOCKER_IMAGE):$(tag) .
 
 .PHONY: lint
 lint: build
-		$(DOCKER) run     \
-			--rm            \
-			$(DOCKER_IMAGE) \
+		$(DOCKER) run            \
+			--rm                   \
+			$(DOCKER_IMAGE):$(tag) \
 			bash -c "cd /home/dockeruser/binaris && npm run lint"
 
 .PHONY: test
@@ -30,7 +34,7 @@ test: build
 			--rm                                          \
 			--privileged                                  \
 			-v /var/run/docker.sock:/var/run/docker.sock  \
-			$(cli_envs) $(DOCKER_IMAGE)                   \
+			$(cli_envs) $(DOCKER_IMAGE):$(tag)            \
 			bash -c "cd /home/dockeruser/binaris && npm run test"
 
 .PHONY: all
