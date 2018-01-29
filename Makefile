@@ -8,6 +8,7 @@ DOCKER := $(SUDO) docker
 DOCKER_IMAGE := binaris
 
 define cli_envs
+	-e BINARIS_API_KEY         \
 	-e BINARIS_INVOKE_ENDPOINT \
 	-e BINARIS_DEPLOY_ENDPOINT \
 	-e BINARIS_LOG_ENDPOINT
