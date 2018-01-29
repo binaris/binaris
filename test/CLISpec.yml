@@ -26,8 +26,6 @@
               invoke [options] <function>  Invoke a Binaris function
 
 - test: Test login (good-path)
-  setup:
-    - export SOME_KEY=bt0fycya2lozx9g8qkvu
   cleanup:
     - bn remove momentousgiants
   steps:
@@ -35,11 +33,11 @@
         out: |-
             Created function * in /home/dockeruser/test
               (use "bn deploy momentousgiants" to deploy the function)
-    -   in: echo "$SOME_KEY" | bn login
+    -   in: echo "$BINARIS_API_KEY" | bn login
         out: |-
             Please enter your Binaris API key to deploy and invoke functions.
             If you don't have a key, head over to https://binaris.com to request one
-            *? API Key: bt0fycya2lozx9g8qkvu*
+            *? API Key: *
             *Authentication Succeeded*
               (use "bn create" to create a template function in your current directory)
     -   in: bn deploy momentousgiants
@@ -59,8 +57,6 @@
               (use "bn deploy -p /home/dockeruser/test/purplecannon purplecannon" to deploy the function)
 
 - test: Test deploy (good-path)
-  setup:
-    - export BINARIS_API_KEY=bt0fycya2lozx9g8qkvu
   cleanup:
     - bn remove drybeef
   steps:
@@ -79,7 +75,6 @@
 
 - test: Test invoke (good-path)
   setup:
-    - export BINARIS_API_KEY=bt0fycya2lozx9g8qkvu
     - |-
       echo '{"name": "unguessable"}' > invoke.json
   cleanup:
@@ -103,8 +98,6 @@
         out: Hello unguessable!
 
 - test: Test logs (good-path)
-  setup:
-    - export BINARIS_API_KEY=bt0fycya2lozx9g8qkvu
   cleanup:
     - bn remove roundbee
   steps:
@@ -141,8 +134,6 @@
           [201*-*-*T*:*:*Z] Hello for the last time!
 
 - test: Test deploy invoke remove cycle commands (good-path)
-  setup:
-    - export BINARIS_API_KEY=bt0fycya2lozx9g8qkvu
   steps:
     -   in: bn create -f gulliblezebra
         out: |-
@@ -199,8 +190,6 @@
         exit: 1
 
 - test: Test remove (bad-path)
-  setup:
-    - export BINARIS_API_KEY=bt0fycya2lozx9g8qkvu
   steps:
     -   in: bn create -f dispensabledrop
     -   in: bn remove dispensabledrop
@@ -288,7 +277,6 @@
 
 - test: No Binaris backend (bad-path)
   setup:
-    - export BINARIS_API_KEY=bt0fycya2lozx9g8qkvu
     - export BINARIS_DEPLOY_ENDPOINT=fake.binaris.neverworks
   steps:
     -   in: bn create -f naughtyvegetable
@@ -300,6 +288,8 @@
         exit: 1
 
 - test: No API key or conf file (bad-path)
+  setup:
+    - unset BINARIS_API_KEY
   steps:
     -   in: bn create -f handsomelycalendar
     -   in: bn deploy handsomelycalendar
@@ -309,6 +299,7 @@
 - test: Corrupt binaris conf file (bad-path)
   setup:
     - echo 'INVALIDCONF' | tee /home/dockeruser/.binaris.yml > /dev/null
+    - unset BINARIS_API_KEY
   steps:
     -   in: bn create -f didacticbrothers
     -   in: bn deploy didacticbrothers
