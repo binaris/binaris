@@ -101,7 +101,7 @@
   setup:
     - export FUNC_NAME=$(cat /dev/urandom | tr -dc 'a-z0-9' | fold -w 32 | head -n 1)
   cleanup:
-    - bn remove roundbee
+    - bn remove $FUNC_NAME
   steps:
     -   in: bn create -f $FUNC_NAME
         out: |-
