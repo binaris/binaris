@@ -98,36 +98,38 @@
         out: Hello unguessable!
 
 - test: Test logs (good-path)
+  setup:
+    - export FUNC_NAME=$(cat /dev/urandom | tr -dc 'a-z0-9' | fold -w 32 | head -n 1)
   cleanup:
     - bn remove roundbee
   steps:
-    -   in: bn create -f roundbee
+    -   in: bn create -f $FUNC_NAME
         out: |-
             Created function * in /home/dockeruser/test
-              (use "bn deploy roundbee" to deploy the function)
-    -   in: bn deploy roundbee
+              (use "bn deploy *" to deploy the function)
+    -   in: bn deploy $FUNC_NAME
         out: |-
             Deployed function to *
-              (use "bn invoke roundbee" to invoke the function)
+              (use "bn invoke *" to invoke the function)
     -   in: sleep 5
-    -   in: bn invoke roundbee
+    -   in: bn invoke $FUNC_NAME
         out: Hello World!
     -   in: sleep 15
-    -   in: bn logs roundbee
+    -   in: bn logs $FUNC_NAME
         out: "[201*-*-*T*:*:*Z] Hello World!"
     -   in: |-
-          bn invoke roundbee -d '{"name": "again"}'
+          bn invoke $FUNC_NAME -d '{"name": "again"}'
         out: Hello again!
     -   in: sleep 15
-    -   in: bn logs roundbee
+    -   in: bn logs $FUNC_NAME
         out: |-
           [201*-*-*T*:*:*Z] Hello World!
           [201*-*-*T*:*:*Z] Hello again!
     -   in: |-
-          bn invoke roundbee -d '{"name": "for the last time"}'
+          bn invoke $FUNC_NAME -d '{"name": "for the last time"}'
         out: Hello for the last time!
     -   in: sleep 15
-    -   in: bn logs roundbee
+    -   in: bn logs $FUNC_NAME
         out: |-
           [201*-*-*T*:*:*Z] Hello World!
           [201*-*-*T*:*:*Z] Hello again!
