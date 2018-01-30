@@ -1,7 +1,3 @@
-ifeq ($(tag),)
-  $(error `tag` variable is required)
-endif
-
 SHELL := /bin/bash
 
 .DEFAULT_GOAL = build
@@ -18,7 +14,7 @@ define cli_envs
 endef
 
 .PHONY: build
-build:
+build: require-tag
 		$(DOCKER) build $(NO_CACHE) -f binaris.Dockerfile -t $(DOCKER_IMAGE):$(tag) .
 
 .PHONY: lint
@@ -36,6 +32,10 @@ test: build
 			-v /var/run/docker.sock:/var/run/docker.sock  \
 			$(cli_envs) $(DOCKER_IMAGE):$(tag)            \
 			bash -c "cd /home/dockeruser/binaris && npm run test"
+
+.PHONY: require-tag
+require-tag:
+	@if [ -z $${tag+x} ]; then echo 'tag' make variable must be defined; false; fi
 
 .PHONY: all
 all: lint test
