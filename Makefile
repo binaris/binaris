@@ -8,6 +8,7 @@ DOCKER := $(SUDO) docker
 DOCKER_IMAGE := binaris
 
 define cli_envs
+	-e tag                     \
 	-e BINARIS_API_KEY         \
 	-e BINARIS_INVOKE_ENDPOINT \
 	-e BINARIS_DEPLOY_ENDPOINT \
@@ -27,6 +28,7 @@ lint: build
 
 .PHONY: test
 test: build
+		export tag=$(tag)
 		$(DOCKER) run                                   \
 			--rm                                          \
 			--privileged                                  \
