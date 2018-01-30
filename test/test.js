@@ -16,6 +16,11 @@ const propagatedEnvVars = [
   'BINARIS_INVOKE_ENDPOINT',
   'BINARIS_LOG_ENDPOINT'];
 
+let imageName = 'binaris';
+if (process.env.tag !== undefined) {
+  imageName = `${imageName}:${process.env.tag}`;
+}
+
 /**
  * Create a Docker container for each test before it runs.
  * This way all test runs are isolated thereby opening up
@@ -23,7 +28,7 @@ const propagatedEnvVars = [
  */
 test.beforeEach(async (t) => {
   // eslint-disable-next-line no-param-reassign
-  t.context.ct = new Container('binaris');
+  t.context.ct = new Container(imageName);
 });
 
 /**
