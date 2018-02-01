@@ -11,7 +11,7 @@
     "lint": "./node_modules/.bin/eslint -c .eslintrc.js ."
   },
   "author": "Binaris",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "pickle": "git+https://github.com:gobinaris/pickle.git#1.0.0",
     "commander": "^2.11.0",
