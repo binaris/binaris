@@ -53,3 +53,5 @@ It's as simple as that.
 
 
 [Dev resources](https://dev.binaris.com/)
+
+This project is licensed under the terms of the MIT license
