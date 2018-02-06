@@ -1,84 +1,132 @@
-const commander = require('commander');
-// grab the version to keep things consistent
-const { version } = require('./package.json');
+const yargs = require('yargs');
+const moniker = require('moniker');
+
+const logger = require('./lib/logger');
+const { makeNameValid } = require('./lib/nameUtil');
 const { deployHandler, createHandler, invokeHandler,
-  logHandler, loginHandler, removeHandler, unknownHandler } = require('./lib');
+  logsHandler, loginHandler, removeHandler } = require('./lib');
 
-const actionWrapper = function actionWrapper(action, actionOptions) {
-  return async (options) => {
-    await action({
-      options: Object.assign({}, actionOptions, options, { path: commander.path }),
-      args: commander.args,
-      rawArgs: commander.rawArgs,
-      name: commander.args[commander.args.length - 1]._name,
-    });
-  };
+const handleCommand = async function handleCommand(options, specificHandler) {
+  const numArgs = options._.length;
+  if (numArgs > 1) {
+    yargs.showHelp();
+    logger.error('Too many positional args given for command');
+    process.exit(1);
+  }
+
+  if (!options.function) {
+    yargs.showHelp();
+    logger.error('A valid function name is a required argument');
+    if (options._[0] === 'create') {
+      logger.error('The "create" command allows for the --random(r) flag in lieu of a name');
+    }
+    process.exit(1);
+  }
+  await specificHandler(options);
+  process.exit(0);
 };
 
-// again not the cleanest solution but the practical one while
-// still using commander instead of yargs
-const namedActionHandler = function namedActionHandler(action) {
-  return async (funcName, options) => {
-    await action({
-      options: Object.assign({}, { function: funcName }, options, { path: commander.path }),
-      args: commander.args,
-      rawArgs: commander.rawArgs,
-      name: commander.args[commander.args.length - 1]._name,
-    });
-  };
-};
+yargs
+  .option('path', {
+    alias: 'p',
+    describe: 'Use directory dir. "create" will create this directory if needed.',
+    type: 'string',
+    global: true,
+  })
+  .usage(
+`Binaris command line interface
 
-commander
-  .version(version)
-  .description('Binaris command line interface')
-  .option('-p, --path <path>',
-    // eslint-disable-next-line quotes
-    'Use directory dir. "create" will create this directory if needed.');
+Usage: $0 <command> [options]` // eslint-disable-line comma-dangle
+  )
+  .command('create [function] [options]', 'Create a function from template', (yargs0) => {
+    yargs0
+      .usage('Usage: $0 create [function] [options]')
+      .positional('function', {
+        describe: 'Name of the function to generate',
+        type: 'string',
+      })
+      .option('random', {
+        alias: 'r', describe: 'Generate a random name for your function', type: 'boolean',
+      });
+  }, async (argv) => {
+    if (argv.random) {
+      // eslint-disable-next-line no-param-reassign
+      argv.function = makeNameValid(moniker.choose());
+    }
+    await handleCommand(argv, createHandler);
+  })
+  .command('deploy <function> [options]', 'Deploys a function to the cloud', (yargs0) => {
+    yargs0
+      .usage('Usage: $0 deploy <function> [options]')
+      .positional('function', {
+        describe: 'Name of the function to deploy',
+        type: 'string',
+      });
+  }, async (argv) => {
+    await handleCommand(argv, deployHandler);
+  })
+  .command('remove <function> [options]', 'Remove a previously deployed function', (yargs0) => {
+    yargs0
+      .usage('Usage: $0 remove <function> [options]')
+      .positional('function', {
+        describe: 'Name of the function to remove',
+        type: 'string',
+      });
+  }, async (argv) => {
+    await handleCommand(argv, removeHandler);
+  })
+  .command('invoke <function> [options]', 'Invoke a Binaris function', (yargs0) => {
+    yargs0
+      .usage('Usage: $0 invoke <function> [options]')
+      .positional('function', {
+        describe: 'Name of the function to invoke',
+        type: 'string',
+      })
+      .option('json', {
+        alias: 'j',
+        describe: 'Path to file containing JSON data',
+        type: 'string',
+      })
+      .option('data', {
+        alias: 'd',
+        describe: 'Data to send with invocation',
+        type: 'string',
+      });
+  }, async (argv) => {
+    await handleCommand(argv, invokeHandler);
+  })
+  .command('logs <function> [options]', 'Print the logs of a function', (yargs0) => {
+    yargs0
+      .usage('Usage: $0 logs <function> [options]')
+      .positional('function', {
+        describe: 'Name of the function to retrieve logs for',
+        type: 'string',
+      })
+      .option('tail', {
+        alias: 't',
+        describe: 'Outputs logs in "tail -f" fashion',
+        type: 'boolean',
+      });
+  }, async (argv) => {
+    await handleCommand(argv, logsHandler);
+  })
+  .command('login', 'Login to your Binaris account using an API key', (yargs0) => {
+    yargs0
+      .usage('Usage: $0 login');
+  }, async () => {
+    await loginHandler();
+  })
+  // .strict()
+  .demand(1, 'Please provide at least 1 valid command')
+  .help('help')
+  .alias('help', 'h')
+  .wrap(null);
 
-commander
-  .command('login')
-  .description('Login to your Binaris account using an API key')
-  .action(actionWrapper(loginHandler));
+const commands = yargs.getCommandInstance().getCommands();
+const argv = yargs.argv;
 
-commander
-  .command('logs <function>')
-  .description('Print the logs of a function')
-  .option('-t, --tail',
-    'Outputs logs in "tail -f" fashion')
-  .action(namedActionHandler(logHandler));
-
-commander
-  .command('create')
-  .description('Create a function from template')
-  .option('-f, --function <name>',
-    'Name of the function to generate. If omitted, a name will be chosen at random')
-  .action(actionWrapper(createHandler));
-
-commander
-  .command('deploy <function>')
-  .description('Deploys a function to the cloud')
-  .action(namedActionHandler(deployHandler));
-
-commander
-  .command('remove <function>')
-  .description('Remove a previously deployed function')
-  .action(namedActionHandler(removeHandler));
-
-commander
-  .command('invoke <function>')
-  .description('Invoke a Binaris function')
-  .option('-d, --data <data>', 'Data to send with invocation')
-  .option('-j, --json <filePath>', 'Path to file containing JSON data')
-  .action(namedActionHandler(invokeHandler));
-
-commander
-  .command('*', null, { noHelp: true })
-  .description('')
-  .action(actionWrapper(unknownHandler));
-
-commander
-  .parse(process.argv);
-
-if (!process.argv.slice(2).length) {
-  commander.outputHelp();
+if (argv._[0] && commands.indexOf(argv._[0]) === -1) {
+  logger.error(`Unknown command: '${argv._[0]}'. See 'bn --help'`);
+  process.exit(1);
 }
+
