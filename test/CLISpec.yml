@@ -254,33 +254,6 @@
         err: "ENOENT: no such file or directory, open '/home/dockeruser/test/what/ifitdidnt/exist/binaris.yml'"
         exit: 1
 
-- test: No binaris.yml in directory (bad-path)
-  setup:
-    - mkdir -p /home/dockeruser/test/trollycopter
-  steps:
-    -   in: bn invoke -p /home/dockeruser/test/trollycopter icydiceymolecule
-        err: "ENOENT: no such file or directory, open '/home/dockeruser/test/trollycopter/binaris.yml'"
-        exit: 1
-
-- test: No matching function (bad-path)
-  steps:
-    -   in: bn create unrelatedname
-    -   in: bn deploy grouchybear
-        err: Cannot find function 'grouchybear' in binaris.yml
-        exit: 1
-
-- test: No Binaris backend (bad-path)
-  setup:
-    - export BINARIS_DEPLOY_ENDPOINT=fake.binaris.neverworks
-  steps:
-    -   in: bn create naughtyvegetable
-    -   in: bn deploy naughtyvegetable
-        err: Could not connect to Binaris backend
-        exit: 1
-    -   in: bn remove naughtyvegetable
-        err: Could not connect to Binaris backend
-        exit: 1
-
 - test: No API key or conf file (bad-path)
   setup:
     - unset BINARIS_API_KEY
@@ -289,14 +262,3 @@
     -   in: bn deploy handsomelycalendar
         err: Binaris conf file could not be read and BINARIS_API_KEY is undefined, please use "bn login"
         exit: 1
-
-- test: Corrupt binaris conf file (bad-path)
-  setup:
-    - echo 'INVALIDCONF' | tee /home/dockeruser/.binaris.yml > /dev/null
-    - unset BINARIS_API_KEY
-  steps:
-    -   in: bn create didacticbrothers
-    -   in: bn deploy didacticbrothers
-        err: Invalid Binaris conf file (missing API key) /home/dockeruser/.binaris.yml
-        exit: 1
-
