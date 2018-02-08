@@ -48,8 +48,10 @@ test.afterEach.always(async (t) => {
  * Iterates over the YAML CLI specification separating and testing each
  * `test` entry separately.
  */
-const planYAML = yaml.safeLoad(fs.readFileSync(process.env.BINARIS_TEST_SPEC_PATH || './test/CLISpec.yml', 'utf8'));
-planYAML.forEach((rawSubTest) => {
+const testFileNames = ['./test/CLISpec.yml', './test/cases.yml'];
+const testFiles = testFileNames.map(file => yaml.safeLoad(fs.readFileSync(file, 'utf8')));
+const testPlan = [].concat(...testFiles);
+testPlan.forEach((rawSubTest) => {
   test(rawSubTest.test, async (t) => {
     const activeEnvs = propagatedEnvVars.filter(envKey =>
       process.env[envKey] !== undefined).map(envKey =>
