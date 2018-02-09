@@ -42,7 +42,7 @@
 
 - test: Test create (good-path)
   steps:
-    -   in: bn create -r
+    -   in: bn create snowmanolympics
         out: |-
             Created function * in /home/dockeruser/test
               (use "bn deploy *" to deploy the function)
@@ -150,7 +150,7 @@
 
 - test: Test login (bad-path)
   steps:
-    -   in: bn create -r
+    -   in: bn create stormysummer
     -   in: echo "9239239" | bn login
         err: Invalid API key
         exit: 1
@@ -198,7 +198,7 @@
 
 - test: Invalid name in binaris.yml  (bad-path)
   setup:
-    - bn create -r
+    - bn create pickypumpkin
     # replace line 2 of binaris.yml(function name) with a bad function name
     - sed -i '2 c \  inv@a-d:' binaris.yml
   steps:
@@ -218,7 +218,7 @@
     - echo binaris | sudo  -S chown root:root /home/dockeruser/test/securedir
     - echo binaris | sudo  -S chmod 700 /home/dockeruser/test/securedir
   steps:
-    -   in: bn create -r -p /home/dockeruser/test/securedir
+    -   in: bn create orangehero -p /home/dockeruser/test/securedir
         err: "EACCES: permission denied, unlink '/home/dockeruser/test/securedir/function.js'"
         exit: 1
 
