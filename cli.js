@@ -1,8 +1,6 @@
 const yargs = require('yargs');
-const moniker = require('moniker');
 
 const logger = require('./lib/logger');
-const { makeNameValid } = require('./lib/nameUtil');
 const { deployHandler, createHandler, invokeHandler,
   logsHandler, loginHandler, removeHandler } = require('./lib');
 
@@ -10,16 +8,13 @@ const handleCommand = async function handleCommand(options, specificHandler) {
   const numArgs = options._.length;
   if (numArgs > 1) {
     yargs.showHelp();
-    logger.error('Too many positional args given for command');
+    logger.error('Too many positional args given for command.');
     process.exit(1);
   }
 
   if (!options.function) {
     yargs.showHelp();
-    logger.error('A valid function name is a required argument');
-    if (options._[0] === 'create') {
-      logger.error('The "create" command allows for the --random(r) flag in lieu of a name');
-    }
+    logger.error('Missing argument: function name.');
     process.exit(1);
   }
   await specificHandler(options);
@@ -44,15 +39,8 @@ Usage: $0 <command> [options]` // eslint-disable-line comma-dangle
       .positional('function', {
         describe: 'Name of the function to generate',
         type: 'string',
-      })
-      .option('random', {
-        alias: 'r', describe: 'Generate a random name for your function', type: 'boolean',
       });
   }, async (argv) => {
-    if (argv.random) {
-      // eslint-disable-next-line no-param-reassign
-      argv.function = makeNameValid(moniker.choose());
-    }
     await handleCommand(argv, createHandler);
   })
   .command('deploy <function> [options]', 'Deploys a function to the cloud', (yargs0) => {
