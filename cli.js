@@ -123,10 +123,11 @@ Usage: $0 <command> [options]` // eslint-disable-line comma-dangle
   .wrap(null);
 
 const commands = yargs.getCommandInstance().getCommands();
-const argv = yargs.argv;
+// first command pushed to command stack(from user input)
+const currCommand = yargs.argv._[0];
 
-if (argv._[0] && commands.indexOf(argv._[0]) === -1) {
-  logger.error(`Unknown command: '${argv._[0]}'. See 'bn --help'`);
+if (currCommand && commands.indexOf(currCommand) === -1) {
+  logger.error(`Unknown command: '${currCommand}'. See 'bn --help'`);
   process.exit(1);
 }
 
