@@ -45,7 +45,7 @@ Usage: $0 <command> [options]` // eslint-disable-line comma-dangle
     yargs0
       .usage('Usage: $0 create <function> [options]')
       .positional('function', {
-        describe: 'Name of the function to generate',
+        describe: 'Function name',
         type: 'string',
       });
   }, async (argv) => {
@@ -55,7 +55,7 @@ Usage: $0 <command> [options]` // eslint-disable-line comma-dangle
     yargs0
       .usage('Usage: $0 deploy <function> [options]')
       .positional('function', {
-        describe: 'Name of the function to deploy',
+        describe: 'Function name',
         type: 'string',
       });
   }, async (argv) => {
@@ -65,7 +65,7 @@ Usage: $0 <command> [options]` // eslint-disable-line comma-dangle
     yargs0
       .usage('Usage: $0 remove <function> [options]')
       .positional('function', {
-        describe: 'Name of the function to remove',
+        describe: 'Function name',
         type: 'string',
       });
   }, async (argv) => {
@@ -75,7 +75,7 @@ Usage: $0 <command> [options]` // eslint-disable-line comma-dangle
     yargs0
       .usage('Usage: $0 invoke <function> [options]')
       .positional('function', {
-        describe: 'Name of the function to invoke',
+        describe: 'Function name',
         type: 'string',
       })
       .option('json', {
@@ -95,7 +95,7 @@ Usage: $0 <command> [options]` // eslint-disable-line comma-dangle
     yargs0
       .usage('Usage: $0 logs <function> [options]')
       .positional('function', {
-        describe: 'Name of the function to retrieve logs for',
+        describe: 'Function name',
         type: 'string',
       })
       .option('tail', {
