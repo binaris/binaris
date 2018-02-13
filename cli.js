@@ -4,19 +4,27 @@ const logger = require('./lib/logger');
 const { deployHandler, createHandler, invokeHandler,
   logsHandler, loginHandler, removeHandler } = require('./lib');
 
+/**
+ * Prints the provided message(along with optionally displayed help)
+ * and then exits the process with a code of 1.
+ *
+ * @param message - string to print before exiting
+ * @param displayHelp - should help be displayed before your error?
+ */
+const msgAndExit = function msgAndExit(message, displayHelp) {
+  if (displayHelp) yargs.showHelp();
+  logger.error(message);
+  process.exit(1);
+};
+
 const handleCommand = async function handleCommand(options, specificHandler) {
-  const numArgs = options._.length;
-  if (numArgs > 1) {
-    yargs.showHelp();
-    logger.error('Too many positional args given for command.');
-    process.exit(1);
+  // eslint-disable-next-line no-param-reassign
+  const cmdSeq = options._;
+  // `_` is the array holding all commands given to yargs
+  if (cmdSeq.length > 1) {
+    msgAndExit(`Invalid subcommand ${cmdSeq[1]} for command ${cmdSeq[0]}`, true);
   }
 
-  if (!options.function) {
-    yargs.showHelp();
-    logger.error('Missing argument: function name.');
-    process.exit(1);
-  }
   await specificHandler(options);
   process.exit(0);
 };
@@ -33,9 +41,9 @@ yargs
 
 Usage: $0 <command> [options]` // eslint-disable-line comma-dangle
   )
-  .command('create [function] [options]', 'Create a function from template', (yargs0) => {
+  .command('create <function> [options]', 'Create a function from template', (yargs0) => {
     yargs0
-      .usage('Usage: $0 create [function] [options]')
+      .usage('Usage: $0 create <function> [options]')
       .positional('function', {
         describe: 'Name of the function to generate',
         type: 'string',
@@ -115,7 +123,6 @@ const commands = yargs.getCommandInstance().getCommands();
 const currCommand = yargs.argv._[0];
 
 if (currCommand && commands.indexOf(currCommand) === -1) {
-  logger.error(`Unknown command: '${currCommand}'. See 'bn --help'`);
-  process.exit(1);
+  msgAndExit(`Unknown command: '${currCommand}'`, true);
 }
 
