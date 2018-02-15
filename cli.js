@@ -18,7 +18,6 @@ const msgAndExit = function msgAndExit(message, displayHelp) {
 };
 
 const handleCommand = async function handleCommand(options, specificHandler) {
-  // eslint-disable-next-line no-param-reassign
   const cmdSeq = options._;
   // `_` is the array holding all commands given to yargs
   if (cmdSeq.length > 1) {
