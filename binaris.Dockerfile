@@ -1,4 +1,5 @@
 FROM ubuntu:16.04
+ARG NPM_TOKEN
 
 RUN apt-get update && apt-get install -y curl git sudo
 

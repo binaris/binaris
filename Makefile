@@ -36,9 +36,23 @@ test: build
 			$(cli_envs) $(DOCKER_IMAGE):$(tag)            \
 			bash -c "cd /home/dockeruser/binaris && npm run test"
 
+.PHONY: publish
+publish: build require-npm-creds
+		export tag=$(tag)
+		$(DOCKER) run                                                              \
+		 --rm                                                                      \
+		 $(DOCKER_IMAGE):$(tag)                                                    \
+		 bash -c 'cd /home/dockeruser/binaris && echo "//registry.npmjs.org/:_authToken=$(NPM_TOKEN)">~/.npmrc && \
+			npm publish &&                                                           \
+			rm ~/.npmrc'
+
 .PHONY: require-tag
 require-tag:
 	@if [ -z $${tag+x} ]; then echo 'tag' make variable must be defined; false; fi
+
+.PHONY: require-npm-creds
+require-npm-creds:
+	@if [ -z $${NPM_TOKEN+x} ]; then echo 'NPM_TOKEN' make variable must be defined; false; fi
 
 .PHONY: all
 all: lint test
