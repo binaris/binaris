@@ -21,7 +21,7 @@
     "lodash.get": "^4.4.2",
     "moniker": "^0.1.2",
     "mz": "^2.7.0",
-    "pickle": "git+https://github.com:gobinaris/pickle.git#1.0.0",
+    "pickle": "git+https://github.com:binaris/pickle.git#1.0.0",
     "request": "^2.81.0",
     "request-promise-native": "^1.0.5",
     "semver": "^5.4.1",
