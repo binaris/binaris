@@ -39,12 +39,12 @@ test: build
 .PHONY: publish
 publish: build require-npm-creds
 		export tag=$(tag)
-		$(DOCKER) run                                                              \
-		 --rm                                                                      \
-		 $(DOCKER_IMAGE):$(tag)                                                    \
-		 bash -c 'cd /home/dockeruser/binaris && echo "//registry.npmjs.org/:_authToken=$(NPM_TOKEN)">~/.npmrc && \
-			npm publish &&                                                           \
-			rm ~/.npmrc'
+		$(DOCKER) run                                                                                              \
+			--rm                                                                                                     \
+			$(DOCKER_IMAGE):$(tag)                                                                                   \
+			bash -c 'cd /home/dockeruser/binaris && echo "//registry.npmjs.org/:_authToken=$(NPM_TOKEN)">~/.npmrc && \
+				npm publish &&                                                                                         \
+				rm ~/.npmrc'
 
 .PHONY: require-tag
 require-tag:
