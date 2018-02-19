@@ -51,7 +51,6 @@ bn logs hellofunc
 
 It's as simple as that.
 
-
-[Dev resources](https://dev.binaris.com/)
+Learn more about the Binaris platform at the [developer resources](https://dev.binaris.com/) page.
 
 This project is licensed under the terms of the MIT license
