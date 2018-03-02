@@ -74,6 +74,7 @@
       echo '{"name": "unguessable"}' > invoke.json
   cleanup:
     - bn remove extrasmallaunt
+    - bn remove alwaysucceeds
   steps:
     -   in: bn create extrasmallaunt
         out: |-
@@ -91,6 +92,12 @@
         out: Hello unguessable!
     -   in: bn invoke extrasmallaunt -j invoke.json
         out: Hello unguessable!
+    -   in: bn create alwaysucceeds
+    -   in: bn deploy alwaysucceeds && bn invoke alwaysucceeds
+        out: |-
+            Deployed function to *
+              (use "bn invoke alwaysucceeds" to invoke the function)
+            Hello World!
 
 - test: Test logs (good-path)
   setup:
