@@ -20,6 +20,40 @@
                 --path, -p  Use directory dir. "create" will create this directory if needed.  [string]
                 --help, -h  Show help  [boolean]*
 
+- test: Test logs help output (good-path)
+  steps:
+    -   in: bn logs --help
+        out: |-
+              Usage: bn logs <function> [options]
+              
+              Positionals:
+                function  Function name  [string] [required]
+              
+              Options:
+                --version    Show version number  [boolean]
+                --path, -p   Use directory dir. "create" will create this directory if needed.  [string]
+                --help, -h   Show help  [boolean]
+                --tail, -t   Outputs logs in "tail -f" fashion  [boolean]
+                --since, -s  Outputs logs after timestamp  [string]
+              
+              Examples:
+                  // retrieve all logs
+                  bn logs foo
+              
+                  // tail all logs
+                  bn logs foo --tail
+              
+                  // ISO
+                  bn logs foo --since 2018-03-09T22:12:21.861Z
+              
+                  // unix
+                  bn logs foo --tail --since 1520816105798
+              
+                  // offset format
+                  bn logs foo --since 3d
+                  bn logs foo --since 13hours
+                  bn logs foo --since 9s*
+
 - test: Test login (good-path)
   cleanup:
     - bn remove momentousgiants
@@ -109,26 +143,30 @@
     -   in: sleep 5
     -   in: bn invoke $FUNC_NAME
         out: Hello World!
-    -   in: sleep 15
+    -   in: sleep 12
     -   in: bn logs $FUNC_NAME
         out: "[201*-*-*T*:*:*Z] Hello World!"
     -   in: |-
           bn invoke $FUNC_NAME -d '{"name": "again"}'
         out: Hello again!
-    -   in: sleep 15
+    -   in: sleep 12
     -   in: bn logs $FUNC_NAME
         out: |-
           [201*-*-*T*:*:*Z] Hello World!
           [201*-*-*T*:*:*Z] Hello again!
+    -   in: sleep 30
     -   in: |-
           bn invoke $FUNC_NAME -d '{"name": "for the last time"}'
         out: Hello for the last time!
     -   in: sleep 15
-    -   in: bn logs $FUNC_NAME
+    -   in: bn logs $FUNC_NAME --since 20s
         out: |-
-          [201*-*-*T*:*:*Z] Hello World!
-          [201*-*-*T*:*:*Z] Hello again!
           [201*-*-*T*:*:*Z] Hello for the last time!
+    -   in: bn logs $FUNC_NAME --since 80sec
+        out: |-
+          *[201*-*-*T*:*:*Z] Hello again!
+          [201*-*-*T*:*:*Z] Hello for the last time!
+
 
 - test: Test deploy invoke remove cycle commands (good-path)
   steps:
@@ -202,6 +240,17 @@
         err: "*Not enough non-option arguments: got 0, need at least 1"
         exit: 1
 
+- test: Test logs (bad-path)
+  steps:
+    -   in: bn create endlessclue
+    -   in: bn logs endlessclue --since h23sdh2
+        err: |-
+             Invalid time format "h23sdh2"
+        exit: 1
+    -   in: bn logs endlessclue --since 231213daysf
+        err: |-
+             Invalid offset format, unknown unit "daysf"
+        exit: 1
 
 - test: Invalid name in binaris.yml  (bad-path)
   setup:
