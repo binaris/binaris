@@ -1,6 +1,7 @@
 const yargs = require('yargs');
 
 const logger = require('./lib/logger');
+const { parseTimeString } = require('./lib/timeUtil');
 const { deployHandler, createHandler, invokeHandler,
   logsHandler, loginHandler, removeHandler } = require('./lib');
 
@@ -101,8 +102,38 @@ Usage: $0 <command> [options]` // eslint-disable-line comma-dangle
         alias: 't',
         describe: 'Outputs logs in "tail -f" fashion',
         type: 'boolean',
-      });
+      })
+      .option('since', {
+        alias: 's',
+        describe: 'Outputs logs after the given ISO timestamp',
+        type: 'string',
+      })
+      .example(
+`  // retrieve all logs
+  bn logs foo
+
+  // tail all logs
+  bn logs foo --tail
+
+  // ISO
+  bn logs foo --since 2018-03-09T22:12:21.861Z
+
+  // unix
+  bn logs foo --tail --since 1520816105798
+
+  // offset format
+  bn logs foo --since 3d
+  bn logs foo --since 13hours
+  bn logs foo --since 9s`);
   }, async (argv) => {
+    if (argv.since) {
+      try {
+        // eslint-disable-next-line no-param-reassign
+        argv.since = parseTimeString(argv.since);
+      } catch (err) {
+        msgAndExit(err.message);
+      }
+    }
     await handleCommand(argv, logsHandler);
   })
   .command('login', 'Login to your Binaris account using an API key', (yargs0) => {

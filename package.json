@@ -1,6 +1,6 @@
 {
   "name": "binaris",
-  "version": "1.5.1",
+  "version": "1.6.0",
   "description": "Binaris SDK & CLI",
   "main": "index.js",
   "bin": {
@@ -19,6 +19,7 @@
     "inquirer": "^3.3.0",
     "js-yaml": "^3.10.0",
     "lodash.get": "^4.4.2",
+    "moment": "^2.20.1",
     "moniker": "^0.1.2",
     "mz": "^2.7.0",
     "pickle": "git+https://github.com:binaris/pickle.git#1.0.0",
