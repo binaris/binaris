@@ -93,11 +93,12 @@
     -   in: bn invoke extrasmallaunt -j invoke.json
         out: Hello unguessable!
     -   in: bn create alwaysucceeds
-    -   in: bn deploy alwaysucceeds && bn invoke alwaysucceeds
+    -   in: |-
+            bn deploy alwaysucceeds && bn invoke alwaysucceeds -d '{"name": "Tony"}'
         out: |-
             Deployed function to *
               (use "bn invoke alwaysucceeds" to invoke the function)
-            Hello World!
+            Hello Tony!
 
 - test: Test logs (good-path)
   setup:
