@@ -8,27 +8,27 @@ const { logEndpoint } = require('./config');
  *
  * @param {string} functionName - name of functions whose logs will be retrieved
  * @param {string} apiKey - Binaris API key used to authenticate function invocation
- * @param {string} startingEntry - the log entry to start from(but not including)
+ * @param {string} mode - tailf / tail / logs
+ * @param {number} startEpochMillisecs - Epoch of first log time to fetch
+ * @param {string} token - Token for fetching next page (returned by this function)
  */
-const logs = async function logs(functionName, apiKey, startingEntry) {
+const logs = async function logs(functionName, apiKey, mode, startEpochMillisecs, token) {
   const options = {
     json: true,
     forever: true,
     resolveWithFullResponse: true,
+    url: urljoin(`https://${logEndpoint}`, 'v1', 'logs', `${apiKey}-${functionName}`, mode),
+    qs: {
+      startEpochMillisecs,
+      token,
+    },
   };
 
-  // determine which mode to query the log endpoint with
-  const mode = startingEntry ? 'tailf' : 'logs';
-  options.url = urljoin(`https://${logEndpoint}`, 'v1',
-    'logs', `${apiKey}-${functionName}`, mode);
-  if (mode === 'tailf') {
-    options.qs = {
-      startEpochMillisecs: startingEntry.timestamp,
-      token: startingEntry.offset,
-    };
-  }
-
-  return (await rp.get(options)).body || [];
+  const res = await rp.get(options);
+  return {
+    body: res.body,
+    nextToken: res.headers['x-binaris-next-token'],
+  };
 };
 
 module.exports = logs;
