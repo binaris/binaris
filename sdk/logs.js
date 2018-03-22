@@ -8,19 +8,20 @@ const { logEndpoint } = require('./config');
  *
  * @param {string} functionName - name of functions whose logs will be retrieved
  * @param {string} apiKey - Binaris API key used to authenticate function invocation
- * @param {string} mode - tailf / tail / logs
+ * @param {boolean} follow - As in tail -f
  * @param {number} startEpochMillisecs - Epoch of first log time to fetch
  * @param {string} token - Token for fetching next page (returned by this function)
  */
-const logs = async function logs(functionName, apiKey, mode, startEpochMillisecs, token) {
+const logs = async function logs(functionName, apiKey, follow, startEpochMillisecs, token) {
   const options = {
     json: true,
     forever: true,
     resolveWithFullResponse: true,
-    url: urljoin(`https://${logEndpoint}`, 'v1', 'logs', `${apiKey}-${functionName}`, mode),
+    url: urljoin(`https://${logEndpoint}`, 'v1', 'logs', `${apiKey}-${functionName}`),
     qs: {
       startEpochMillisecs,
       token,
+      follow,
     },
   };
 
