@@ -100,7 +100,7 @@ Usage: $0 <command> [options]` // eslint-disable-line comma-dangle
       })
       .option('tail', {
         alias: 't',
-        describe: 'Outputs logs in "tail -f" fashion',
+        describe: 'Outputs logs in "tail -f" fashion (ignores --since flag)',
         type: 'boolean',
       })
       .option('since', {
@@ -119,7 +119,7 @@ Usage: $0 <command> [options]` // eslint-disable-line comma-dangle
   bn logs foo --since 2018-03-09T22:12:21.861Z
 
   // unix
-  bn logs foo --tail --since 1520816105798
+  bn logs foo --since 1520816105798
 
   // offset format
   bn logs foo --since 3d
