@@ -2,6 +2,7 @@ const urljoin = require('urljoin');
 const rp = require('request-promise-native');
 
 const { invokeEndpoint } = require('./config');
+const logger = require('../lib/logger');
 
 /**
  * Invokes a previously deployed Binaris function.
@@ -13,14 +14,17 @@ const { invokeEndpoint } = require('./config');
  * @returns {object} - response of function invocation
  */
 const invoke = async function invoke(funcName, apiKey, funcData) {
-  return rp.post({
+  const options = {
     url: urljoin(`https://${invokeEndpoint}`, 'v1', 'run', apiKey, funcName),
-    headers: {
-      'Content-Type': 'application/json',
-    },
+    headers: { 'Content-Type': 'application/json' },
     body: funcData,
     resolveWithFullResponse: true,
-  });
+  };
+  logger.debug('Invoking function', options);
+  const res = await rp.post(options);
+  const { statusCode, headers, body } = res;
+  logger.debug('Invoke response', { statusCode, headers, body });
+  return res;
 };
 
 module.exports = invoke;
