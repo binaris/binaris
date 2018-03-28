@@ -33,8 +33,8 @@
                 --version    Show version number  [boolean]
                 --path, -p   Use directory dir. "create" will create this directory if needed.  [string]
                 --help, -h   Show help  [boolean]
-                --tail, -t   Outputs logs in "tail -f" fashion  [boolean]
-                --since, -s  Outputs logs after timestamp  [string]
+                --tail, -t   Outputs logs in "tail -f" fashion (ignores --since flag)  [boolean]
+                --since, -s  Outputs logs after the given ISO timestamp  [string]
               
               Examples:
                   // retrieve all logs
@@ -47,7 +47,7 @@
                   bn logs foo --since 2018-03-09T22:12:21.861Z
               
                   // unix
-                  bn logs foo --tail --since 1520816105798
+                  bn logs foo --since 1520816105798
               
                   // offset format
                   bn logs foo --since 3d
@@ -117,55 +117,67 @@
         out: |-
             Deployed function to *
               (use "bn invoke extrasmallaunt" to invoke the function)
-    -   in: sleep 5
+    -   in: sleep 8
     -   in: bn invoke extrasmallaunt
-        out: Hello World!
+        out: |-
+            "Hello World!"
     -   in: |-
             bn invoke extrasmallaunt -d '{"name": "unguessable"}'
-        out: Hello unguessable!
+        out: |-
+            "Hello unguessable!"
     -   in: bn invoke extrasmallaunt -j invoke.json
-        out: Hello unguessable!
+        out: |-
+            "Hello unguessable!"
 
 - test: Test logs (good-path)
   setup:
     - export FUNC_NAME=$(cat /dev/urandom | tr -dc 'a-z0-9' | fold -w 32 | head -n 1)
+    - bn create $FUNC_NAME
+    - sed -i '2 a \  console.log(`Hello ${name}!`);' function.js
   cleanup:
     - bn remove $FUNC_NAME
   steps:
-    -   in: bn create $FUNC_NAME
-        out: |-
-            Created function * in /home/dockeruser/test
-              (use "bn deploy *" to deploy the function)
     -   in: bn deploy $FUNC_NAME
         out: |-
             Deployed function to *
               (use "bn invoke *" to invoke the function)
-    -   in: sleep 5
+    -   in: sleep 8
     -   in: bn invoke $FUNC_NAME
-        out: Hello World!
-    -   in: sleep 12
-    -   in: bn logs $FUNC_NAME
-        out: "[201*-*-*T*:*:*Z] Hello World!"
-    -   in: |-
-          bn invoke $FUNC_NAME -d '{"name": "again"}'
-        out: Hello again!
-    -   in: sleep 12
+        out: |-
+            "Hello World!"
+    -   in: sleep 5
     -   in: bn logs $FUNC_NAME
         out: |-
           [201*-*-*T*:*:*Z] Hello World!
+          [201*-*-*T*:*:*Z] Function invocation took * us
+    -   in: |-
+          bn invoke $FUNC_NAME -d '{"name": "again"}'
+        out: |-
+            "Hello again!"
+    -   in: sleep 5
+    -   in: bn logs $FUNC_NAME
+        out: |-
+          [201*-*-*T*:*:*Z] Hello World!
+          [201*-*-*T*:*:*Z] Function invocation took * us
           [201*-*-*T*:*:*Z] Hello again!
-    -   in: sleep 30
+          [201*-*-*T*:*:*Z] Function invocation took * us
+    -   in: sleep 15
     -   in: |-
           bn invoke $FUNC_NAME -d '{"name": "for the last time"}'
-        out: Hello for the last time!
-    -   in: sleep 15
-    -   in: bn logs $FUNC_NAME --since 20s
+        out: |-
+            "Hello for the last time!"
+    -   in: sleep 8
+    -   in: bn logs $FUNC_NAME --since 10s
         out: |-
           [201*-*-*T*:*:*Z] Hello for the last time!
-    -   in: bn logs $FUNC_NAME --since 80sec
+          [201*-*-*T*:*:*Z] Function invocation took * us
+    -   in: bn logs $FUNC_NAME --since 40sec
         out: |-
-          *[201*-*-*T*:*:*Z] Hello again!
+          [201*-*-*T*:*:*Z] Hello again!
+          [201*-*-*T*:*:*Z] Function invocation took * us
           [201*-*-*T*:*:*Z] Hello for the last time!
+          [201*-*-*T*:*:*Z] Function invocation took * us
+
 
 
 - test: Test deploy invoke remove cycle commands (good-path)
@@ -178,9 +190,10 @@
         out: |-
             Deployed function to *
               (use "bn invoke gulliblezebra" to invoke the function)
-    -   in: sleep 4
+    -   in: sleep 8
     -   in: bn invoke gulliblezebra
-        out: Hello World!
+        out: |-
+            "Hello World!"
     -   in: bn remove gulliblezebra
         out: |-
             Removed function *
