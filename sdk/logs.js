@@ -11,11 +11,11 @@ const msleep = ms => new Promise(resolve => setTimeout(resolve, ms));
  *
  * @param {string} functionName - name of functions whose logs will be retrieved
  * @param {string} apiKey - Binaris API key used to authenticate function invocation
- * @param {boolean} follow - As in tail -f
- * @param {Date} startAfter - Datetime of first log record to fetch
- * @param {string} token - Token for fetching next page (returned by this function)
+ * @param {boolean} follow - as in tail -f
+ * @param {Date} startAfter - datetime of first log record to fetch
+ * @param {string} token - token for fetching next page (returned by this function)
  */
-async function logs(functionName, apiKey, follow, startAfter, token) { // eslint-disable-line consistent-return,max-len
+const logs = async function logs(functionName, apiKey, follow, startAfter, token) { // eslint-disable-line consistent-return,max-len
   const options = {
     json: true,
     forever: true,
@@ -32,20 +32,26 @@ async function logs(functionName, apiKey, follow, startAfter, token) { // eslint
     try {
       // eslint-disable-next-line no-await-in-loop
       const { statusCode, headers, body } = await rp.get(options);
-      logger.debug('Logs response', { statusCode, headers, body });
+      logger.debug('logs response', { statusCode, headers, body });
       return {
         body,
         nextToken: headers['x-binaris-next-token'],
       };
     } catch (err) {
-      if (!err.statusCode || err.statusCode < 500 || err.statusCode >= 600) { // Not a 5xx error
+      // Not a 5xx error
+      if (!err.statusCode || err.statusCode < 500
+        || err.statusCode >= 600) {
         throw err;
       }
-      logger.debug('Failed to fetch logs', { statusCode: err.statusCode, message: err.message, attempt });
+      logger.debug('failed to fetch logs', {
+        statusCode: err.statusCode,
+        message: err.message,
+        attempt,
+      });
       // eslint-disable-next-line no-await-in-loop
       await msleep(backoff);
     }
   }
-}
+};
 
 module.exports = logs;
