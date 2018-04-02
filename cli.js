@@ -147,7 +147,7 @@ Usage: $0 <command> [options]` // eslint-disable-line comma-dangle
       })
       .option('tail', {
         alias: 't',
-        describe: 'Outputs logs in "tail -f" fashion (ignores --since flag)',
+        describe: 'Outputs logs in "tail -f" fashion',
         type: 'boolean',
       })
       .option('since', {
