@@ -2,7 +2,7 @@ const fs = require('fs');
 const urljoin = require('urljoin');
 const request = require('request');
 
-const { deployEndpoint } = require('./config');
+const { getDeployEndpoint } = require('./config');
 
 /**
  * Deploys the function to the Binaris cloud by streaming
@@ -50,7 +50,7 @@ const deployFunction = async function uploadFunction(tarPath, funcConf, deployUR
 const deploy = async function deploy(funcName, apiKey, funcConf, tarPath) {
   try {
     const rawResponse = await deployFunction(tarPath, funcConf,
-      urljoin(`https://${deployEndpoint}`, 'v1', 'function', `${apiKey}-${funcName}`));
+      urljoin(`https://${getDeployEndpoint()}`, 'v1', 'function', `${apiKey}-${funcName}`));
     return { status: rawResponse.statusCode, body: rawResponse.body };
   } catch (err) {
     // NOTE: This 'err' returned in the error field is in NodeJS error format

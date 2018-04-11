@@ -2,7 +2,7 @@ const urljoin = require('urljoin');
 const rp = require('request-promise-native');
 const logger = require('../lib/logger');
 
-const { logEndpoint } = require('./config');
+const { getLogEndpoint } = require('./config');
 
 const msleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -20,7 +20,7 @@ const logs = async function logs(functionName, apiKey, follow, startAfter, token
     json: true,
     forever: true,
     resolveWithFullResponse: true,
-    url: urljoin(`https://${logEndpoint}`, 'v1', 'logs', `${apiKey}-${functionName}`),
+    url: urljoin(`https://${getLogEndpoint()}`, 'v1', 'logs', `${apiKey}-${functionName}`),
     qs: {
       startAfter,
       token,

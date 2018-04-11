@@ -1,7 +1,7 @@
 const urljoin = require('urljoin');
 const rp = require('request-promise-native');
 
-const { invokeEndpoint } = require('./config');
+const { getInvokeEndpoint } = require('./config');
 const logger = require('../lib/logger');
 
 /**
@@ -15,7 +15,7 @@ const logger = require('../lib/logger');
  */
 const invoke = async function invoke(funcName, apiKey, funcData) {
   const options = {
-    url: urljoin(`https://${invokeEndpoint}`, 'v1', 'run', apiKey, funcName),
+    url: urljoin(`https://${getInvokeEndpoint()}`, 'v1', 'run', apiKey, funcName),
     headers: { 'Content-Type': 'application/json' },
     body: funcData,
     resolveWithFullResponse: true,
