@@ -154,7 +154,7 @@
           bn invoke $FUNC_NAME -d '{"name": "again"}'
         out: |-
             "Hello again!"
-    -   in: sleep 5
+    -   in: sleep 8
     -   in: bn logs $FUNC_NAME
         out: |-
           [201*-*-*T*:*:*Z] Hello World!
