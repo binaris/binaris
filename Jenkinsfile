@@ -26,16 +26,6 @@ node {
                    make lint
                 """
             }
-            stage('Run remote tests') {
-                echo 'Deploying and running tests'
-                build(
-                    job: "bn-cli-trigger",
-                    wait: true,
-                    parameters: [
-                      string(name: 'tag', value: "${BUILD_TAG}")
-                    ]
-                )
-            }
         }
     } catch (err) {
         throw err;
