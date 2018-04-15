@@ -29,6 +29,8 @@ const handleCommand = async function handleCommand(options, specificHandler) {
   process.exit(0);
 };
 
+const runtimes = ['node8', 'python2', 'pypy2'];
+
 yargs
   .option('path', {
     alias: 'p',
@@ -41,16 +43,12 @@ yargs
 
 Usage: $0 <command> [options]` // eslint-disable-line comma-dangle
   )
-  .command('create <function> [options]', 'Create a function from template', (yargs0) => {
+  .command('create <runtime> <function> [options]', 'Create a function from template', (yargs0) => {
     yargs0
-      .usage('Usage: $0 create <function> [options]')
-      // TODO: should runtime be positional (required)?
-      .option('runtime', {
-        alias: 'r',
-        choices: ['node8', 'cpython2', 'pypy2'],
-        describe: 'Runtime image name',
+      .usage('Usage: $0 create <runtime> <function> [options]')
+      .positional('runtime', {
+        choices: runtimes,
         type: 'string',
-        default: 'node8', // Should this be the default (if any)?
       })
       .positional('function', {
         describe: 'Function name',

@@ -51,7 +51,8 @@ test.afterEach.always(async (t) => {
 const testFileNames = ['./test/spec.yml', './test/cases.yml'];
 const testFiles = testFileNames.map(file => yaml.safeLoad(fs.readFileSync(file, 'utf8')));
 const testPlan = [].concat(...testFiles);
-testPlan.forEach((rawSubTest) => {
+
+function createTest(rawSubTest) {
   test(rawSubTest.test, async (t) => {
     const activeEnvs = propagatedEnvVars.filter(envKey =>
       process.env[envKey] !== undefined).map(envKey =>
@@ -84,5 +85,19 @@ testPlan.forEach((rawSubTest) => {
       t.is(cmdOut.exitCode, (step.exit || 0));
     }
   });
+}
+
+testPlan.forEach((rawSubTest) => {
+  if (rawSubTest.vars) {
+    for (const k of Object.keys(rawSubTest.vars)) {
+      const v = rawSubTest.vars[k];
+      for (const val of v) {
+        const copy = JSON.parse(JSON.stringify(rawSubTest).replace(new RegExp(`{${k}}`, 'g'), val));
+        createTest(copy);
+      }
+    }
+  } else {
+    createTest(rawSubTest);
+  }
 });
 
