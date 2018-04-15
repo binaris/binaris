@@ -179,14 +179,20 @@
           [201*-*-*T*:*:*Z] Function invocation took * us
 
 - test: 'Test {PY_VERSION} E2E (good-path)'
-  vars:
-    PY_VERSION:
-      - python2
-      - pypy2
+  foreach:
+    - PY_VERSION: python2
+    - PY_VERSION: pypy2
   setup:
     - export FUNC_NAME=$(cat /dev/urandom | tr -dc 'a-z0-9' | fold -w 32 | head -n 1)
     - 'bn create {PY_VERSION} $FUNC_NAME'
-    - sed -i '2 a \    print "Hello {}!".format(name)' function.py
+    - |-
+      cat > function.py <<EOF
+      def handler(body, req):
+          name = req.query.get('name') or body.get('name') or 'World'
+          out = 'Hello {}!'.format(name)
+          print out
+          return out
+      EOF
   cleanup:
     - bn remove $FUNC_NAME
   steps:
