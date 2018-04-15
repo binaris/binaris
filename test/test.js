@@ -88,13 +88,16 @@ function createTest(rawSubTest) {
 }
 
 testPlan.forEach((rawSubTest) => {
-  if (rawSubTest.vars) {
-    for (const k of Object.keys(rawSubTest.vars)) {
-      const v = rawSubTest.vars[k];
-      for (const val of v) {
-        const copy = JSON.parse(JSON.stringify(rawSubTest).replace(new RegExp(`{${k}}`, 'g'), val));
-        createTest(copy);
+  if (rawSubTest.foreach) {
+    for (const variant of Object.keys(rawSubTest.foreach)) {
+      const vars = rawSubTest.foreach[variant];
+      let testStr = JSON.stringify(rawSubTest);
+      for (const key of Object.keys(vars)) {
+        const val = vars[key];
+        testStr = testStr.replace(new RegExp(`{${key}}`, 'g'), val);
       }
+      const copy = JSON.parse(testStr);
+      createTest(copy);
     }
   } else {
     createTest(rawSubTest);
