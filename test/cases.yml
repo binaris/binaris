@@ -9,7 +9,7 @@
 
 - test: No matching function (bad-path)
   steps:
-    -   in: bn create unrelatedname
+    -   in: bn create node8 unrelatedname
     -   in: bn deploy grouchybear
         err: Cannot find function 'grouchybear' in binaris.yml
         exit: 1
@@ -18,7 +18,7 @@
   setup:
     - export BINARIS_DEPLOY_ENDPOINT=fake.binaris.neverworks
   steps:
-    -   in: bn create naughtyvegetable
+    -   in: bn create node8 naughtyvegetable
     -   in: bn deploy naughtyvegetable
         err: Could not connect to Binaris backend
         exit: 1
@@ -31,14 +31,14 @@
     - echo 'INVALIDCONF' | tee /home/dockeruser/.binaris.yml > /dev/null
     - unset BINARIS_API_KEY
   steps:
-    -   in: bn create didacticbrothers
+    -   in: bn create node8 didacticbrothers
     -   in: bn deploy didacticbrothers
         err: Invalid Binaris conf file (missing API key) /home/dockeruser/.binaris.yml
         exit: 1
 
 - test: create function with template name
   steps:
-    -   in: bn create hello -p /home/dockeruser/test/hello
+    -   in: bn create node8 hello -p /home/dockeruser/test/hello
         out: |-
             Created function hello in /home/dockeruser/test/hello
               (use "bn deploy -p /home/dockeruser/test/hello hello" to deploy the function)
