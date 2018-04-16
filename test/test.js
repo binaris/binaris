@@ -16,7 +16,7 @@ const propagatedEnvVars = [
   'BINARIS_INVOKE_ENDPOINT',
   'BINARIS_LOG_ENDPOINT'];
 
-let imageName = 'binaris';
+let imageName = 'binaris/binaris';
 if (process.env.tag !== undefined) {
   imageName = `${imageName}:${process.env.tag}`;
 }
