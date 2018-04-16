@@ -5,7 +5,7 @@ SHELL := /bin/bash
 NO_CACHE = $(shell if [ $${NO_CACHE:-false} != false ]; then echo --no-cache; fi)
 SUDO := $(shell if docker info 2>&1 | grep "permission denied" >/dev/null; then echo "sudo -E"; fi)
 DOCKER := $(SUDO) docker
-DOCKER_IMAGE := binaris
+DOCKER_IMAGE := binaris/binaris
 
 define cli_envs
 	-e tag                     \
@@ -15,9 +15,17 @@ define cli_envs
 	-e BINARIS_LOG_ENDPOINT
 endef
 
+BRANCH := $(shell if [[ ! -z $${BRANCH_NAME+x} ]]; then echo $${BRANCH_NAME}; else git rev-parse --abbrev-ref HEAD 2>/dev/null || echo UNKNOWN; fi)
+
 .PHONY: build
 build: require-tag
 		$(DOCKER) build $(NO_CACHE) -f binaris.Dockerfile -t $(DOCKER_IMAGE):$(tag) .
+
+.PHONY: tag
+tag: require-tag
+		$(DOCKER) tag $(DOCKER_IMAGE):$(tag) binaris
+		$(DOCKER) tag $(DOCKER_IMAGE):$(tag) $(DOCKER_IMAGE):latest
+		$(DOCKER) tag $(DOCKER_IMAGE):$(tag) $(DOCKER_IMAGE):$(BRANCH)
 
 .PHONY: lint
 lint: build
