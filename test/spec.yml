@@ -263,6 +263,9 @@
     -   in: bn create abcd
         err: "*Not enough non-option arguments: got 1, need at least 2"
         exit: 1
+    -   in: bn create cpp4096 abcd
+        err: '*Invalid values:*Argument: runtime, Given: "cpp4096", Choices:*'
+        exit: 1
 
 - test: Test invoke (bad-path)
   steps:
