@@ -44,8 +44,8 @@ node {
                     job: 'push-cli',
                     wait: true,
                     parameters: [
-                        string(name: 'TRIGGER_BRANCH', value: "${BRANCH_NAME}"),
-                        string(name: 'BUILD_TAG', value: "${BUILD_TAG}")
+                        string(name: 'TRIGGER_BRANCH', value: BRANCH_NAME),
+                        string(name: 'BUILD_TAG', value: BUILD_TAG)
                     ]
                 )
             }
