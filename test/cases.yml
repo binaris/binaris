@@ -43,3 +43,10 @@
             Created function hello in /home/dockeruser/test/hello
               (use "bn deploy -p /home/dockeruser/test/hello hello" to deploy the function)
 
+- test: Missing info in binaris.yml (bad-path)
+  steps:
+    -   in: bn create node8 missfield
+    -   in: sed -i '5d' binaris.yml
+    -   in: bn deploy missfield
+        err: "binaris.yml: missing field <runtime>"
+        exit: 1
