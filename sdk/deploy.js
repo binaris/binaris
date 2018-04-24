@@ -55,7 +55,12 @@ const deployConf = async function deployConf(deployURLBase, apiKey, funcName, fu
     body: funcConf,
     resolveWithFullResponse: true,
   };
-  return rp.post(confDeployOptions);
+  await rp.post(confDeployOptions);
+  const tagDeployOptions = {
+    url: urljoin(deployURLBase, 'v2', 'tag', apiKey, funcName, 'latest'),
+    resolveWithFullResponse: true,
+  };
+  return rp.post(tagDeployOptions);
 };
 
 /**
