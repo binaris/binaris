@@ -1,40 +1,61 @@
 const fs = require('fs');
 const urljoin = require('urljoin');
 const request = require('request');
+const rp = require('request-promise-native');
 
 const { getDeployEndpoint } = require('./config');
 
 /**
- * Deploys the function to the Binaris cloud by streaming
- * a tarball containing the function to the Binaris deployment
- * endpoint.
+ * Deploys a tarball, whose contents represent a Binaris function deployment
  *
- * @param {string} tarPath - path of the tarball containing the function to deploy
- * @param {string} funcConf -  configuration of the function to deploy
- * @param {string} deployURL - URL of Binaris deployment endpoint
+ * @param {string} deployURLBase - root deployment URL for conf endpoint
+ * @param {string} apiKey - Binaris apiKey used to authenticate remote request
+ * @param {string} tarPath - path to tarball that will be deployed
  *
- * @returns {object} - response of the deployment request
+ * @return {object} - digest of deployed function
  */
-const deployFunction = async function uploadFunction(tarPath, funcConf, deployURL) {
-  const options = {
-    url: deployURL,
-    qs: funcConf,
+const deployCode = async function deployCode(deployURLBase, apiKey, tarPath) {
+  const codeDeployOptions = {
+    url: urljoin(deployURLBase, 'v2', 'code'),
+    headers: { 'X-Binaris-Api-Key': apiKey },
     json: true,
   };
   // use raw request here(as opposed to rp) because the
   // request-promise module explicitly discourages using
   // request-promise for pipe
   // https://github.com/request/request-promise
-  return new Promise((resolve, reject) => {
+  const codeDeployment = await (new Promise((resolve, reject) => {
     fs.createReadStream(tarPath)
-      .pipe(request.post(options, (uploadErr, uploadResponse) => {
+      .pipe(request.post(codeDeployOptions, (uploadErr, uploadResponse) => {
         if (uploadErr) {
           reject(uploadErr);
         } else {
           resolve(uploadResponse);
         }
       }));
-  });
+  }));
+  return codeDeployment.body.digest;
+};
+
+/**
+ * Deploys the configuration of a previously deployed `tgz` file
+ * holding the code for a Binaris function.
+ *
+ * @param {string} deployURLBase - root deployment URL for conf endpoint
+ * @param {string} apiKey - Binaris apiKey used to authenticate remote request
+ * @param {string} funcName - name of function whose conf is being deployed
+ * @param {string} funcConf - configuration object to deploy for the function
+ *
+ * @return {object} - response of conf deployment
+ */
+const deployConf = async function deployConf(deployURLBase, apiKey, funcName, funcConf) {
+  const confDeployOptions = {
+    url: urljoin(deployURLBase, 'v2', 'conf', apiKey, funcName),
+    headers: { 'Content-Type': 'application/json' },
+    body: funcConf,
+    resolveWithFullResponse: true,
+  };
+  return rp.post(confDeployOptions);
 };
 
 /**
@@ -49,9 +70,12 @@ const deployFunction = async function uploadFunction(tarPath, funcConf, deployUR
  */
 const deploy = async function deploy(funcName, apiKey, funcConf, tarPath) {
   try {
-    const rawResponse = await deployFunction(tarPath, funcConf,
-      urljoin(`https://${getDeployEndpoint()}`, 'v1', 'function', `${apiKey}-${funcName}`));
-    return { status: rawResponse.statusCode, body: rawResponse.body };
+    const deployURLBase = `https://${getDeployEndpoint()`;
+    const codeDeployResp = await deployCode(deployURLBase, apiKey, tarPath);
+    const confWithDigest = Object.assign({}, funcConf, { digest: codeDeployResp });
+    const confDeployResp = await deployConf(deployURLBase, apiKey,
+      funcName, confWithDigest);
+    return { status: confDeployResp.statusCode, body: confDeployResp.body };
   } catch (err) {
     // NOTE: This 'err' returned in the error field is in NodeJS error format
     return { error: err };
