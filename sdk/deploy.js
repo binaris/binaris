@@ -76,7 +76,7 @@ const deployConf = async function deployConf(deployURLBase, apiKey, funcName, fu
  */
 const deploy = async function deploy(funcName, apiKey, funcConf, tarPath) {
   try {
-    const deployURLBase = `https://${getDeployEndpoint()`;
+    const deployURLBase = `https://${getDeployEndpoint()}`;
     const codeDigest = await deployCode(deployURLBase, apiKey, tarPath);
     const confWithDigest = Object.assign({}, funcConf, { codeDigest });
     const confDeployResp = await deployConf(deployURLBase, apiKey,
