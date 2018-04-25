@@ -58,6 +58,7 @@ const deployConf = async function deployConf(deployURLBase, apiKey, funcName, fu
   await rp.post(confDeployOptions);
   const tagDeployOptions = {
     url: urljoin(deployURLBase, 'v2', 'tag', apiKey, funcName, 'latest'),
+    body: { digest: funcConf.codeDigest },
     resolveWithFullResponse: true,
   };
   return rp.post(tagDeployOptions);
