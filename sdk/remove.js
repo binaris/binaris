@@ -13,7 +13,7 @@ const { getDeployEndpoint } = require('./config');
  */
 const remove = async function remove(funcName, apiKey) {
   const options = {
-    url: urljoin(`https://${getDeployEndpoint()}`, 'v1', 'function', `${apiKey}-${funcName}`),
+    url: urljoin(`https://${getDeployEndpoint()}`, 'v2', 'tag', apiKey, funcName, 'latest'),
     json: true,
     resolveWithFullResponse: true,
     simple: false,
