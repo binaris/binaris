@@ -56,17 +56,16 @@ const deployCode = async function deployCode(deployURLBase, apiKey, tarPath) {
 const deployConf = async function deployConf(deployURLBase, apiKey, funcName, funcConf) {
   const confDeployOptions = {
     url: urljoin(deployURLBase, 'v2', 'conf', apiKey, funcName),
-    headers: { 'Content-Type': 'application/json' },
     body: funcConf,
-    resolveWithFullResponse: true,
+    json: true,
   };
-  await rp.post(confDeployOptions);
+  const { digest } = await rp.post(confDeployOptions);
   const tagDeployOptions = {
     url: urljoin(deployURLBase, 'v2', 'tag', apiKey, funcName, 'latest'),
-    body: { digest: funcConf.codeDigest },
-    resolveWithFullResponse: true,
+    json: true,
+    body: { digest },
   };
-  return rp.post(tagDeployOptions);
+  await rp.post(tagDeployOptions);
 };
 
 /**
