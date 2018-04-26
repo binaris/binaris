@@ -17,7 +17,10 @@ const { getDeployEndpoint } = require('./config');
 const deployCode = async function deployCode(deployURLBase, apiKey, tarPath) {
   const codeDeployOptions = {
     url: urljoin(deployURLBase, 'v2', 'code'),
-    headers: { 'X-Binaris-Api-Key': apiKey },
+    headers: {
+      'Content-Type': 'application/gzip',
+      'X-Binaris-Api-Key': apiKey,
+    },
     json: true,
   };
   // use raw request here(as opposed to rp) because the
@@ -29,6 +32,8 @@ const deployCode = async function deployCode(deployURLBase, apiKey, tarPath) {
       .pipe(request.post(codeDeployOptions, (uploadErr, uploadResponse) => {
         if (uploadErr) {
           reject(uploadErr);
+        } else if (uploadResponse.statusCode !== 200) {
+          reject(new Error(uploadResponse.statusMessage));
         } else {
           resolve(uploadResponse);
         }
