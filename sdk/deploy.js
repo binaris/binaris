@@ -64,8 +64,9 @@ const deployConf = async function deployConf(deployURLBase, apiKey, funcName, fu
     url: urljoin(deployURLBase, 'v2', 'tag', apiKey, funcName, 'latest'),
     json: true,
     body: { digest },
+    resolveWithFullResponse: true,
   };
-  await rp.post(tagDeployOptions);
+  return rp.post(tagDeployOptions);
 };
 
 /**
