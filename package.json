@@ -27,6 +27,7 @@
     "request-promise-native": "^1.0.5",
     "semver": "^5.4.1",
     "string-argv": "0.0.2",
+    "supports-color": "^5.4.0",
     "targz": "^1.0.1",
     "urljoin": "^0.1.5",
     "uuid": "^3.1.0",
