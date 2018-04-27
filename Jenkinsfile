@@ -16,38 +16,31 @@ node {
     ]);
     try {
         ansiColor('xterm') {
-            stage('Build') {
-                echo 'Building docker image';
-                sh """
-                   export NO_CACHE
-                   export tag=$BUILD_TAG
-                   make build
-                """
-            }
-            stage('Lint') {
-                echo 'Linting'
-                sh """
-                   export tag=$BUILD_TAG
-                   make lint
-                """
-            }
-            stage('Tag') {
-                echo 'Tagging local images';
-                sh """
-                  export tag=$BUILD_TAG
-                  make tag
-                """
-            }
-            stage('Push') {
-                echo 'Pushing images to ECR'
-                build(
-                    job: 'cli/push-cli',
-                    wait: true,
-                    parameters: [
-                        string(name: 'TRIGGER_BRANCH', value: BRANCH_NAME),
-                        string(name: 'BUILD_TAG', value: BUILD_TAG)
-                    ]
-                )
+            def env = ["tag=${BUILD_TAG}", "NO_CACHE=${params.NO_CACHE}"]
+            withEnv(env) {
+                stage('Build') {
+                    echo 'Building docker image';
+                    sh "make build"
+                }
+                stage('Lint') {
+                    echo 'Linting'
+                    sh "make lint"
+                }
+                stage('Tag') {
+                    echo 'Tagging local images';
+                    sh "make tag"
+                }
+                stage('Push') {
+                    echo 'Pushing images to ECR'
+                    build(
+                        job: 'cli/push-cli',
+                        wait: true,
+                        parameters: [
+                            string(name: 'TRIGGER_BRANCH', value: BRANCH_NAME),
+                            string(name: 'BUILD_TAG', value: BUILD_TAG)
+                        ]
+                    )
+                }
             }
         }
         if (!params.NO_PRECIOUS) {
