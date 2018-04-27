@@ -93,7 +93,16 @@ Usage: $0 <command> [options]` // eslint-disable-line comma-dangle
         alias: 'd',
         describe: 'Data to send with invocation',
         type: 'string',
-      });
+      })
+      .example(
+`  // invoke a function
+  bn invoke foo
+
+  // invoke using JSON file data
+  bn invoke foo --json ./path/to/myfile.json
+
+  // invoke foo and send JSON data in the body
+  bn invoke foo --data '{ "name": "helloworld" }'`);
   }, async (argv) => {
     await handleCommand(argv, invokeHandler);
   })
