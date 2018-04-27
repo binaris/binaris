@@ -24,7 +24,6 @@ build: require-tag
 .PHONY: tag
 tag: require-tag
 		$(DOCKER) tag $(DOCKER_IMAGE):$(tag) binaris
-		$(DOCKER) tag $(DOCKER_IMAGE):$(tag) $(DOCKER_IMAGE):latest
 		$(DOCKER) tag $(DOCKER_IMAGE):$(tag) $(DOCKER_IMAGE):$(BRANCH)
 
 .PHONY: lint
