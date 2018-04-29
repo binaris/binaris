@@ -3,7 +3,7 @@ const yargs = require('yargs');
 const logger = require('./lib/logger');
 const { parseTimeString } = require('./lib/timeUtil');
 const { deployHandler, createHandler, invokeHandler,
-  logsHandler, loginHandler, removeHandler } = require('./lib');
+  logsHandler, loginHandler, removeHandler, perfHandler } = require('./lib');
 
 /**
  * Prints the provided message(along with optionally displayed help)
@@ -105,6 +105,38 @@ Usage: $0 <command> [options]` // eslint-disable-line comma-dangle
   bn invoke foo --data '{ "name": "helloworld" }'`);
   }, async (argv) => {
     await handleCommand(argv, invokeHandler);
+  })
+  .command('perf <function> [options]', 'Measure invocation latency', (yargs0) => {
+    yargs0
+      .usage('Usage: $0 perf <function> [options]')
+      .positional('function', {
+        describe: 'Function name',
+        type: 'string',
+      })
+      .option('maxRequests', {
+        alias: 'n',
+        describe: 'Number of invocations to perform',
+        type: 'number',
+        default: 100,
+      })
+      .option('concurrency', {
+        alias: 'c',
+        describe: 'How many requests run concurrently',
+        type: 'number',
+        default: 1,
+      })
+      .example(
+` // Run performance test on function foo (100 invocations, serially)
+  bn perf foo
+
+  // Run performance test with 1,000 invocations
+  bn perf foo -n 1000
+
+  // Run performance test with 1,000 invocations and 4 concurrent connections
+  bn perf foo -n 1000 -c 4
+`);
+  }, async (argv) => {
+    await handleCommand(argv, perfHandler);
   })
   .command('logs <function> [options]', 'Print the logs of a function', (yargs0) => {
     yargs0

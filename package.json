@@ -13,11 +13,13 @@
   "author": "Binaris",
   "license": "MIT",
   "dependencies": {
+    "columnify": "^1.5.4",
     "dockerode": "^2.5.3",
     "escape-string-regexp": "^1.0.5",
     "fs-extra": "^4.0.2",
     "inquirer": "^3.3.0",
     "js-yaml": "^3.10.0",
+    "loadtest": "^3.0.3",
     "lodash.get": "^4.4.2",
     "moment": "^2.20.1",
     "moniker": "^0.1.2",
