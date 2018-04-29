@@ -131,7 +131,7 @@
 
 - test: Test logs (good-path)
   setup:
-    - export FUNC_NAME=$(cat /dev/urandom | tr -dc 'a-z0-9' | fold -w 32 | head -n 1)
+    - export FUNC_NAME=rand$(cat /dev/urandom | tr -dc 'a-z0-9' | fold -w 32 | head -n 1)
     - bn create node8 $FUNC_NAME
     - sed -i '2 a \  console.log(`Hello ${name}!`);' function.js
   cleanup:
