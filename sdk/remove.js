@@ -2,7 +2,7 @@ const urljoin = require('urljoin');
 const rp = require('request-promise-native');
 const get = require('lodash.get');
 
-const { translateErrorCode } = require('pickle');
+const { translateErrorCode } = require('binaris-pickle');
 const { getDeployEndpoint } = require('./config');
 
 /**
