@@ -117,7 +117,7 @@ Usage: $0 <command> [options]` // eslint-disable-line comma-dangle
         alias: 'n',
         describe: 'Number of invocations to perform',
         type: 'number',
-        default: 100,
+        default: 5000,
       })
       .option('concurrency', {
         alias: 'c',
