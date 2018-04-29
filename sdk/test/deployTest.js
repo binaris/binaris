@@ -39,14 +39,14 @@ test('Just test deploy (good-path)', async (t) => {
   const digestObj = { digest: 'fakedigest' };
   // eslint-disable-next-line no-unused-vars
   const deployMock = nock(deployEndpoint)
-    .post(`/v2/code`)
+    .post('/v2/code')
     .matchHeader('X-Binaris-Api-Key', testApiKey)
     .matchHeader('Content-Type', 'application/gzip')
     .reply(200, digestObj)
     .post(`/v2/conf/${testApiKey}/${testFuncName}`, testFuncConf)
     .reply(200, digestObj)
     .post(`/v2/tag/${testApiKey}/${testFuncName}/latest`, digestObj)
-    .reply(200, digestObj)
+    .reply(200, digestObj);
   const response = await deploy(testFuncName, testApiKey,
     testFuncConf, t.context.fakeTarFileName);
   t.is(200, response.status);
