@@ -106,7 +106,7 @@ Usage: $0 <command> [options]` // eslint-disable-line comma-dangle
   }, async (argv) => {
     await handleCommand(argv, invokeHandler);
   })
-  .command('perf <function> [options]', 'Measure invocation latency', (yargs0) => {
+  .command('perf <function> [options]', 'Measure invocation latency (experimental)', (yargs0) => {
     yargs0
       .usage('Usage: $0 perf <function> [options]')
       .positional('function', {
