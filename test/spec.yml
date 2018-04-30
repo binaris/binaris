@@ -12,6 +12,7 @@
                 bn deploy <function> [options]            Deploys a function to the cloud
                 bn remove <function> [options]            Remove a previously deployed function
                 bn invoke <function> [options]            Invoke a Binaris function
+                bn perf <function> [options]              Measure invocation latency (experimental)
                 bn logs <function> [options]              Print the logs of a function
                 bn login                                  Login to your Binaris account using an API key
 
