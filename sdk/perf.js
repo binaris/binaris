@@ -1,5 +1,4 @@
 const urljoin = require('urljoin');
-const rp = require('request-promise-native');
 const { loadTest } = require('loadtest');
 
 const { getInvokeEndpoint } = require('./config');
