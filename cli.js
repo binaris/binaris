@@ -29,7 +29,7 @@ const handleCommand = async function handleCommand(options, specificHandler) {
   process.exit(0);
 };
 
-const runtimes = ['node8', 'python2', 'pypy2'];
+const runtimes = require('./lib/runtimes');
 
 yargs
   .option('path', {

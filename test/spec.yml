@@ -69,7 +69,7 @@
             If you don't have a key, head over to https://binaris.com to request one
             *? API Key: *
             *Authentication Succeeded*
-              (use "bn create" to create a template function in your current directory)
+              (use "bn create node8 hello" to create a Node.js template function in your CWD)
     -   in: bn deploy momentousgiants
         out: |-
             Deployed function to *
