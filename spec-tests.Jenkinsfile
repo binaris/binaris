@@ -39,7 +39,15 @@ node {
                            withEnv(["tag=${BUILD_TAG}"]) {
                                // make test tags binaris/binaris with ${tag}, and we don't want to
                                // somehow override a stable tag with the result of this build.
-                               sh 'make test'
+                               withCredentials([string(credentialsId: 'realm-config-url', variable: 'REALM_CONFIG_URL')]) {
+                                   sh '''
+                                      export domain=$(curl -Ls ${REALM_CONFIG_URL}${realm} | jq -r '.domain')
+                                      export BINARIS_INVOKE_ENDPOINT=run-$realm.$domain
+                                      export BINARIS_DEPLOY_ENDPOINT=api-$realm.$domain
+                                      export BINARIS_LOG_ENDPOINT=logs-$realm.$domain
+                                      make test
+                                   '''
+                               }
                            }
                        }
                     }
