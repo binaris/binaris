@@ -118,7 +118,6 @@
         out: |-
             Deployed function to *
               (use "bn invoke extrasmallaunt" to invoke the function)
-    -   in: sleep 8
     -   in: bn invoke extrasmallaunt
         out: |-
             "Hello World!"
@@ -142,7 +141,6 @@
         out: |-
             Deployed function to *
               (use "bn invoke *" to invoke the function)
-    -   in: sleep 8
     -   in: bn invoke $FUNC_NAME
         out: |-
             "Hello World!"
@@ -201,7 +199,6 @@
         out: |-
             Deployed function to *
               (use "bn invoke *" to invoke the function)
-    -   in: sleep 8
     -   in: |-
           bn invoke $FUNC_NAME -d '{"name": "Binaris"}'
         out: |-
@@ -222,7 +219,6 @@
         out: |-
             Deployed function to *
               (use "bn invoke gulliblezebra" to invoke the function)
-    -   in: sleep 8
     -   in: bn invoke gulliblezebra
         out: |-
             "Hello World!"
