@@ -41,7 +41,7 @@ node {
             stage('Push') {
                 echo 'Pushing images to ECR'
                 build(
-                    job: 'push-cli',
+                    job: 'cli/push-cli',
                     wait: true,
                     parameters: [
                         string(name: 'TRIGGER_BRANCH', value: BRANCH_NAME),
