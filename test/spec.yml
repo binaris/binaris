@@ -282,7 +282,6 @@
         exit: 1
     -   in: bn deploy dispensabledrop
     -   in: bn remove dispensabledrop
-    -   in: sleep 2
     -   in: bn remove dispensabledrop
         err: No such function
         exit: 1
