@@ -367,3 +367,26 @@
     -   in: bn deploy handsomelycalendar
         err: Binaris conf file could not be read and BINARIS_API_KEY is undefined, please use "bn login"
         exit: 1
+
+- test: Deploy of 200MB function succeeds
+  setup:
+    - bn create python2 largeData200MB
+    - dd if=/dev/urandom bs=1048576 count=200 of=large.data
+  cleanup:
+    - bn remove largeData200MB
+  steps:
+    - in: bn deploy largeData200MB
+      out: |-
+          Deployed function to *
+            (use "bn invoke *" to invoke the function)
+    - in: bn invoke largeData200MB
+      out: "Hello World!"
+
+- test: Deploy of 300MB function fails with significant error message
+  setup:
+    - bn create python2 largeData300MB
+    - dd if=/dev/urandom bs=1048576 count=300 of=very.large.data
+  steps:
+    - in: bn deploy largeData300MB
+      err: Payload too large
+      exit: 1
