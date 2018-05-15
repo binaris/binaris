@@ -380,7 +380,8 @@
           Deployed function to *
             (use "bn invoke *" to invoke the function)
     - in: bn invoke largeData200MB
-      out: "Hello World!"
+      out: |-
+          "Hello World!"
 
 - test: Deploy of 300MB function fails with significant error message
   setup:
