@@ -16,7 +16,7 @@ const propagatedEnvVars = [
   'BINARIS_INVOKE_ENDPOINT',
   'BINARIS_LOG_ENDPOINT'];
 
-let imageName = 'binaris';
+let imageName = 'binaris/binaris';
 if (process.env.tag !== undefined) {
   imageName = `${imageName}:${process.env.tag}`;
 }
@@ -51,7 +51,8 @@ test.afterEach.always(async (t) => {
 const testFileNames = ['./test/spec.yml', './test/cases.yml'];
 const testFiles = testFileNames.map(file => yaml.safeLoad(fs.readFileSync(file, 'utf8')));
 const testPlan = [].concat(...testFiles);
-testPlan.forEach((rawSubTest) => {
+
+function createTest(rawSubTest) {
   test(rawSubTest.test, async (t) => {
     const activeEnvs = propagatedEnvVars.filter(envKey =>
       process.env[envKey] !== undefined).map(envKey =>
@@ -84,5 +85,22 @@ testPlan.forEach((rawSubTest) => {
       t.is(cmdOut.exitCode, (step.exit || 0));
     }
   });
+}
+
+testPlan.forEach((rawSubTest) => {
+  if (rawSubTest.foreach) {
+    for (const variant of Object.keys(rawSubTest.foreach)) {
+      const vars = rawSubTest.foreach[variant];
+      let testStr = JSON.stringify(rawSubTest);
+      for (const key of Object.keys(vars)) {
+        const val = vars[key];
+        testStr = testStr.replace(new RegExp(`{${key}}`, 'g'), val);
+      }
+      const copy = JSON.parse(testStr);
+      createTest(copy);
+    }
+  } else {
+    createTest(rawSubTest);
+  }
 });
 

@@ -16,7 +16,7 @@ npm install -g binaris
 3. Generate a Binaris template function
 ```bash
 # generates simple NodeJS template function
-bn create hellofunc
+bn create node8 hellofunc
 ```
 
 4. Deploy a function

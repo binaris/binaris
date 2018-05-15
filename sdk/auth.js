@@ -1,7 +1,7 @@
 const urljoin = require('urljoin');
 const rp = require('request-promise-native');
 
-const { invokeEndpoint } = require('./config');
+const { getInvokeEndpoint } = require('./config');
 
 /**
  * Verifies that the provided Binaris API key is correct by
@@ -11,7 +11,7 @@ const { invokeEndpoint } = require('./config');
  */
 const verifyAPIKey = async function verifyAPIKey(apiKey) {
   const options = {
-    url: urljoin(`https://${invokeEndpoint}`, 'v1', 'apikey', apiKey),
+    url: urljoin(`https://${getInvokeEndpoint()}`, 'v1', 'apikey', apiKey),
     json: true,
     simple: false,
     resolveWithFullResponse: true,

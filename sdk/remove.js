@@ -2,8 +2,8 @@ const urljoin = require('urljoin');
 const rp = require('request-promise-native');
 const get = require('lodash.get');
 
-const { translateErrorCode } = require('pickle');
-const { deployEndpoint } = require('./config');
+const { translateErrorCode } = require('binaris-pickle');
+const { getDeployEndpoint } = require('./config');
 
 /**
  * Removes the function from the Binaris cloud.
@@ -13,7 +13,7 @@ const { deployEndpoint } = require('./config');
  */
 const remove = async function remove(funcName, apiKey) {
   const options = {
-    url: urljoin(`https://${deployEndpoint}`, 'v1', 'function', `${apiKey}-${funcName}`),
+    url: urljoin(`https://${getDeployEndpoint()}`, 'v2', 'tag', apiKey, funcName, 'latest'),
     json: true,
     resolveWithFullResponse: true,
     simple: false,

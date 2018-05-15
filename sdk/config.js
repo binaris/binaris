@@ -1,14 +1,18 @@
-// TODO: ensure that this is configured in a better way, having a single
-// variable in the deploy file is inadequate
-const deployEndpoint =
-  process.env.BINARIS_DEPLOY_ENDPOINT || 'api.binaris.com';
+const getDeployEndpoint = function getDeployEndpoint() {
+  return process.env.BINARIS_DEPLOY_ENDPOINT || 'api.binaris.com';
+};
 
-// TODO: ensure that this is configured in a better way, having a single
-// variable in the deploy file is inadequate
-const invokeEndpoint =
-      process.env.BINARIS_INVOKE_ENDPOINT || 'run.binaris.com';
+const getInvokeEndpoint = function getInvokeEndpoint() {
+  return process.env.BINARIS_INVOKE_ENDPOINT || 'run.binaris.com';
+};
 
-const logEndpoint =
-      process.env.BINARIS_LOG_ENDPOINT || 'log.binaris.com';
+const getLogEndpoint = function getLogEndpoint() {
+  return process.env.BINARIS_LOG_ENDPOINT || 'log.binaris.com';
+};
 
-module.exports = { deployEndpoint, invokeEndpoint, logEndpoint };
+module.exports = {
+  getDeployEndpoint,
+  getInvokeEndpoint,
+  getLogEndpoint,
+};
+

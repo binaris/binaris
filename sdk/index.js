@@ -4,11 +4,13 @@ const deploy = require('./deploy');
 const invoke = require('./invoke');
 const logs = require('./logs');
 const remove = require('./remove');
+const perf = require('./perf');
 
 module.exports = {
   auth,
   deploy,
   invoke,
   logs,
+  perf,
   remove,
 };

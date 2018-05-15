@@ -1,0 +1,4 @@
+functions:
+    hello:
+        file: function.py
+        entrypoint: handler

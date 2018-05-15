@@ -4,17 +4,18 @@
     -   in: bn --help
         out: |-
               Binaris command line interface
-              
+
               Usage: bn <command> [options]
-              
+
               Commands:
-                bn create <function> [options]  Create a function from template
-                bn deploy <function> [options]  Deploys a function to the cloud
-                bn remove <function> [options]  Remove a previously deployed function
-                bn invoke <function> [options]  Invoke a Binaris function
-                bn logs <function> [options]    Print the logs of a function
-                bn login                        Login to your Binaris account using an API key
-              
+                bn create <runtime> <function> [options]  Create a function from template
+                bn deploy <function> [options]            Deploys a function to the cloud
+                bn remove <function> [options]            Remove a previously deployed function
+                bn invoke <function> [options]            Invoke a Binaris function
+                bn perf <function> [options]              Measure invocation latency (experimental)
+                bn logs <function> [options]              Print the logs of a function
+                bn login                                  Login to your Binaris account using an API key
+
               Options:
                 --version   Show version number  [boolean]
                 --path, -p  Use directory dir. "create" will create this directory if needed.  [string]
@@ -25,30 +26,30 @@
     -   in: bn logs --help
         out: |-
               Usage: bn logs <function> [options]
-              
+
               Positionals:
                 function  Function name  [string] [required]
-              
+
               Options:
                 --version    Show version number  [boolean]
                 --path, -p   Use directory dir. "create" will create this directory if needed.  [string]
                 --help, -h   Show help  [boolean]
                 --tail, -t   Outputs logs in "tail -f" fashion (ignores --since flag)  [boolean]
                 --since, -s  Outputs logs after the given ISO timestamp  [string]
-              
+
               Examples:
                   // retrieve all logs
                   bn logs foo
-              
+
                   // tail all logs
                   bn logs foo --tail
-              
+
                   // ISO
                   bn logs foo --since 2018-03-09T22:12:21.861Z
-              
+
                   // unix
                   bn logs foo --since 1520816105798
-              
+
                   // offset format
                   bn logs foo --since 3d
                   bn logs foo --since 13hours
@@ -58,7 +59,7 @@
   cleanup:
     - bn remove momentousgiants
   steps:
-    -   in: bn create momentousgiants
+    -   in: bn create node8 momentousgiants
         out: |-
             Created function * in /home/dockeruser/test
               (use "bn deploy momentousgiants" to deploy the function)
@@ -68,7 +69,7 @@
             If you don't have a key, head over to https://binaris.com to request one
             *? API Key: *
             *Authentication Succeeded*
-              (use "bn create" to create a template function in your current directory)
+              (use "bn create node8 hello" to create a Node.js template function in your CWD)
     -   in: bn deploy momentousgiants
         out: |-
             Deployed function to *
@@ -76,11 +77,11 @@
 
 - test: Test create (good-path)
   steps:
-    -   in: bn create snowmanolympics
+    -   in: bn create node8 snowmanolympics
         out: |-
             Created function * in /home/dockeruser/test
               (use "bn deploy *" to deploy the function)
-    -   in: bn create purplecannon -p /home/dockeruser/test/purplecannon
+    -   in: bn create node8 purplecannon -p /home/dockeruser/test/purplecannon
         out: |-
             Created function purplecannon in /home/dockeruser/test/purplecannon
               (use "bn deploy -p /home/dockeruser/test/purplecannon purplecannon" to deploy the function)
@@ -89,7 +90,7 @@
   cleanup:
     - bn remove drybeef
   steps:
-    -   in: bn create drybeef
+    -   in: bn create node8 drybeef
         out: |-
             Created function * in /home/dockeruser/test
               (use "bn deploy drybeef" to deploy the function)
@@ -109,7 +110,7 @@
   cleanup:
     - bn remove extrasmallaunt
   steps:
-    -   in: bn create extrasmallaunt
+    -   in: bn create node8 extrasmallaunt
         out: |-
             Created function * in /home/dockeruser/test
               (use "bn deploy extrasmallaunt" to deploy the function)
@@ -117,7 +118,6 @@
         out: |-
             Deployed function to *
               (use "bn invoke extrasmallaunt" to invoke the function)
-    -   in: sleep 8
     -   in: bn invoke extrasmallaunt
         out: |-
             "Hello World!"
@@ -131,8 +131,8 @@
 
 - test: Test logs (good-path)
   setup:
-    - export FUNC_NAME=$(cat /dev/urandom | tr -dc 'a-z0-9' | fold -w 32 | head -n 1)
-    - bn create $FUNC_NAME
+    - export FUNC_NAME=rand$(cat /dev/urandom | tr -dc 'a-z0-9' | fold -w 32 | head -n 1)
+    - bn create node8 $FUNC_NAME
     - sed -i '2 a \  console.log(`Hello ${name}!`);' function.js
   cleanup:
     - bn remove $FUNC_NAME
@@ -141,7 +141,6 @@
         out: |-
             Deployed function to *
               (use "bn invoke *" to invoke the function)
-    -   in: sleep 8
     -   in: bn invoke $FUNC_NAME
         out: |-
             "Hello World!"
@@ -154,7 +153,7 @@
           bn invoke $FUNC_NAME -d '{"name": "again"}'
         out: |-
             "Hello again!"
-    -   in: sleep 5
+    -   in: sleep 8
     -   in: bn logs $FUNC_NAME
         out: |-
           [201*-*-*T*:*:*Z] Hello World!
@@ -178,11 +177,41 @@
           [201*-*-*T*:*:*Z] Hello for the last time!
           [201*-*-*T*:*:*Z] Function invocation took * us
 
-
+- test: 'Test {PY_VERSION} E2E (good-path)'
+  foreach:
+    - PY_VERSION: python2
+    - PY_VERSION: pypy2
+  setup:
+    - export FUNC_NAME={PY_VERSION}$(cat /dev/urandom | tr -dc 'a-z0-9' | fold -w 32 | head -n 1)
+    - 'bn create {PY_VERSION} $FUNC_NAME'
+    - |-
+      cat > function.py <<EOF
+      def handler(body, req):
+          name = req.query.get('name') or body.get('name') or 'World'
+          out = 'Hello {}!'.format(name)
+          print out
+          return out
+      EOF
+  cleanup:
+    - bn remove $FUNC_NAME
+  steps:
+    -   in: bn deploy $FUNC_NAME
+        out: |-
+            Deployed function to *
+              (use "bn invoke *" to invoke the function)
+    -   in: |-
+          bn invoke $FUNC_NAME -d '{"name": "Binaris"}'
+        out: |-
+            "Hello Binaris!"
+    -   in: sleep 5
+    -   in: bn logs $FUNC_NAME
+        out: |-
+          [201*-*-*T*:*:*Z] Hello Binaris!
+          [201*-*-*T*:*:*Z] Function invocation took * us
 
 - test: Test deploy invoke remove cycle commands (good-path)
   steps:
-    -   in: bn create gulliblezebra
+    -   in: bn create node8 gulliblezebra
         out: |-
             Created function * in /home/dockeruser/test
               (use "bn deploy gulliblezebra" to deploy the function)
@@ -190,7 +219,6 @@
         out: |-
             Deployed function to *
               (use "bn invoke gulliblezebra" to invoke the function)
-    -   in: sleep 8
     -   in: bn invoke gulliblezebra
         out: |-
             "Hello World!"
@@ -201,35 +229,44 @@
 
 - test: Test login (bad-path)
   steps:
-    -   in: bn create stormysummer
+    -   in: bn create node8 stormysummer
     -   in: echo "9239239" | bn login
         err: Invalid API key
         exit: 1
 
 - test: Test create (bad-path)
   steps:
-    -   in: bn create a*b*c*
+    -   in: bn create node8 a*b*c*
         err: Invalid characters in function name a*b*c*. Use only letters and digits
         exit: 1
-    -   in: bn create a_b%c#d@e+
+    -   in: bn create node8 a_b%c#d@e+
         err: Invalid characters in function name a_b%c#d@e+. Use only letters and digits
         exit: 1
-    -   in: bn create a=b~c,d.
+    -   in: bn create node8 a=b~c,d.
         err: Invalid characters in function name a=b~c,d.. Use only letters and digits
         exit: 1
-    -   in: bn create a:b?c!d-
+    -   in: bn create node8 a:b?c!d-
         err: Invalid characters in function name a:b?c!d-. Use only letters and digits
         exit: 1
-    -   in: bn create tooooooooooooooooooooooooooooooooooooooooooooooolongggggggggggggggggggggggggggggggggggggggggggggggggggggggggg
+    -   in: bn create node8 tooooooooooooooooooooooooooooooooooooooooooooooolongggggggggggggggggggggggggggggggggggggggggggggggggggggggggg
         err: Function names cannot be longer than 58 characters.
         exit: 1
     -   in: bn create
-        err: "*Not enough non-option arguments: got 0, need at least 1"
+        err: "*Not enough non-option arguments: got 0, need at least 2"
+        exit: 1
+    -   in: bn create node8
+        err: "*Not enough non-option arguments: got 1, need at least 2"
+        exit: 1
+    -   in: bn create abcd
+        err: "*Not enough non-option arguments: got 1, need at least 2"
+        exit: 1
+    -   in: bn create cpp4096 abcd
+        err: '*Invalid values:*Argument: runtime, Given: "cpp4096", Choices:*'
         exit: 1
 
 - test: Test invoke (bad-path)
   steps:
-    -   in: bn create quarrelsometest -p /home/dockeruser/test/alloftheoptions
+    -   in: bn create node8 quarrelsometest -p /home/dockeruser/test/alloftheoptions
     -   in: bn invoke quarrelsometest -p /home/dockeruser/test/alloftheoptions -j myFile.json -d data
         err: Invoke flags --json(-j) and --data(-d) are mutually exclusive
         exit: 1
@@ -239,13 +276,12 @@
 
 - test: Test remove (bad-path)
   steps:
-    -   in: bn create dispensabledrop
+    -   in: bn create node8 dispensabledrop
     -   in: bn remove dispensabledrop
         err: No such function
         exit: 1
     -   in: bn deploy dispensabledrop
     -   in: bn remove dispensabledrop
-    -   in: sleep 2
     -   in: bn remove dispensabledrop
         err: No such function
         exit: 1
@@ -255,7 +291,7 @@
 
 - test: Test logs (bad-path)
   steps:
-    -   in: bn create endlessclue
+    -   in: bn create node8 endlessclue
     -   in: bn logs endlessclue --since h23sdh2
         err: |-
              Invalid time format "h23sdh2"
@@ -267,7 +303,7 @@
 
 - test: Invalid name in binaris.yml  (bad-path)
   setup:
-    - bn create pickypumpkin
+    - bn create node8 pickypumpkin
     # replace line 2 of binaris.yml(function name) with a bad function name
     - sed -i '2 c \  inv@a-d:' binaris.yml
   steps:
@@ -287,7 +323,7 @@
     - echo binaris | sudo  -S chown root:root /home/dockeruser/test/securedir
     - echo binaris | sudo  -S chmod 700 /home/dockeruser/test/securedir
   steps:
-    -   in: bn create orangehero -p /home/dockeruser/test/securedir
+    -   in: bn create node8 orangehero -p /home/dockeruser/test/securedir
         err: "EACCES: permission denied, unlink '/home/dockeruser/test/securedir/function.js'"
         exit: 1
 
@@ -327,7 +363,31 @@
   setup:
     - unset BINARIS_API_KEY
   steps:
-    -   in: bn create handsomelycalendar
+    -   in: bn create node8 handsomelycalendar
     -   in: bn deploy handsomelycalendar
         err: Binaris conf file could not be read and BINARIS_API_KEY is undefined, please use "bn login"
         exit: 1
+
+- test: Deploy of 200MB function succeeds
+  setup:
+    - bn create python2 largeData200MB
+    - dd if=/dev/urandom bs=1048576 count=200 of=large.data
+  cleanup:
+    - bn remove largeData200MB
+  steps:
+    - in: bn deploy largeData200MB
+      out: |-
+          Deployed function to *
+            (use "bn invoke *" to invoke the function)
+    - in: bn invoke largeData200MB
+      out: |-
+          "Hello World!"
+
+- test: Deploy of 300MB function fails with significant error message
+  setup:
+    - bn create python2 largeData300MB
+    - dd if=/dev/urandom bs=1048576 count=300 of=very.large.data
+  steps:
+    - in: bn deploy largeData300MB
+      err: Payload too large
+      exit: 1
