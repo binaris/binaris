@@ -34,7 +34,7 @@
                 --version    Show version number  [boolean]
                 --path, -p   Use directory dir. "create" will create this directory if needed.  [string]
                 --help, -h   Show help  [boolean]
-                --tail, -t   Outputs logs in "tail -f" fashion (ignores --since flag)  [boolean]
+                --tail, -t   Outputs logs in "tail -f" fashion  [boolean]
                 --since, -s  Outputs logs after the given ISO timestamp  [string]
 
               Examples:
