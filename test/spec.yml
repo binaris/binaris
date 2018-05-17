@@ -377,9 +377,6 @@
     -   in: bn invoke livelyhall -p /home/dockeruser/test/never/will/exist
         err: "ENOENT: no such file or directory, open '/home/dockeruser/test/never/will/exist/binaris.yml'"
         exit: 1
-    -   in: bn remove livelyhall -p /home/dockeruser/test/hocus/pocus/fairy
-        err: "ENOENT: no such file or directory, open '/home/dockeruser/test/hocus/pocus/fairy/binaris.yml'"
-        exit: 1
     -   in: bn logs livelyhall -p /home/dockeruser/test/what/ifitdidnt/exist
         err: "ENOENT: no such file or directory, open '/home/dockeruser/test/what/ifitdidnt/exist/binaris.yml'"
         exit: 1
