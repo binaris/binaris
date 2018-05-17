@@ -2,7 +2,7 @@ const yargs = require('yargs');
 
 const logger = require('./lib/logger');
 const { parseTimeString } = require('./lib/timeUtil');
-const { deployHandler, createHandler, invokeHandler,
+const { deployHandler, createHandler, invokeHandler, listHandler,
   logsHandler, loginHandler, removeHandler, perfHandler } = require('./lib');
 
 /**
@@ -105,6 +105,15 @@ Usage: $0 <command> [options]` // eslint-disable-line comma-dangle
   bn invoke foo --data '{ "name": "helloworld" }'`);
   }, async (argv) => {
     await handleCommand(argv, invokeHandler);
+  })
+  .command('list [options]', 'List all deployed functions', (yargs0) => {
+    yargs0
+      .usage('Usage: $0 list [options]')
+      .option('json', {
+        describe: 'Output as JSON',
+      })
+  }, async (argv) => {
+    await handleCommand(argv, listHandler);
   })
   .command('perf <function> [options]', 'Measure invocation latency (experimental)', (yargs0) => {
     yargs0
