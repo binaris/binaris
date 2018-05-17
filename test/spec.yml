@@ -25,29 +25,13 @@
   steps:
     -   in: bn list --help
         out: |-
-        List all deployed functions
+              Usage: bn list [options]
 
-        Usage: bn list [options]
-
-        Options:
-          --json      Output as JSON
-          --version   Show version number [boolean]
-          --help, -h  Show help [boolean]
-- test: Test list help output
-  steps:
-    -   in: 'bn list --json | jq -r ".[].name" | xargs -n1 --no-run-if-empty bn remove'
-    -   in: bn create listtest1
-    -   in: bn create listtest2
-    -   in: bn deploy listtest1
-    -   in: bn deploy listtest2
-    -   in: bn list --json
-        out: |-
-        [ { "name": "listtest1", "[201*-*-*T*:*:*Z]" }, { "name": "listtest2", "[201*-*-*T*:*:*Z]" } ]
-    -   in: bn list
-        out: |-
-        Function       Last Deployed
-        listtest1      [201*-*-*T*:*:*Z]
-        listtest2      [201*-*-*T*:*:*Z]
+              Options:
+                --version   Show version number  [boolean]
+                --path, -p  Use directory dir. "create" will create this directory if needed.  [string]
+                --help, -h  Show help  [boolean]
+                --json      Output as JSON*
 - test: Test logs help output (good-path)
   steps:
     -   in: bn logs --help
@@ -129,6 +113,20 @@
         out: |-
             Deployed function to *
               (use "bn invoke drybeef" to invoke the function)
+
+- test: Test list (good-path)
+  cleanup:
+    - 'bn list --json | jq -r ".[].name" | xargs -n1 --no-run-if-empty bn remove'
+  steps:
+    -   in: bn create listtest1
+    -   in: bn deploy listtest1
+    -   in: bn create listtest2
+    -   in: bn deploy listtest2
+    -   in: bn list
+        out: |-
+              Function       Last Deployed
+              listtest1      [201*-*-*T*:*:*Z]
+              listtest2      [201*-*-*T*:*:*Z]
 
 - test: Test invoke (good-path)
   setup:
