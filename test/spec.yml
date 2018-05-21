@@ -250,7 +250,6 @@
     -   in: bn remove gulliblezebra
         out: |-
             Removed function *
-              (use "bn deploy gulliblezebra" to re-deploy the function)
 
 - test: Test login (bad-path)
   steps:
