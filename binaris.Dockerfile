@@ -7,7 +7,7 @@ RUN curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
 RUN sudo apt-get install -y nodejs
 
 ENV TINI_VERSION v0.16.1
-ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /tini
+RUN curl -sL https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini -o /tini
 RUN chmod +x /tini
 ENTRYPOINT ["/tini", "--"]
 
