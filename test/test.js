@@ -53,7 +53,8 @@ const testFiles = testFileNames.map(file => yaml.safeLoad(fs.readFileSync(file, 
 const testPlan = [].concat(...testFiles);
 
 function createTest(rawSubTest) {
-  test(rawSubTest.test, async (t) => {
+  const maybeSerialTest = rawSubTest.serial ? test.serial : test;
+  maybeSerialTest(rawSubTest.test, async (t) => {
     const activeEnvs = propagatedEnvVars.filter(envKey =>
       process.env[envKey] !== undefined).map(envKey =>
       `${envKey}=${process.env[envKey]}`);
