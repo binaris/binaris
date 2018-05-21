@@ -124,10 +124,9 @@
     -   in: bn deploy listtest2
     -   in: bn list
         out: |-
-              Function       Last Deployed
-              listtest1      [201*-*-*T*:*:*Z]
-              listtest2      [201*-*-*T*:*:*Z]
-
+             FUNCTION                  LAST DEPLOYED*
+             listtest1                 201*-*-*T*:*:*Z
+             listtest2                 201*-*-*T*:*:*Z
 - test: Test invoke (good-path)
   setup:
     - |-
