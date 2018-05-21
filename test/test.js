@@ -82,7 +82,7 @@ function createTest(rawSubTest) {
       } else if (step.err) {
         t.true(createRegTest(step.err).test(strip(cmdOut.stderr.slice(0, -1))));
       }
-      t.is(cmdOut.exitCode, (step.exit || 0));
+      t.true(cmdOut.exitCode === (step.exit || 0), step.err);
     }
   });
 }
