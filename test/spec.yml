@@ -118,9 +118,9 @@
   cleanup:
     - 'bn list --json | jq -r ".[].name" | xargs -n1 --no-run-if-empty bn remove'
   steps:
-    -   in: bn create listtest1
+    -   in: bn create node8 listtest1
     -   in: bn deploy listtest1
-    -   in: bn create listtest2
+    -   in: bn create node8 listtest2
     -   in: bn deploy listtest2
     -   in: bn list
         out: |-
