@@ -39,6 +39,7 @@ test: build
 		$(DOCKER) run                                   \
 			--rm                                          \
 			--privileged                                  \
+			--user root \
 			-v /var/run/docker.sock:/var/run/docker.sock  \
 			$(cli_envs) $(DOCKER_IMAGE):$(tag)            \
 			bash -c "cd /home/dockeruser/binaris && npm run test"
