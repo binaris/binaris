@@ -28,18 +28,18 @@ tag: require-tag
 
 .PHONY: lint
 lint: build
-		$(DOCKER) run            \
-			--rm                   \
-			$(DOCKER_IMAGE):$(tag) \
+		$(DOCKER) run                                                 \
+			--rm                                                      \
+			$(DOCKER_IMAGE):$(tag)                                    \
 			bash -c "cd /home/dockeruser/binaris && npm run lint"
 
 .PHONY: test
 test: build
 		export tag=$(tag)
-		$(DOCKER) run                                   \
+		$(DOCKER) run                                     \
 			--rm                                          \
 			--privileged                                  \
-			--user root \
+			--user root                                   \
 			-v /var/run/docker.sock:/var/run/docker.sock  \
 			$(cli_envs) $(DOCKER_IMAGE):$(tag)            \
 			bash -c "cd /home/dockeruser/binaris && npm run test"
