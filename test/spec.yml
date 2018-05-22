@@ -117,11 +117,19 @@
 - test: Test list
   serial: true
   setup:
-      - |-
-        bn list --json | jq -r ".[].name" | grep listtest | xargs -n1 --no-run-if-empty echo bn remove
+      - >
+          for i in {1..2};
+          do out="$(bn remove listtest$i 2>&1)";
+          echo "$out";
+          if ! echo "$out" | grep -e "No such function" -e "Removed function"; then false; fi
+          done;
   cleanup:
-      - |-
-        bn list --json | jq -r ".[].name" | grep listtest | xargs -n1 --no-run-if-empty echo bn remove
+      - >
+          for i in {1..2};
+          do out="$(bn remove listtest$i 2>&1)";
+          echo "$out";
+          if ! echo "$out" | grep -e "No such function" -e "Removed function"; then false; fi
+          done;
   steps:
     -   in: bn create node8 listtest1
     -   in: bn deploy listtest1
