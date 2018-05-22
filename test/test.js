@@ -41,9 +41,11 @@ test.afterEach.always(async (t) => {
     for (const cleanupStep of t.context.cleanup) {
       // eslint-disable-next-line no-await-in-loop
       const result = await t.context.ct.streamIn(`${commonBashOpts} ${cleanupStep}`);
-      t.log(`Cleanup stdout: ${result.stdout}`);
-      t.log(`Cleanup stderr: ${result.stderr}`);
-      t.is(result.exitCode, 0);
+      if (result.exitCode !== 0) {
+        t.log(`Cleanup stdout: ${result.stdout}`);
+        t.log(`Cleanup stderr: ${result.stderr}`);
+        throw new Error(result.stderr);
+      }
     }
   }
   await t.context.ct.stopAndKillContainer();
@@ -68,9 +70,11 @@ function createTest(rawSubTest) {
       for (const setupStep of rawSubTest.setup) {
         // eslint-disable-next-line no-await-in-loop
         const setupOut = await t.context.ct.streamIn(`${commonBashOpts} ${setupStep}`);
-        t.log(`Setup stdout: ${setupOut.stdout}`);
-        t.log(`Setup stderr: ${setupOut.stderr}`);
-        t.is(setupOut.exitCode, 0);
+        if (setupOut.exitCode !== 0) {
+          t.log(`Setup stdout: ${setupOut.stdout}`);
+          t.log(`Setup stderr: ${setupOut.stderr}`);
+          throw new Error(setupOut.stderr);
+        }
       }
     }
     // eslint-disable-next-line no-param-reassign
