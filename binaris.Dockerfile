@@ -4,7 +4,7 @@ ARG NPM_TOKEN
 RUN apt-get update && apt-get install -y curl git sudo
 
 RUN curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
-RUN sudo apt-get install -y nodejs
+RUN sudo apt-get install -y nodejs jq
 
 ENV TINI_VERSION v0.16.1
 RUN curl -sL https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini -o /tini
