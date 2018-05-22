@@ -114,12 +114,12 @@
             Deployed function to *
               (use "bn invoke drybeef" to invoke the function)
 
-- test: Test list (good-path)
+- test: Test list
   serial: true
   setup:
-    - 'bn list --json | jq -r ".[].name" | xargs -n1 --no-run-if-empty bn remove'
+    - 'bn list --json | jq -r ".[].name" | grep listtest | xargs -n1 --no-run-if-empty bn remove'
   cleanup:
-    - 'bn list --json | jq -r ".[].name" | xargs -n1 --no-run-if-empty bn remove'
+    - 'bn list --json | jq -r ".[].name" | grep listtest | xargs -n1 --no-run-if-empty bn remove'
   steps:
     -   in: bn create node8 listtest1
     -   in: bn deploy listtest1
@@ -128,8 +128,12 @@
     -   in: bn list
         out: |-
              FUNCTION                  LAST DEPLOYED*
-             listtest1                 201*-*-*T*:*:*Z
-             listtest2                 201*-*-*T*:*:*Z
+             listtest1                 201*-*-*T*:*:*Z*
+             listtest2                 201*-*-*T*:*:*Z*
+    -   in: bn list --json
+        out: |-
+            *[{"name":"listtest1","lastDeployed":"[20*-*-*T*:*:*Z]"},{"name":"listtest2","lastDeployed":"[20*-*-*T*:*:*Z]"}]*
+
 - test: Test invoke (good-path)
   setup:
     - |-
