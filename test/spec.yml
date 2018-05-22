@@ -117,9 +117,11 @@
 - test: Test list
   serial: true
   setup:
-    - 'bn list --json | jq -r ".[].name" | grep listtest | xargs -n1 --no-run-if-empty bn remove'
+      - |-
+        bn list --json | jq -r ".[].name" | grep listtest | xargs -n1 --no-run-if-empty echo bn remove
   cleanup:
-    - 'bn list --json | jq -r ".[].name" | grep listtest | xargs -n1 --no-run-if-empty bn remove'
+      - |-
+        bn list --json | jq -r ".[].name" | grep listtest | xargs -n1 --no-run-if-empty echo bn remove
   steps:
     -   in: bn create node8 listtest1
     -   in: bn deploy listtest1
