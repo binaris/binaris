@@ -16,6 +16,8 @@ const propagatedEnvVars = [
   'BINARIS_INVOKE_ENDPOINT',
   'BINARIS_LOG_ENDPOINT'];
 
+const commonBashOpts = 'set -o pipefail;';
+
 let imageName = 'binaris/binaris';
 if (process.env.tag !== undefined) {
   imageName = `${imageName}:${process.env.tag}`;
@@ -38,7 +40,10 @@ test.afterEach.always(async (t) => {
   if (t.context.cleanup) {
     for (const cleanupStep of t.context.cleanup) {
       // eslint-disable-next-line no-await-in-loop
-      await t.context.ct.streamIn(cleanupStep);
+      const result = await t.context.ct.streamIn(`${commonBashOpts} ${cleanupStep}`);
+      t.log(`Cleanup stdout: ${result.stdout}`);
+      t.log(`Cleanup stderr: ${result.stderr}`);
+      t.is(result.exitCode, 0);
     }
   }
   await t.context.ct.stopAndKillContainer();
@@ -62,7 +67,9 @@ function createTest(rawSubTest) {
     if (rawSubTest.setup) {
       for (const setupStep of rawSubTest.setup) {
         // eslint-disable-next-line no-await-in-loop
-        const setupOut = await t.context.ct.streamIn(setupStep);
+        const setupOut = await t.context.ct.streamIn(`${commonBashOpts} ${setupStep}`);
+        t.log(`Setup stdout: ${setupOut.stdout}`);
+        t.log(`Setup stderr: ${setupOut.stderr}`);
         t.is(setupOut.exitCode, 0);
       }
     }
