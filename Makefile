@@ -47,7 +47,7 @@ test: build
 			bash -c "cd /home/dockeruser/binaris && npm run test"
 
 .PHONY: publish
-publish: build require-npm-creds
+publish: build require-npm-creds require-npm-tag
 		export tag=$(tag)
 		$(DOCKER) run                                                                                              \
 			--rm                                                                                                     \
