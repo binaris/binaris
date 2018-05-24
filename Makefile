@@ -51,12 +51,16 @@ publish: build require-npm-creds
 			--rm                                                                                                     \
 			$(DOCKER_IMAGE):$(tag)                                                                                   \
 			bash -c 'cd /home/dockeruser/binaris && echo "//registry.npmjs.org/:_authToken=$(NPM_TOKEN)">~/.npmrc && \
-				npm publish &&                                                                                         \
+				npm publish --tag $(NPM_TAG) &&                                                                                         \
 				rm ~/.npmrc'
 
 .PHONY: require-tag
 require-tag:
 	@if [ -z $${tag+x} ]; then echo 'tag' make variable must be defined; false; fi
+
+.PHONY: require-npm-tag
+require-npm-tag:
+	@if [ -z $${NPM_TAG+x} ]; then echo 'NPM_TAG' make variable must be defined; false; fi
 
 .PHONY: require-npm-creds
 require-npm-creds:
