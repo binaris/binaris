@@ -9,6 +9,11 @@ node {
                 ),
                 booleanParam(
                     defaultValue: false,
+                    description: 'publish to NPM if tests pass',
+                    name: 'NPM_PUBLISH'
+                ),
+                booleanParam(
+                    defaultValue: false,
                     description: 'whether to avoid triggering precious at the end',
                     name: 'NO_PRECIOUS'
                 ),
@@ -45,6 +50,28 @@ node {
         }
         if (!params.NO_PRECIOUS) {
             trigger_precious("${BRANCH_NAME}", "${JOB_NAME}");
+        }
+        if (params.NPM_PUBLISH) {
+            stage('Publish') {
+                timeout(time: 1, unit: 'MINUTES') {
+                    try {
+                        withCredentials([string(credentialsId: 'binaris-jenkins-github-user', variable: 'GITHUB_TOKEN')]) {
+                            withEnv(['CI=1']) {
+                                sh '''
+                                    version=$(cat package.json | jq -r ".version")
+                                    git remote set-url origin https://${GITHUB_TOKEN}@github.com/binaris/binaris.git
+                                    git tag $version
+                                    git push --tags
+                                ''';
+                                echo 'Publishing to NPM'
+                                sh 'make publish'
+                            }
+                        }
+                    } finally {
+                        sh('''git remote set-url origin https://github.com/binaris/binaris.git''');
+                    }
+                }
+            }
         }
         slack('SUCCESS');
     } catch (err) {
