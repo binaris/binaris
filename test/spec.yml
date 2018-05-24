@@ -137,9 +137,9 @@
     -   in: bn deploy listtest2
     -   in: bn list
         out: |-
-             FUNCTION                  LAST DEPLOYED*
-             listtest1                 201*-*-*T*:*:*Z*
-             listtest2                 201*-*-*T*:*:*Z*
+             FUNCTION                 *LAST DEPLOYED*
+             listtest1                *201*-*-*T*:*:*Z*
+             listtest2                *201*-*-*T*:*:*Z*
     -   in: bn list --json
         out: |-
             *[{"name":"listtest1","lastDeployed":"[20*-*-*T*:*:*Z]"},{"name":"listtest2","lastDeployed":"[20*-*-*T*:*:*Z]"}]*
