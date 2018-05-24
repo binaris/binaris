@@ -48,6 +48,9 @@ test: build
 
 .PHONY: publish
 publish: build require-npm-creds require-npm-tag
+		version=$(shell cat package.json | jq -r ".version")
+		git tag $(version)
+		git push --tags
 		export tag=$(tag)
 		$(DOCKER) run                                                                                              \
 			--rm                                                                                                     \
