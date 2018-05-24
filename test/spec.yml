@@ -142,7 +142,7 @@
              listtest2                *201*-*-*T*:*:*Z*
     -   in: bn list --json
         out: |-
-            *[{"name":"listtest1","lastDeployed":"[20*-*-*T*:*:*Z]"},{"name":"listtest2","lastDeployed":"[20*-*-*T*:*:*Z]"}]*
+            *[*{"name":"listtest1","lastDeployed":"[20*-*-*T*:*:*Z]"}*,*{"name":"listtest2","lastDeployed":"[20*-*-*T*:*:*Z]"}*]*
 
 - test: Test invoke (good-path)
   setup:
