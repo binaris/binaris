@@ -66,3 +66,7 @@ require-npm-creds:
 
 .PHONY: all
 all: lint test
+
+.PHONY: bn
+bn:
+	$(DOCKER) build -t binaris/bn .
