@@ -2,7 +2,7 @@
 
 **[Binaris](https://www.binaris.com/)** is a fast, low-latency FaaS (Function as a Service) platform. With our performance and scale, you can run real production workloads on Node.js.
 
-### <a name="up-and-running"></a>Getting up and running in seconds
+## Getting up and running in seconds
 
 1. Install using npm
 ```bash
@@ -51,6 +51,40 @@ bn logs hellofunc
 
 It's as simple as that.
 
+## Running without Node & NPM
+
+There's a docker version of the Binaris CLI, published on Dockerhub as [binaris/bn](https://hub.docker.com/r/binaris/bn/).
+
+### Usage
+
+To run in the current directory:
+
+```bash
+
+docker run --rm -v $(pwd):/src binaris/bn --help
+
+```
+
+You'll want to forward your API key. So add `-e BINARIS_API_KEY` like so:
+
+```bash
+
+docker run --rm -e BINARIS_API_KEY -v $(pwd):/src binaris/bn
+
+```
+
+For convenience, you can create an alias for this in bash:
+
+```bash
+
+alias bn='docker run --rm -e BINARIS_API_KEY -v $(pwd):/src binaris/bn'
+bn create node8 hello
+bn deploy hello
+bn invoke hello
+
+```
+
 Learn more about the Binaris platform at the [developer resources](https://dev.binaris.com/) page.
 
 This project is licensed under the terms of the MIT license
+
