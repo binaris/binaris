@@ -3,7 +3,7 @@
   setup:
     - mkdir -p /home/dockeruser/test/trollycopter
   steps:
-    -   in: bn invoke -p /home/dockeruser/test/trollycopter icydiceymolecule
+    -   in: bn deploy -p /home/dockeruser/test/trollycopter icydiceymolecule
         err: "ENOENT: no such file or directory, open '/home/dockeruser/test/trollycopter/binaris.yml'"
         exit: 1
 
