@@ -159,6 +159,7 @@
         out: |-
             Deployed function to *
               (use "bn invoke extrasmallaunt" to invoke the function)
+    -   in: cd /home/
     -   in: bn invoke extrasmallaunt
         out: |-
             "Hello World!"
@@ -166,7 +167,7 @@
             bn invoke extrasmallaunt -d '{"name": "unguessable"}'
         out: |-
             "Hello unguessable!"
-    -   in: bn invoke extrasmallaunt -j invoke.json
+    -   in: bn invoke extrasmallaunt -j ./dockeruser/test/invoke.json
         out: |-
             "Hello unguessable!"
 
