@@ -1,5 +1,5 @@
 ---
-- test: Test help output
+- test: (local) Test help output
   steps:
     -   in: bn --help
         out: |-
@@ -21,7 +21,7 @@
                 --version   Show version number  [boolean]
                 --path, -p  Use directory dir. "create" will create this directory if needed.  [string]
                 --help, -h  Show help  [boolean]*
-- test: Test list help output
+- test: (local) Test list help output
   steps:
     -   in: bn list --help
         out: |-
@@ -32,7 +32,7 @@
                 --path, -p  Use directory dir. "create" will create this directory if needed.  [string]
                 --help, -h  Show help  [boolean]
                 --json      Output as JSON*
-- test: Test logs help output (good-path)
+- test: (local) Test logs help output (good-path)
   steps:
     -   in: bn logs --help
         out: |-
@@ -86,7 +86,7 @@
             Deployed function to *
               (use "bn invoke momentousgiants" to invoke the function)
 
-- test: Test create (good-path)
+- test: (local) Test create (good-path)
   steps:
     -   in: bn create node8 snowmanolympics
         out: |-
@@ -330,7 +330,7 @@
         err: "*Not enough non-option arguments: got 0, need at least 1"
         exit: 1
 
-- test: Test logs (bad-path)
+- test: (local) Test logs (bad-path)
   steps:
     -   in: bn create node8 endlessclue
     -   in: bn logs endlessclue --since h23sdh2
@@ -342,7 +342,7 @@
              Invalid offset format, unknown unit "daysf"
         exit: 1
 
-- test: Invalid name in binaris.yml  (bad-path)
+- test: (local) Invalid name in binaris.yml  (bad-path)
   setup:
     - bn create node8 pickypumpkin
     # replace line 2 of binaris.yml(function name) with a bad function name
@@ -352,13 +352,13 @@
       err: Invalid characters in function name inv@a-d. Use only letters and digits
       exit: 1
 
-- test: Unknown command (bad-path)
+- test: (local) Unknown command (bad-path)
   steps:
     -   in: bn alwaysbad
         err: "*Unknown command: 'alwaysbad'"
         exit: 1
 
-- test: No permission
+- test: (local) No permission
   setup:
     - mkdir /home/dockeruser/test/securedir
     - echo binaris | sudo  -S chown root:root /home/dockeruser/test/securedir
@@ -385,7 +385,7 @@
 #         err: Argument "notlogs" is not a valid input to logs
 #         exit: 1
 
-- test: No such path (bad-path)
+- test: (local) No such path (bad-path)
   steps:
     -   in: bn deploy livelyhall -p /home/dockeruser/test/bogus/comeon/really/hello.js
         err: "ENOENT: no such file or directory, open '/home/dockeruser/test/bogus/comeon/really/hello.js/binaris.yml'"
@@ -394,7 +394,7 @@
         err: "ENOENT: no such file or directory, open '/home/dockeruser/test/what/ifitdidnt/exist/binaris.yml'"
         exit: 1
 
-- test: No API key or conf file (bad-path)
+- test: (local) No API key or conf file (bad-path)
   setup:
     - unset BINARIS_API_KEY
   steps:

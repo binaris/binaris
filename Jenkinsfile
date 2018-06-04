@@ -26,6 +26,10 @@ node {
                     echo 'Linting'
                     sh "make lint"
                 }
+                stage('Test local') {
+                    echo 'Running local tests'
+                    sh "make test_local"
+                }
                 stage('Tag') {
                     echo 'Tagging local images';
                     sh "make tag"

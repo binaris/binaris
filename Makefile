@@ -44,6 +44,18 @@ test: build
 			$(cli_envs) $(DOCKER_IMAGE):$(tag)            \
 			bash -c "cd /home/dockeruser/binaris && npm run test"
 
+.PHONY: test_local
+test_local: build
+		export tag=$(tag)
+		$(DOCKER) run                                     \
+			--rm                                          \
+			--privileged                                  \
+			--user root                                   \
+			-v /var/run/docker.sock:/var/run/docker.sock  \
+			$(cli_envs) $(DOCKER_IMAGE):$(tag)            \
+			bash -c "cd /home/dockeruser/binaris && npm test -- -m '(local)*'"
+
+
 .PHONY: publish
 publish: build require-npm-creds
 		export tag=$(tag)
