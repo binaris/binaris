@@ -1,4 +1,9 @@
 ---
+- test: Bad spec item (bad-path)
+  steps:
+    -   in: exit 1
+        exit: 1
+
 - test: No binaris.yml in directory (bad-path)
   setup:
     - mkdir -p /home/dockeruser/test/trollycopter
