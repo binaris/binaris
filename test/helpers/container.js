@@ -92,6 +92,13 @@ class Container {
       stdout: true,
       stderr: true,
     });
+
+    // handle the case of the bash process itself crashing
+    this.dockerStream.on('end', () => {
+      this.cmdUUID = undefined;
+      this.exitCode = 1;
+      this.started = false;
+    });
     // separates out stderr/stdout, this can also be done manually with the headers
     this.container.modem.demuxStream(this.dockerStream, this.outStream, this.errStream);
     // start the container and wait for the startup command to finish
@@ -157,6 +164,7 @@ class Container {
     if (this.container && this.started) {
       await this.container.stop();
       await this.container.remove();
+      this.started = false;
     }
   }
 }
