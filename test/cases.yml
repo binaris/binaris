@@ -17,6 +17,7 @@
 - test: (local) No Binaris backend (bad-path)
   setup:
     - export BINARIS_DEPLOY_ENDPOINT=fake.binaris.neverworks
+    - export BINARIS_API_KEY=thisisntavalidkey
   steps:
     -   in: bn create node8 naughtyvegetable
     -   in: bn deploy naughtyvegetable
