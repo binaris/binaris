@@ -45,7 +45,7 @@ test: build
 			bash -c "cd /home/dockeruser/binaris && npm run test"
 
 .PHONY: publish
-publish: build require-npm-creds require-npm-tag
+publish: require-npm-creds require-npm-tag
 		version=$(shell cat package.json | jq -r ".version")
 		git tag $(version)/$(NPM_TAG)
 		git push --tags
