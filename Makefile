@@ -7,6 +7,8 @@ SUDO := $(shell if docker info 2>&1 | grep "permission denied" >/dev/null; then 
 DOCKER := $(SUDO) docker
 DOCKER_IMAGE := binaris/binaris
 
+version := $(shell cat package.json | jq -r ".version")
+
 define cli_envs
 	-e BINARIS_LOG_LEVEL       \
 	-e tag                     \
@@ -48,9 +50,8 @@ test: build
 
 .PHONY: publish
 publish: require-npm-creds require-npm-tag
-		version=$(shell cat package.json | jq -r ".version")
 		git tag $(version)/$(NPM_TAG)
-		git push --tags
+		git push origin $(version)/$(NPM_TAG)
 		export tag=$(tag)
 		$(DOCKER) run                                                                                              \
 			--rm                                                                                                     \
