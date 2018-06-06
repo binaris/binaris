@@ -212,6 +212,7 @@
         out: |-
           [201*-*-*T*:*:*Z] Hello for the last time!
           [201*-*-*T*:*:*Z] Function invocation took * us
+    -   in: cd /home/
     -   in: bn logs $FUNC_NAME --since 40sec
         out: |-
           [201*-*-*T*:*:*Z] Hello again!
@@ -389,9 +390,6 @@
   steps:
     -   in: bn deploy livelyhall -p /home/dockeruser/test/bogus/comeon/really/hello.js
         err: "ENOENT: no such file or directory, open '/home/dockeruser/test/bogus/comeon/really/hello.js/binaris.yml'"
-        exit: 1
-    -   in: bn logs livelyhall -p /home/dockeruser/test/what/ifitdidnt/exist
-        err: "ENOENT: no such file or directory, open '/home/dockeruser/test/what/ifitdidnt/exist/binaris.yml'"
         exit: 1
 
 - test: No API key or conf file (bad-path)
