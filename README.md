@@ -100,8 +100,7 @@ functions:
       SOME_API_KEY: XXXXXXXXXXX
 ```
 
-If a parameter is sensitive and you don't want to accidentally commit it to SCM, you can leave out the value in `binaris.yml`:
-
+If a parameter is sensitive and you don't want to commit it to SCM, you can leave out the value in `binaris.yml`:
 
 ```yaml
 functions:
@@ -114,12 +113,6 @@ functions:
 ```
 
 And pass it as an environment variable to the `deploy` command:
-
-Only string values are supported in the `env:` section.
-
-```bash
-SOME_API_KEY=XXXXXXX bn deploy hello
-```
 
 You can then access these parameters as environment variables:
 
@@ -140,6 +133,12 @@ import os
 def handler(body, req):
     apiKey = os.environ['SOME_API_KEY']
     # ...
+```
+
+Only string values are supported in the `env:` section.
+
+```bash
+SOME_API_KEY=XXXXXXX bn deploy hello
 ```
 
 Learn more about the Binaris platform at the [developer resources](https://dev.binaris.com/) page.
