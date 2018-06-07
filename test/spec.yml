@@ -269,6 +269,69 @@
         out: |-
             Removed function *
 
+- test: "envs: deploy invoke remove with secrets"
+  steps:
+    -   in: bn create node8 secretsanta
+    -   in: |-
+            cat <<EOF >/home/dockeruser/test/binaris.yml
+            functions:
+              secretsanta:
+                file: function.js
+                entrypoint: handler
+                runtime: node8
+                env:
+                    FORWARD_ME:
+                    DEFINED_HERE: value
+                    BN_FUNCTION: "dont-override"
+            EOF
+    -   in: |-
+            cat <<EOF >/home/dockeruser/test/function.js
+            exports.handler = () => [process.env.FORWARD_ME, process.env.DEFINED_HERE, process.env.BN_FUNCTION];
+            EOF
+    -   in: FORWARD_ME=please bn deploy secretsanta
+        out: |-
+            Deployed function to *
+              (use "bn invoke secretsanta" to invoke the function)
+    -   in: bn invoke secretsanta
+        out: |-
+            *["please","value","*secretsanta"]*
+    -   in: bn remove secretsanta
+        out: |-
+            Removed function *
+- test: "envs: fail to deploy if non-string in env"
+  steps:
+    -   in: bn create node8 invalidenv
+    -   in: |-
+            cat <<EOF >/home/dockeruser/test/binaris.yml
+            functions:
+              invalidenv:
+                file: function.js
+                entrypoint: handler
+                runtime: node8
+                env:
+                    A_NUMBER: 6.66
+            EOF
+    -   in: bn deploy invalidenv
+        exit: 1
+        err: |-
+            *A_NUMBER's value is not a string*
+- test: "envs: fail to deploy if empty string in env"
+  steps:
+    -   in: bn create node8 emptiness
+    -   in: |-
+            cat <<EOF >/home/dockeruser/test/binaris.yml
+            functions:
+              emptiness:
+                file: function.js
+                entrypoint: handler
+                runtime: node8
+                env:
+                    EMPTY: ""
+            EOF
+    -   in: bn deploy emptiness
+        exit: 1
+        err: |-
+            *Empty string *EMPTY not supported.*
 - test: Test login (bad-path)
   steps:
     -   in: bn create node8 stormysummer
