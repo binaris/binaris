@@ -84,6 +84,64 @@ bn invoke hello
 
 ```
 
+## Storing secrets and other configuration parameters
+
+You can pass configuration parameters to functions as part of the `deploy` command. These parameters will be available to the function during runtime as environment variables. All parameters are encrypted at rest and in-transit, which makes them the preferred way to store API keys, passwords, etc.
+
+To pass parameters into a function, add an `env:` section to `binaris.yml`, like so:
+
+```yaml
+functions:
+  hello:
+    file: function.js
+    entrypoint: handler
+    runtime: node8
+    env:
+      SOME_API_KEY: XXXXXXXXXXX
+```
+
+If a parameter is sensitive and you don't want to accidentally commit it to SCM, you can leave out the value in `binaris.yml`:
+
+
+```yaml
+functions:
+  hello:
+    file: function.js
+    entrypoint: handler
+    runtime: node8
+    env:
+      SOME_API_KEY:
+```
+
+And pass it as an environment variable to the `deploy` command:
+
+Only string values are supported in the `env:` section.
+
+```bash
+SOME_API_KEY=XXXXXXX bn deploy hello
+```
+
+You can then access these parameters as environment variables:
+
+`function.js`
+
+```js
+exports.handler = () => {
+  const apiKey = process.env.SOME_API_KEY;
+  // ...
+}
+```
+
+Or in Python:
+
+```python
+import os
+
+def handler(body, req):
+    apiKey = os.environ['SOME_API_KEY']
+    # ...
+```
+
 Learn more about the Binaris platform at the [developer resources](https://dev.binaris.com/) page.
 
 This project is licensed under the terms of the MIT license
