@@ -38,6 +38,7 @@ lint: build
 test: build
 		export tag=$(tag)
 		$(DOCKER) run                                     \
+			$(INTERACTIVE)                                \
 			--rm                                          \
 			--privileged                                  \
 			--user root                                   \
