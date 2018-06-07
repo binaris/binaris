@@ -82,11 +82,9 @@ const deployConf = async function deployConf(deployURLBase, apiKey, funcName, fu
         if (!env[key] || env[key] === '') {
           delete env[key];
         }
-      } else {
-        if (typeof env[key] !== 'string') {
-          logger.error(`Only string values are supported in function env configuration.
+      } else if (typeof env[key] !== 'string') {
+        logger.error(`Only string values are supported in function env configuration.
 ${key}'s value is not a string.`);
-        }
       }
     }
   }
