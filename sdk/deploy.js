@@ -2,7 +2,7 @@ const fs = require('fs');
 const urljoin = require('urljoin');
 const request = require('request');
 const rp = require('request-promise-native');
-
+const logger = require('../lib/logger');
 const { getDeployEndpoint } = require('./config');
 
 
@@ -62,6 +62,32 @@ const deployCode = async function deployCode(deployURLBase, apiKey, tarPath) {
  * @return {object} - response of tag operation
  */
 const deployConf = async function deployConf(deployURLBase, apiKey, funcName, funcConf) {
+  const { env } = funcConf;
+  if (env) {
+    for (const key of Object.keys(env)) {
+      if (env[key] === '') {
+        logger.error(`
+  Empty string values for env key ${key} not supported.
+  To forward the calling process's environment variables when deploying, use the following syntax in binaris.yml:
+    env:
+      ${key}:
+  Instead of:
+    env:
+      ${key}: ''
+  `);
+        throw new Error('Invalid env param');
+      }
+      if (env[key] == null) {
+        env[key] = process.env[key];
+        if (!env[key] || env[key] === '') {
+          delete env[key];
+        }
+      } else if (typeof env[key] !== 'string') {
+        logger.error(`Only string values are supported in function env configuration.
+${key}'s value is not a string.`);
+      }
+    }
+  }
   const confDeployOptions = {
     url: urljoin(deployURLBase, 'v2', 'conf', apiKey, funcName),
     body: funcConf,

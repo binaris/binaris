@@ -8,6 +8,7 @@ DOCKER := $(SUDO) docker
 DOCKER_IMAGE := binaris/binaris
 
 define cli_envs
+	-e BINARIS_LOG_LEVEL       \
 	-e tag                     \
 	-e BINARIS_API_KEY         \
 	-e BINARIS_INVOKE_ENDPOINT \
@@ -37,6 +38,7 @@ lint: build
 test: build
 		export tag=$(tag)
 		$(DOCKER) run                                     \
+			$(INTERACTIVE)                                \
 			--rm                                          \
 			--privileged                                  \
 			--user root                                   \
@@ -64,3 +66,7 @@ require-npm-creds:
 
 .PHONY: all
 all: lint test
+
+.PHONY: bn
+bn:
+	$(DOCKER) build -t binaris/bn .
