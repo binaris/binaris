@@ -37,18 +37,20 @@ test.beforeEach(async (t) => {
  * Always call `remove` on the container before exit
  */
 test.afterEach.always(async (t) => {
-  if (t.context.cleanup) {
-    for (const cleanupStep of t.context.cleanup) {
-      // eslint-disable-next-line no-await-in-loop
-      const result = await t.context.ct.streamIn(`${commonBashOpts} ${cleanupStep}`);
-      if (result.exitCode !== 0) {
-        t.log(`Cleanup stdout: ${result.stdout}`);
-        t.log(`Cleanup stderr: ${result.stderr}`);
-        throw new Error(result.stderr);
+  if (t.context.ct.started) {
+    if (t.context.cleanup) {
+      for (const cleanupStep of t.context.cleanup) {
+        // eslint-disable-next-line no-await-in-loop
+        const result = await t.context.ct.streamIn(`${commonBashOpts} ${cleanupStep}`);
+        if (result.exitCode !== 0) {
+          t.log(`Cleanup stdout: ${result.stdout}`);
+          t.log(`Cleanup stderr: ${result.stderr}`);
+          throw new Error(result.stderr);
+        }
       }
     }
+    await t.context.ct.stopAndKillContainer();
   }
-  await t.context.ct.stopAndKillContainer();
 });
 
 /**
