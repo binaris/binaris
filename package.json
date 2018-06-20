@@ -30,6 +30,7 @@
     "string-argv": "0.0.2",
     "supports-color": "^5.4.0",
     "targz": "^1.0.1",
+    "throat": "^4.1.0",
     "urljoin": "^0.1.5",
     "uuid": "^3.2.1",
     "winston": "^2.4.2",

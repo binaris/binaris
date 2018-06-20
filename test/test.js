@@ -6,6 +6,7 @@ const yaml = require('js-yaml');
 const fs = require('mz/fs');
 const strip = require('strip-color');
 const regEsc = require('escape-string-regexp');
+const throat = require('throat');
 
 // Create/run and remove a Docker container.
 const Container = require('./helpers/container');
@@ -61,8 +62,14 @@ const testFileNames = ['./test/spec.yml', './test/cases.yml'];
 const testFiles = testFileNames.map(file => yaml.safeLoad(fs.readFileSync(file, 'utf8')));
 const testPlan = [].concat(...testFiles);
 
+const limiter = throat(4);
+
+function limitedTest(name, testFn) {
+  return test(name, async t => limiter(async () => testFn(t)));
+}
+
 function createTest(rawSubTest) {
-  const maybeSerialTest = rawSubTest.serial ? test.serial : test;
+  const maybeSerialTest = rawSubTest.serial ? test.serial : limitedTest;
   maybeSerialTest(rawSubTest.test, async (t) => {
     const activeEnvs = propagatedEnvVars.filter(envKey =>
       process.env[envKey] !== undefined).map(envKey =>
