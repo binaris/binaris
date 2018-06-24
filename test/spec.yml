@@ -171,6 +171,33 @@
         out: |-
             "Hello unguessable!"
 
+- test: Block access to internal network
+  setup:
+      - bn create node8 internalnets
+      - npm i request-promise-native request
+      - |-
+        cat <<EOF >/home/dockeruser/test/function.js
+
+        exports.handler = async() => {
+            const rp = require('request-promise-native');
+            for (host of ['169.254.169.254', '172.17.0.1', '172.16.0.1']) {
+                try {
+                    await rp.get('http://' + host);
+                    return 'should not be returned';
+                } catch (err) {
+                    if (err.message.indexOf('ECONNREFUSED ' + host) === -1) {
+                        throw err;
+                    }
+                }
+            }
+            return true;
+        };
+        EOF
+      - bn deploy internalnets
+  cleanup:
+      - bn remove internalnets
+  steps:
+      - in: bn invoke internalnets
 - test: Test logs (good-path)
   setup:
     - export FUNC_NAME=rand$(cat /dev/urandom | tr -dc 'a-z0-9' | fold -w 32 | head -n 1)
