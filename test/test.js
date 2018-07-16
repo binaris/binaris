@@ -46,6 +46,8 @@ test.afterEach.always(async (t) => {
         if (result.exitCode !== 0) {
           t.log(`Cleanup stdout: ${result.stdout}`);
           t.log(`Cleanup stderr: ${result.stderr}`);
+          // eslint-disable-next-line no-await-in-loop
+          await t.context.ct.stopAndKillContainer();
           throw new Error(result.stderr);
         }
       }
