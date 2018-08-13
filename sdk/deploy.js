@@ -4,14 +4,7 @@ const request = require('request');
 const rp = require('request-promise-native');
 const logger = require('../lib/logger');
 const { getDeployEndpoint } = require('./config');
-
-
-class HTTPError extends Error {
-  constructor(response) {
-    super(response.statusMessage);
-    this.response = response;
-  }
-}
+const { HTTPError, tryRequest } = require('./httpError');
 
 /**
  * Deploys a tarball, whose contents represent a Binaris function deployment
@@ -93,15 +86,15 @@ ${key}'s value is not a string.`);
     body: funcConf,
     json: true,
   };
-  const { digest } = await rp.post(confDeployOptions);
-  // const digest = 'fakedigest';
+  const digest = (await tryRequest(rp.post(confDeployOptions))).digest;
+
   const tagDeployOptions = {
     url: urljoin(deployURLBase, 'v2', 'tag', apiKey, funcName, 'latest'),
     json: true,
     body: { digest },
     resolveWithFullResponse: true,
   };
-  const response = await rp.post(tagDeployOptions);
+  const response = await tryRequest(rp.post(tagDeployOptions));
   return response;
 };
 

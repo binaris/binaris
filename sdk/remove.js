@@ -4,6 +4,7 @@ const get = require('lodash.get');
 
 const { translateErrorCode } = require('binaris-pickle');
 const { getDeployEndpoint } = require('./config');
+const { HTTPError, tryRequest } = require('./httpError');
 
 /**
  * Removes the function from the Binaris cloud.
@@ -18,18 +19,17 @@ const remove = async function remove(funcName, apiKey) {
     resolveWithFullResponse: true,
     simple: false,
   };
-  let response;
   try {
-    response = await rp.delete(options);
+    const response = await tryRequest(rp.delete(options));
+    return { status: response.statusCode, body: response.body };
   } catch (err) {
-    throw new Error(translateErrorCode('ERR_NO_BACKEND'));
-  }
-  if (response.statusCode < 200 || response.statusCode >= 300) {
-    if (get(response, 'body.errorCode')) {
-      throw new Error(translateErrorCode(response.body.errorCode));
+    if (err instanceof HTTPError) {
+      return { status: err.response.statusCode, body: err.response.body };
     }
-    throw new Error(`Failed to remove function ${funcName}`);
+    // NOTE: This 'err' returned in the error field is in NodeJS error format
+    return { error: err };
   }
+
 };
 
 module.exports = remove;
