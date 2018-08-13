@@ -54,12 +54,10 @@ test.serial('Just test deploy (good-path)', async (t) => {
 
   const response = await deploy(testFuncName, testApiKey,
     testFuncConf, t.context.fakeTarFileName, deployEndpoint);
-  t.is(200, response.status);
-  t.deepEqual({ status: 'ok' }, response.body);
+  t.deepEqual({ status: 'ok' }, response);
 });
 
-test.serial('Test deploy with bad key (bad-path)', async (t) => {
-  // eslint-disable-next-line global-require
+test.serial('Test deploy with bad key (bad-path)', async (t) => { // eslint-disable-next-line global-require
   const deploy = require('../deploy');
 
   const deployEndpoint = generate(10);
@@ -72,19 +70,16 @@ test.serial('Test deploy with bad key (bad-path)', async (t) => {
     .matchHeader('Content-Type', 'application/gzip')
     .reply(403, { errorCode: 'ERR_BAD_KEY' });
 
-  const response = await deploy(testFuncName, someBadKey,
-    testFuncConf, t.context.fakeTarFileName, deployEndpoint);
-
-  t.is(403, response.status);
-  t.is('ERR_BAD_KEY', response.body.errorCode);
+  await t.throws(deploy(testFuncName, someBadKey,
+    testFuncConf, t.context.fakeTarFileName, deployEndpoint),
+    'Invalid API key');
 });
 
 test.serial('Test deploy with no backend (bad-path)', async (t) => {
   // eslint-disable-next-line global-require
   const deploy = require('../deploy');
-
-  const response = await deploy(testFuncName, testApiKey,
-    testFuncConf, t.context.fakeTarFileName, 'invalidbinaris.endpoint');
-  t.true(response.error !== undefined);
+  await t.throws(deploy(testFuncName, testApiKey,
+    testFuncConf, t.context.fakeTarFileName, 'invalidbinaris.endpoint'),
+    'getaddrinfo ENOTFOUND invalidbinaris.endpoint invalidbinaris.endpoint:443');
 });
 

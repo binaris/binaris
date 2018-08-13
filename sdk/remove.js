@@ -1,9 +1,7 @@
 const urljoin = require('urljoin');
-const rp = require('request-promise-native');
-const get = require('lodash.get');
 
-const { translateErrorCode } = require('binaris-pickle');
 const { getDeployEndpoint } = require('./config');
+const { callAPI } = require('./handleError');
 
 /**
  * Removes the function from the Binaris cloud.
@@ -15,21 +13,9 @@ const remove = async function remove(funcName, apiKey) {
   const options = {
     url: urljoin(`https://${getDeployEndpoint()}`, 'v2', 'tag', apiKey, funcName, 'latest'),
     json: true,
-    resolveWithFullResponse: true,
-    simple: false,
   };
-  let response;
-  try {
-    response = await rp.delete(options);
-  } catch (err) {
-    throw new Error(translateErrorCode('ERR_NO_BACKEND'));
-  }
-  if (response.statusCode < 200 || response.statusCode >= 300) {
-    if (get(response, 'body.errorCode')) {
-      throw new Error(translateErrorCode(response.body.errorCode));
-    }
-    throw new Error(`Failed to remove function ${funcName}`);
-  }
+  const response = await callAPI(options, 'delete');
+  return response.body;
 };
 
 module.exports = remove;
