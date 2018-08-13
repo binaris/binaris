@@ -1,17 +1,13 @@
 const fs = require('fs');
 const urljoin = require('urljoin');
 const request = require('request');
-const rp = require('request-promise-native');
+
 const logger = require('../lib/logger');
+
+const { translateErrorCode } = require('binaris-pickle');
+
 const { getDeployEndpoint } = require('./config');
-
-
-class HTTPError extends Error {
-  constructor(response) {
-    super(response.statusMessage);
-    this.response = response;
-  }
-}
+const { callAPI, APIError } = require('./handleError');
 
 /**
  * Deploys a tarball, whose contents represent a Binaris function deployment
@@ -41,7 +37,7 @@ const deployCode = async function deployCode(deployURLBase, apiKey, tarPath) {
         if (uploadErr) {
           reject(uploadErr);
         } else if (uploadResponse.statusCode !== 200) {
-          reject(new HTTPError(uploadResponse));
+          reject(new APIError(translateErrorCode(uploadResponse.body.errorCode)));
         } else {
           resolve(uploadResponse);
         }
@@ -91,17 +87,14 @@ ${key}'s value is not a string.`);
   const confDeployOptions = {
     url: urljoin(deployURLBase, 'v2', 'conf', apiKey, funcName),
     body: funcConf,
-    json: true,
   };
-  const { digest } = await rp.post(confDeployOptions);
-  // const digest = 'fakedigest';
+  const digest = (await callAPI(confDeployOptions)).digest;
+
   const tagDeployOptions = {
     url: urljoin(deployURLBase, 'v2', 'tag', apiKey, funcName, 'latest'),
-    json: true,
     body: { digest },
-    resolveWithFullResponse: true,
   };
-  const response = await rp.post(tagDeployOptions);
+  const response = await callAPI(tagDeployOptions);
   return response;
 };
 
@@ -123,20 +116,12 @@ const deploy = async function deploy(
   tarPath,
   endpoint = getDeployEndpoint(),
 ) {
-  try {
-    const deployURLBase = `https://${endpoint}`;
-    const codeDigest = await deployCode(deployURLBase, apiKey, tarPath);
-    const confWithDigest = Object.assign({}, funcConf, { codeDigest });
-    const confDeployResp = await deployConf(deployURLBase, apiKey,
-      funcName, confWithDigest);
-    return { status: confDeployResp.statusCode, body: confDeployResp.body };
-  } catch (err) {
-    if (err instanceof HTTPError) {
-      return { status: err.response.statusCode, body: err.response.body };
-    }
-    // NOTE: This 'err' returned in the error field is in NodeJS error format
-    return { error: err };
-  }
+  const deployURLBase = `https://${endpoint}`;
+  const codeDigest = await deployCode(deployURLBase, apiKey, tarPath);
+  const confWithDigest = Object.assign({}, funcConf, { codeDigest });
+  const confDeployResp = await deployConf(deployURLBase, apiKey,
+    funcName, confWithDigest);
+  return confDeployResp;
 };
 
 module.exports = deploy;
