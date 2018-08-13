@@ -124,6 +124,7 @@ const deploy = async function deploy(
       funcName, confWithDigest);
     return { status: confDeployResp.statusCode, body: confDeployResp.body };
   } catch (err) {
+    // console.log(JSON.stringify(err));
     if (err instanceof HTTPError) {
       return { status: err.response.statusCode, body: err.response.body };
     }

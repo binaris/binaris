@@ -21,6 +21,7 @@ async function tryRequest(asyncReq) {
     const response = await asyncReq;
     return response;
   } catch (err) {
+    console.log(JSON.stringify(err, null, 2));
     if (err.statusCode < 200 || err.statusCode >= 300) {
       makeHTTPError(err);
     }
