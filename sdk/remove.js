@@ -1,8 +1,6 @@
 const urljoin = require('urljoin');
 const rp = require('request-promise-native');
-const get = require('lodash.get');
 
-const { translateErrorCode } = require('binaris-pickle');
 const { getDeployEndpoint } = require('./config');
 const { HTTPError, tryRequest } = require('./httpError');
 
@@ -29,7 +27,6 @@ const remove = async function remove(funcName, apiKey) {
     // NOTE: This 'err' returned in the error field is in NodeJS error format
     return { error: err };
   }
-
 };
 
 module.exports = remove;

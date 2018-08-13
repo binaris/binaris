@@ -22,7 +22,7 @@ async function tryRequest(asyncReq) {
     return response;
   } catch (err) {
     if (err.statusCode < 200 || err.statusCode >= 300) {
-      makeHTTPError(err)
+      makeHTTPError(err);
     }
     throw err;
   }
