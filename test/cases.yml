@@ -25,10 +25,10 @@
   steps:
     -   in: bn create node8 naughtyvegetable
     -   in: bn deploy naughtyvegetable
-        err: Could not connect to Binaris backend
+        err: "getaddrinfo ENOTFOUND fake.binaris.neverworks fake.binaris.neverworks:443"
         exit: 1
     -   in: bn remove naughtyvegetable
-        err: Could not connect to Binaris backend
+        err: "Error: getaddrinfo ENOTFOUND fake.binaris.neverworks fake.binaris.neverworks:443"
         exit: 1
 
 - test: Corrupt binaris conf file (bad-path)
