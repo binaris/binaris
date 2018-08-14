@@ -21,9 +21,7 @@ const remove = async function remove(funcName, apiKey) {
     const response = await tryRequest(rp.delete(options));
     return { status: response.statusCode, body: response.body };
   } catch (err) {
-    // console.log(JSON.stringify(err));
     if (err instanceof HTTPError) {
-      console.log('http error');
       return { status: err.response.statusCode, body: err.response.body };
     }
     // NOTE: This 'err' returned in the error field is in NodeJS error format
