@@ -16,7 +16,10 @@ async function callAPI(options, type = 'post') {
     ...options,
   });
   logger.debug('raw response', inspect(response, { depth: null }));
+  return validateResponse(response);
+}
 
+function validateResponse(response) {
   const errorCode = get(response, 'body.errorCode');
   if (errorCode) {
     throw new APIError(translateErrorCode(errorCode));
@@ -36,5 +39,6 @@ async function callAPI(options, type = 'post') {
 
 module.exports = {
   callAPI,
+  validateResponse,
   APIError,
 };
