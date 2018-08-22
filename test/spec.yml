@@ -512,5 +512,5 @@
     - dd if=/dev/urandom bs=1048576 count=300 of=very.large.data
   steps:
     - in: bn deploy largeData300MB
-      err: Payload too large
+      err: "Error: Payload too large"
       exit: 1
