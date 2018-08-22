@@ -25,7 +25,7 @@
   steps:
     -   in: bn create node8 naughtyvegetable
     -   in: bn deploy naughtyvegetable
-        err: "getaddrinfo ENOTFOUND fake.binaris.neverworks fake.binaris.neverworks:443"
+        err: "Error: getaddrinfo ENOTFOUND fake.binaris.neverworks fake.binaris.neverworks:443"
         exit: 1
     -   in: bn remove naughtyvegetable
         err: "Error: getaddrinfo ENOTFOUND fake.binaris.neverworks fake.binaris.neverworks:443"
