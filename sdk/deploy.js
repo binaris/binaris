@@ -7,7 +7,7 @@ const logger = require('../lib/logger');
 const { translateErrorCode } = require('binaris-pickle');
 
 const { getDeployEndpoint } = require('./config');
-const { callAPI, APIError, validateResponse } = require('./handleError');
+const { APIError, loggedRequest, validateResponse } = require('./handleError');
 
 /**
  * Deploys a tarball, whose contents represent a Binaris function deployment
@@ -87,13 +87,13 @@ ${key}'s value is not a string.`);
     url: urljoin(deployURLBase, 'v2', 'conf', apiKey, funcName),
     body: funcConf,
   };
-  const digest = (await callAPI(confDeployOptions)).digest;
+  const digest = (await loggedRequest(confDeployOptions)).digest;
 
   const tagDeployOptions = {
     url: urljoin(deployURLBase, 'v2', 'tag', apiKey, funcName, 'latest'),
     body: { digest },
   };
-  const response = await callAPI(tagDeployOptions);
+  const response = await loggedRequest(tagDeployOptions);
   return response;
 };
 
