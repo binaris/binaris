@@ -1,7 +1,7 @@
 const urljoin = require('urljoin');
 
 const { getDeployEndpoint } = require('./config');
-const { callAPI } = require('./handleError');
+const { loggedRequest } = require('./handleError');
 
 /**
  * Removes the function from the Binaris cloud.
@@ -14,7 +14,7 @@ const remove = async function remove(funcName, apiKey) {
     url: urljoin(`https://${getDeployEndpoint()}`, 'v2', 'tag', apiKey, funcName, 'latest'),
     json: true,
   };
-  const response = await callAPI(options, 'delete');
+  const response = await loggedRequest(options, 'delete');
   return response.body;
 };
 

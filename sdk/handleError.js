@@ -8,7 +8,7 @@ const { translateErrorCode } = require('binaris-pickle');
 
 class APIError extends Error {}
 
-async function callAPI(options, type = 'post') {
+async function loggedRequest(options, type = 'post') {
   const response = await rp[type]({
     json: true,
     simple: false,
@@ -38,7 +38,7 @@ function validateResponse(response) {
 }
 
 module.exports = {
-  callAPI,
+  loggedRequest,
   validateResponse,
   APIError,
 };
