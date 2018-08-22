@@ -8,17 +8,6 @@ const { translateErrorCode } = require('binaris-pickle');
 
 class APIError extends Error {}
 
-async function loggedRequest(options, type = 'post') {
-  const response = await rp[type]({
-    json: true,
-    simple: false,
-    resolveWithFullResponse: true,
-    ...options,
-  });
-  logger.debug('raw response', inspect(response, { depth: null }));
-  return validateResponse(response);
-}
-
 function validateResponse(response) {
   const errorCode = get(response, 'body.errorCode');
   if (errorCode) {
@@ -37,8 +26,19 @@ function validateResponse(response) {
   return response.body || response;
 }
 
+async function loggedRequest(options, type = 'post') {
+  const response = await rp[type]({
+    json: true,
+    simple: false,
+    resolveWithFullResponse: true,
+    ...options,
+  });
+  logger.debug('raw response', inspect(response, { depth: null }));
+  return validateResponse(response);
+}
+
 module.exports = {
+  APIError,
   loggedRequest,
   validateResponse,
-  APIError,
 };

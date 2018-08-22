@@ -4,10 +4,8 @@ const request = require('request');
 
 const logger = require('../lib/logger');
 
-const { translateErrorCode } = require('binaris-pickle');
-
 const { getDeployEndpoint } = require('./config');
-const { APIError, loggedRequest, validateResponse } = require('./handleError');
+const { loggedRequest, validateResponse } = require('./handleError');
 
 /**
  * Deploys a tarball, whose contents represent a Binaris function deployment
