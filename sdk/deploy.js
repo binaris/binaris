@@ -7,7 +7,7 @@ const logger = require('../lib/logger');
 const { translateErrorCode } = require('binaris-pickle');
 
 const { getDeployEndpoint } = require('./config');
-const { callAPI, APIError } = require('./handleError');
+const { callAPI, APIError, validateResponse } = require('./handleError');
 
 /**
  * Deploys a tarball, whose contents represent a Binaris function deployment
@@ -36,13 +36,12 @@ const deployCode = async function deployCode(deployURLBase, apiKey, tarPath) {
       .pipe(request.post(codeDeployOptions, (uploadErr, uploadResponse) => {
         if (uploadErr) {
           reject(uploadErr);
-        } else if (uploadResponse.statusCode !== 200) {
-          reject(new APIError(translateErrorCode(uploadResponse.body.errorCode)));
         } else {
           resolve(uploadResponse);
         }
       }));
   }));
+  validateResponse(codeDeployment);
   return codeDeployment.body.digest;
 };
 
