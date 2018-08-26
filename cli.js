@@ -223,7 +223,7 @@ Usage: $0 <command> [options]` // eslint-disable-line comma-dangle
     if (argv.since) {
       try {
         // eslint-disable-next-line no-param-reassign
-        argv.since = parseTimeString(argv.since);
+        argv.since = parseTimeString(argv.since).toISOString();
       } catch (err) {
         msgAndExit(err.message);
       }
@@ -231,7 +231,7 @@ Usage: $0 <command> [options]` // eslint-disable-line comma-dangle
     if (argv.until) {
       try {
         // eslint-disable-next-line no-param-reassign
-        argv.until = parseTimeString(argv.until);
+        argv.until = parseTimeString(argv.until).toISOString();
       } catch (err) {
         msgAndExit(err.message);
       }
