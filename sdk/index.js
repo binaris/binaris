@@ -6,6 +6,7 @@ const list = require('./list');
 const logs = require('./logs');
 const remove = require('./remove');
 const perf = require('./perf');
+const stats = require('./stats');
 
 module.exports = {
   auth,
@@ -15,4 +16,5 @@ module.exports = {
   logs,
   perf,
   remove,
+  stats,
 };
