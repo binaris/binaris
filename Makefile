@@ -4,6 +4,7 @@ SHELL := /bin/bash
 
 NO_CACHE = $(shell if [ $${NO_CACHE:-false} != false ]; then echo --no-cache; fi)
 SUDO := $(shell if docker info 2>&1 | grep "permission denied" >/dev/null; then echo "sudo -E"; fi)
+INTERACTIVE := $(shell if [ -t 0 ]; then echo "-it"; fi)
 DOCKER := $(SUDO) docker
 DOCKER_IMAGE := binaris/binaris
 
