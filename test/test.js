@@ -92,9 +92,15 @@ function createTest(rawSubTest) {
     t.context.cleanup = rawSubTest.cleanup;
 
     const createRegTest = function createRegTest(expected) {
-      const escaped = expected.split('*').map(item => regEsc(item));
-      const finalString = `^${escaped.join('[\\s\\S]*')}$`;
-      return new RegExp(finalString);
+      const DIGIT_ESCAPE = 'ESCAPESEQUENCEDIGIT';
+      const SPACE_ESCAPE = 'ESCAPESEQUENCESPACE';
+      let regex = expected.replace(/#/g, DIGIT_ESCAPE);
+      regex = regex.replace(/\*/g, SPACE_ESCAPE);
+      regex = regEsc(regex);
+      regex = regex.split(DIGIT_ESCAPE).join('\\d+');
+      regex = regex.split(SPACE_ESCAPE).join('[\\s\\S]*');
+      regex = `^${regex}\\s*$`;
+      return new RegExp(regex);
     };
 
     for (const step of rawSubTest.steps) {
