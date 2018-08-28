@@ -15,6 +15,7 @@
                 bn list [options]                         List all deployed functions
                 bn perf <function> [options]              Measure invocation latency (experimental)
                 bn logs <function> [options]              Print the logs of a function
+                bn stats [options]                        Print usage statistics
                 bn login                                  Login to your Binaris account using an API key
 
               Options:
@@ -459,6 +460,35 @@
         err: "EACCES: permission denied, unlink '/home/dockeruser/test/securedir/function.js'"
         exit: 1
 
+- test: Invocation stats
+  setup:
+    - export FUNC_NAME="invokestats$RANDOM$RANDOM"
+    - bn create node8 $FUNC_NAME
+    - bn deploy $FUNC_NAME
+  cleanup:
+    - bn remove $FUNC_NAME
+  steps:
+    - in: bn invoke $FUNC_NAME
+    - in: sleep 70 # Enough time to get minute-aggregated stats
+    - in: bn stats --since "3m" | grep -E "(FUNCTION|$FUNC_NAME)"
+      out: |-
+        FUNCTION* METRIC* VALUE* SINCE* UNTIL*
+        invokestats* function_duration_us* #* #-#-#T#:#:#.#Z* #-#-#T#:#:#.#Z*
+        invokestats* function_invocations* #* #-#-#T#:#:#.#Z* #-#-#T#:#:#.#Z*
+    - in: bn stats --since "3m" --json
+      out: '{*"metrics":[*]*}'
+
+- test: Empty stats
+  steps:
+    - in: bn stats --until "1990-01-01T00:00:00Z"
+      out: No matching usage stats found
+
+- test: Bad input to stats
+  steps:
+    - in: bn stats --since 'not a valid time'
+      exit: 1
+      err: Invalid time format "not a valid time"
+
 # Disabled until the switch is made to yargs
 #
 # - test: Superfluous output(bad-path)
@@ -506,6 +536,32 @@
       out: |-
           "Hello World!"
 
+- test: Stats help
+  steps:
+    - in: bn stats --help
+      out: |-
+        Usage: bn stats [options]
+
+        Options:
+          --version    Show version number  [boolean]
+          --path, -p   Use directory dir. "create" will create this directory if needed.  [string]
+          --help, -h   Show help  [boolean]
+          --since, -s  Output statistics after given ISO timestamp (inclusive)  [string]
+          --until, -u  Output statistics until given ISO timestamp (non-inclusive)  [string]
+          --json       Output as JSON
+
+        Examples:
+            // Retrieve all usage statistics of the account
+            bn stats
+
+            // Retrieve all statistics since the timestamp until now (~1 minute)
+            bn stats --since 2018-03-09T22:12:21.861Z
+
+            // Statistics over the last 24h
+            bn stats --since 1d
+
+            // Retrieve all statistics of a certain month
+            bn stats --since 2018-03-01T00:00:00Z --until 2018-04-01T00:00:00Z
 - test: Deploy of 300MB function fails with significant error message
   setup:
     - bn create python2 largeData300MB
@@ -514,3 +570,4 @@
     - in: bn deploy largeData300MB
       err: "Error: Payload too large"
       exit: 1
+
