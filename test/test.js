@@ -93,12 +93,12 @@ function createTest(rawSubTest) {
 
     const createRegTest = function createRegTest(expected) {
       const DIGIT_ESCAPE = 'ESCAPESEQUENCEDIGIT';
-      const SPACE_ESCAPE = 'ESCAPESEQUENCESPACE';
+      const STAR_ESCAPE = 'ESCAPESEQUENCESPACE';
       let regex = expected.replace(/#/g, DIGIT_ESCAPE);
-      regex = regex.replace(/\*/g, SPACE_ESCAPE);
+      regex = regex.replace(/\*/g, STAR_ESCAPE);
       regex = regEsc(regex);
       regex = regex.split(DIGIT_ESCAPE).join('\\d+');
-      regex = regex.split(SPACE_ESCAPE).join('[\\s\\S]*');
+      regex = regex.split(STAR_ESCAPE).join('[\\s\\S]*');
       regex = `^${regex}\\s*$`;
       return new RegExp(regex);
     };
