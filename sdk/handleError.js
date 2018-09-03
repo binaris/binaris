@@ -11,14 +11,14 @@ const { version } = require('../package.json');
 class APIError extends Error {}
 
 function validateResponse(response) {
-  const errorText = get(response, 'body.error');
-  if (errorText) {
-    throw new APIError(errorText);
-  }
-
   const errorCode = get(response, 'body.errorCode');
   if (errorCode) {
     throw new APIError(`Error: ${translateErrorCode(errorCode)}`);
+  }
+
+  const errorText = get(response, 'body.error');
+  if (errorText) {
+    throw new APIError(errorText);
   }
 
   if (response.statusCode < 200 || response.statusCode >= 300) {
