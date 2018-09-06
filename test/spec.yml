@@ -411,12 +411,12 @@
   steps:
     -   in: bn create node8 dispensabledrop
     -   in: bn remove dispensabledrop
-        err: No such function
+        err: "Error: No such function"
         exit: 1
     -   in: bn deploy dispensabledrop
     -   in: bn remove dispensabledrop
     -   in: bn remove dispensabledrop
-        err: No such function
+        err: "Error: No such function"
         exit: 1
     -   in: bn remove
         err: "*Not enough non-option arguments: got 0, need at least 1"
