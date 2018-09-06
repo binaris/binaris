@@ -372,8 +372,8 @@
     -   in: bn create node8 a*b*c*
         err: Invalid characters in function name a*b*c*. Use only letters and digits
         exit: 1
-    -   in: bn create node8 a_b%c#d@e+
-        err: Invalid characters in function name a_b%c#d@e+. Use only letters and digits
+    -   in: bn create node8 a_b%cd@e+
+        err: Invalid characters in function name a_b%cd@e+. Use only letters and digits
         exit: 1
     -   in: bn create node8 a=b~c,d.
         err: Invalid characters in function name a=b~c,d.. Use only letters and digits
