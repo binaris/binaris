@@ -29,22 +29,18 @@ const deployCode = async function deployCode(deployURLBase, apiKey, tarPath) {
   // request-promise module explicitly discourages using
   // request-promise for pipe
   // https://github.com/request/request-promise
-  try {
-    const codeDeployment = await (new Promise((resolve, reject) => {
-      fs.createReadStream(tarPath)
-        .pipe(request.post(codeDeployOptions, (uploadErr, uploadResponse) => {
-          if (uploadErr) {
-            reject(uploadErr);
-          } else {
-            resolve(uploadResponse);
-          }
-        }));
-    }));
-    validateResponse(codeDeployment);
-    return codeDeployment.body.digest;
-  } catch (err) {
-    throw new Error(`Error: ${err.message}`);
-  }
+  const codeDeployment = await (new Promise((resolve, reject) => {
+    fs.createReadStream(tarPath)
+      .pipe(request.post(codeDeployOptions, (uploadErr, uploadResponse) => {
+        if (uploadErr) {
+          reject(new Error(uploadErr.toString()));
+        } else {
+          resolve(uploadResponse);
+        }
+      }));
+  }));
+  validateResponse(codeDeployment);
+  return codeDeployment.body.digest;
 };
 
 /**

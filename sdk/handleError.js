@@ -11,7 +11,7 @@ class APIError extends Error {}
 function validateResponse(response) {
   const errorCode = get(response, 'body.errorCode');
   if (errorCode) {
-    throw new APIError(translateErrorCode(errorCode));
+    throw new APIError(`Error: ${translateErrorCode(errorCode)}`);
   }
 
   const errorText = get(response, 'body.errorText');
