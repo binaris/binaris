@@ -1,6 +1,6 @@
 const urljoin = require('urljoin');
-const rp = require('request-promise-native');
 const logger = require('../lib/logger');
+const { loggedRequest } = require('./handleError');
 
 const { getDeployEndpoint } = require('./config');
 
@@ -15,14 +15,14 @@ const stats = async function stats(apiKey, since, until) { // eslint-disable-lin
   const statsURLBase = `https://${getDeployEndpoint()}`;
   const statsOptions = {
     url: urljoin(statsURLBase, 'v2', 'metrics', apiKey),
-    json: true,
     body: {
       since,
       until,
     },
   };
+
   logger.debug('Fetching account usage stats', { statsOptions });
-  const metrics = await rp.get(statsOptions);
+  const metrics = await loggedRequest(statsOptions, 'get');
   return metrics;
 };
 
