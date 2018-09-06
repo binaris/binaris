@@ -469,8 +469,8 @@
     - bn remove $FUNC_NAME
   steps:
     - in: bn invoke $FUNC_NAME
-    - in: sleep 70 # Enough time to get minute-aggregated stats
-    - in: bn stats --since "3m" | grep -E "(FUNCTION|$FUNC_NAME)"
+    - in: sleep 100 # Enough time to get minute-aggregated stats
+    - in: bn stats --since "3m"
       out: |-
         FUNCTION* METRIC* VALUE* SINCE* UNTIL*
         invokestats* function_duration_us* #* #-#-#T#:#:#.#Z* #-#-#T#:#:#.#Z*
