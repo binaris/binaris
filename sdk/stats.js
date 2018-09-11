@@ -22,8 +22,8 @@ const stats = async function stats(apiKey, since, until) { // eslint-disable-lin
   };
 
   logger.debug('Fetching account usage stats', { statsOptions });
-  const metrics = await loggedRequest(statsOptions, 'get');
-  return metrics;
+  const { body } = await loggedRequest(statsOptions, 'get');
+  return body;
 };
 
 module.exports = stats;
