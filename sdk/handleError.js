@@ -23,7 +23,7 @@ function validateResponse(response) {
     throw new APIError(`Unexpected response ${response.statusCode}`);
   }
 
-  return response.body || response;
+  return response;
 }
 
 async function loggedRequest(options, type = 'post') {

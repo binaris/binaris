@@ -85,7 +85,7 @@ ${key}'s value is not a string.`);
     url: urljoin(deployURLBase, 'v2', 'conf', apiKey, funcName),
     body: funcConf,
   };
-  const digest = (await loggedRequest(confDeployOptions)).digest;
+  const { digest } = (await loggedRequest(confDeployOptions)).body;
 
   const tagDeployOptions = {
     url: urljoin(deployURLBase, 'v2', 'tag', apiKey, funcName, 'latest'),
