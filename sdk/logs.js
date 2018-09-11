@@ -1,5 +1,5 @@
 const urljoin = require('urljoin');
-const rp = require('request-promise-native');
+const { loggedRequest, validateResponse } = require('./handleError');
 const logger = require('../lib/logger');
 
 const { getLogEndpoint } = require('./config');
@@ -17,9 +17,7 @@ const msleep = ms => new Promise(resolve => setTimeout(resolve, ms));
  */
 const logs = async function logs(functionName, apiKey, follow, startAfter, token) { // eslint-disable-line consistent-return,max-len
   const options = {
-    json: true,
     forever: true,
-    resolveWithFullResponse: true,
     url: urljoin(`https://${getLogEndpoint()}`, 'v1', 'logs', `${apiKey}-${functionName}`),
     qs: {
       startAfter,
@@ -29,23 +27,17 @@ const logs = async function logs(functionName, apiKey, follow, startAfter, token
   };
 
   for (let attempt = 1, backoff = 3; attempt <= 3; attempt += 1, backoff *= 2) {
+    // eslint-disable-next-line no-await-in-loop
+    const response = await loggedRequest(options, 'get', false);
     try {
-      // eslint-disable-next-line no-await-in-loop
-      const { statusCode, headers, body } = await rp.get(options);
-      logger.debug('logs response', { statusCode, headers, body });
+      validateResponse(response);
       return {
-        body,
-        nextToken: headers['x-binaris-next-token'],
+        body: response.body,
+        nextToken: response.headers['x-binaris-next-token'],
       };
     } catch (err) {
-      // Not a 5xx error
-      if (!err.statusCode || err.statusCode < 500
-        || err.statusCode >= 600) {
-        throw err;
-      }
       logger.debug('failed to fetch logs', {
-        statusCode: err.statusCode,
-        message: err.message,
+        err,
         attempt,
       });
       // eslint-disable-next-line no-await-in-loop
