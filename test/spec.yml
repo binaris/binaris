@@ -115,6 +115,15 @@
             Deployed function to *
               (use "bn invoke drybeef" to invoke the function)
 
+- test: Test Java
+  steps:
+    -   in: bn create java8 ventimacchiato
+    -   in: gradle jar
+    -   in: bn invoke ventimacchiato
+        out: |-
+            *"Hello, world"*
+    -   in: bn remove ventimacchiato
+
 - test: Test list
   serial: true
   setup:
