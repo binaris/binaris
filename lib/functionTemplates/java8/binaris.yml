@@ -1,0 +1,5 @@
+functions:
+    hello:
+        file: build/libs/example.jar
+        entrypoint: ExampleFunction
+        runtime: java8
