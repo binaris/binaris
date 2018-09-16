@@ -466,7 +466,7 @@
     - echo binaris | sudo  -S chmod 700 /home/dockeruser/test/securedir
   steps:
     -   in: bn create node8 orangehero -p /home/dockeruser/test/securedir
-        err: "EACCES: permission denied, unlink '/home/dockeruser/test/securedir/function.js'"
+        err: "EACCES: permission denied, unlink '/home/dockeruser/test/securedir/*"
         exit: 1
 
 - test: Invocation stats
