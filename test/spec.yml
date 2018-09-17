@@ -118,7 +118,8 @@
 - test: Test Java
   steps:
     -   in: bn create java8 ventimacchiato
-    -   in: gradle jar
+    -   in: gradle jar --no-daemon
+    -   in: bn deploy ventimacchiato
     -   in: bn invoke ventimacchiato
         out: |-
             *"Hello, world"*
