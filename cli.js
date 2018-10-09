@@ -34,13 +34,13 @@ const handleCommand = async function handleCommand(options, specificHandler) {
 
 const runtimes = require('./lib/runtimes');
 
+const pathOption = ['path', {
+  alias: 'p',
+  describe: 'Use directory dir.',
+  type: 'string',
+}];
+
 yargs
-  .option('path', {
-    alias: 'p',
-    describe: 'Use directory dir. "create" will create this directory if needed.',
-    type: 'string',
-    global: true,
-  })
   .usage(
 `Binaris command line interface
 
@@ -56,6 +56,11 @@ Usage: $0 <command> [options]` // eslint-disable-line comma-dangle
       .positional('function', {
         describe: 'Function name',
         type: 'string',
+      })
+      .option('path', {
+        alias: 'p',
+        describe: 'Use directory dir. "create" will create this directory if needed.',
+        type: 'string',
       });
   }, async (argv) => {
     await handleCommand(argv, createHandler);
@@ -66,7 +71,8 @@ Usage: $0 <command> [options]` // eslint-disable-line comma-dangle
       .positional('function', {
         describe: 'Function name',
         type: 'string',
-      });
+      })
+      .option(...pathOption);
   }, async (argv) => {
     await handleCommand(argv, deployHandler);
   })
