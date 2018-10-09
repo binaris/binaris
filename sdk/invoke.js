@@ -21,7 +21,25 @@ const invoke = async function invoke(funcName, apiKey, funcData) {
     resolveWithFullResponse: true,
   };
   logger.debug('Invoking function', options);
-  const res = await rp.post(options);
+  try {
+    const res = await rp.post(options);
+  } catch (err) {
+    console.log(err);
+    console.log(Object.keys(err));
+    if (err.error) {
+      let rawError
+      try {
+        const rError = JSON.parse(err.error);
+        rawError = `${rError.message}\nrequest_id: ${rError.request_id}`;
+      } catch (parseErr) {
+        rawError = err.error;
+      }
+      throw new Error(rawError);
+    } else {
+      const { error, stack } = JSON.parse(err.response.body);
+      throw new Error(`${realErr.error}\n${realErr.stack}`);
+    }
+  }
   const { statusCode, headers, body } = res;
   logger.debug('Invoke response', { statusCode, headers, body });
   return res;
