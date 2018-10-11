@@ -97,6 +97,11 @@ Usage: $0 <command> [options]` // eslint-disable-line comma-dangle
         describe: 'Data to send with invocation',
         type: 'string',
       })
+      .option('color', {
+        alias: 'c',
+        describe: 'Should output be printed in color',
+        type: 'boolean',
+      })
       .example(
 `  // invoke a function
   bn invoke foo
