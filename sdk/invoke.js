@@ -21,10 +21,25 @@ const invoke = async function invoke(funcName, apiKey, funcData) {
     resolveWithFullResponse: true,
   };
   logger.debug('Invoking function', options);
-  const res = await rp.post(options);
-  const { statusCode, headers, body } = res;
-  logger.debug('Invoke response', { statusCode, headers, body });
-  return res;
+  try {
+    const res = await rp.post(options);
+    const { statusCode, headers, body } = res;
+    logger.debug('Invoke response', { statusCode, headers, body });
+    return res;
+  } catch (err) {
+    let parsedError;
+    try {
+      parsedError = JSON.parse(err.error);
+    } catch (nestedErr) {
+      throw new Error(`Failed to parse error ${nestedErr}`);
+    }
+    if (parsedError.stack && parsedError.request_id) {
+      throw new Error(`${parsedError.error}\n${parsedError.stack}`);
+    } else if (parsedError.message && parsedError.request_id) {
+      throw new Error(`${parsedError.message}\nrequest_id: ${parsedError.request_id}`);
+    }
+    throw new Error(parsedError);
+  }
 };
 
 module.exports = invoke;
