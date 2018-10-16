@@ -4,7 +4,7 @@ ARG NPM_TOKEN
 RUN apt-get update && apt-get install -y curl git sudo openjdk-8-jdk unzip
 RUN curl -sL https://raw.githubusercontent.com/binaris/711/master/ubuntu/gradle/4.10.a.sh | sudo -E bash -
 RUN curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
-RUN sudo apt-get install -y nodejs jq
+RUN sudo apt-get install -y nodejs jq gradle
 
 ENV TINI_VERSION v0.16.1
 RUN curl -sL https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini -o /tini

@@ -371,6 +371,7 @@
         exit: 1
         err: |-
             *Empty string *EMPTY not supported.*
+
 - test: Test login (bad-path)
   steps:
     -   in: bn create node8 stormysummer
@@ -416,6 +417,140 @@
         exit: 1
     -   in: bn invoke quarrelsometest -j myFile.json
         err: "ENOENT: no such file or directory, open 'myFile.json'"
+        exit: 1
+    -   in: bn invoke nosuchfunction
+        err: |-
+            Sorry, your function is not ready yet.
+            Please try again.
+            If this keeps happening, please contact support@binaris.com with the request ID.
+            
+            request_id: *
+        exit: 1
+
+- test: Test bad user node8 code (bad-path)
+  cleanup:
+    - bn remove doomedtofailnode8
+  steps:
+    -   in: bn create node8 doomedtofailnode8
+        out: |-
+            Created function * in /home/dockeruser/test
+              (use "bn deploy doomedtofailnode8" to deploy the function)
+    -   in: |-
+            sed -i.bak "2i\  throw new Error('some error');" function.js
+    -   in: bn deploy doomedtofailnode8
+        out: |-
+            Deployed function to *
+              (use "bn invoke doomedtofailnode8" to invoke the function)
+    -   in: bn invoke doomedtofailnode8
+        err: |-
+            some error
+            Error: some error
+                at Bolt.exports.handler [as userEntryPoint] (/code/function.js:2:9)
+                at Bolt.run (/opt/binaris/dist/bolt.js:62:31)
+                at <anonymous>
+        exit: 1
+
+- test: Test bad user python2 code (bad-path)
+  cleanup:
+    - bn remove doomedtofailpy2
+  steps:
+    -   in: bn create python2 doomedtofailpy2
+        out: |-
+            Created function * in /home/dockeruser/test
+              (use "bn deploy doomedtofailpy2" to deploy the function)
+    -   in: |-
+            sed -i.bak "2i\    sdasda" function.py
+    -   in: bn deploy doomedtofailpy2
+        out: |-
+            Deployed function to *
+              (use "bn invoke doomedtofailpy2" to invoke the function)
+    -   in: bn invoke doomedtofailpy2
+        err: |-
+            global name 'sdasda' is not defined
+              File "/opt/binaris/py2/main.py", line 160, in run_handler
+                response = yield gen.maybe_future(self._handler(body, request))
+            ,  File "/code/function.py", line 2, in handler
+                sdasda
+
+        exit: 1
+
+- test: Test bad user python3 code (bad-path)
+  cleanup:
+    - bn remove doomedtofailpy3
+  steps:
+    -   in: bn create python3 doomedtofailpy3
+        out: |-
+            Created function * in /home/dockeruser/test
+              (use "bn deploy doomedtofailpy3" to deploy the function)
+    -   in: |-
+            sed -i.bak "2i\    sdasda" function.py
+    -   in: bn deploy doomedtofailpy3
+        out: |-
+            Deployed function to *
+              (use "bn invoke doomedtofailpy3" to invoke the function)
+    -   in: bn invoke doomedtofailpy3
+        err: |-
+            name 'sdasda' is not defined
+              File "/opt/binaris/py3/main.py", line 160, in run_handler
+                response = yield gen.maybe_future(self._handler(body, request))
+            ,  File "/code/function.py", line 2, in handler
+                sdasda
+
+        exit: 1
+
+- test: Test bad user pypy2 code (bad-path)
+  cleanup:
+    - bn remove doomedtofailpypy2
+  steps:
+    -   in: bn create pypy2 doomedtofailpypy2
+        out: |-
+            Created function * in /home/dockeruser/test
+              (use "bn deploy doomedtofailpypy2" to deploy the function)
+    -   in: |-
+            sed -i.bak "2i\    sdasda" function.py
+    -   in: bn deploy doomedtofailpypy2
+        out: |-
+            Deployed function to *
+              (use "bn invoke doomedtofailpypy2" to invoke the function)
+    -   in: bn invoke doomedtofailpypy2
+        err: |-
+            global name 'sdasda' is not defined
+              File "/opt/binaris/py2/main.py", line 160, in run_handler
+                response = yield gen.maybe_future(self._handler(body, request))
+            ,  File "/code/function.py", line 2, in handler
+                sdasda
+
+        exit: 1
+
+- test: Test bad user java8 code (bad-path)
+  cleanup:
+    - bn remove doomedtofailjava8
+  steps:
+    -   in: bn create java8 doomedtofailjava8
+        out: |-
+            Created function * in /home/dockeruser/test
+              (use "bn deploy doomedtofailjava8" to deploy the function)
+    -   in: |-
+            sed -i.bak '6s/.*/        throw new java.lang.Error("this is very bad");/' src/main/java/ExampleFunction.java
+    -   in: gradle jar
+    -   in: bn deploy doomedtofailjava8
+        out: |-
+            Deployed function to *
+              (use "bn invoke doomedtofailjava8" to invoke the function)
+    -   in: bn invoke doomedtofailjava8
+        err: |-
+            <html>
+            <head>
+            <meta http-equiv="Content-Type" content="text/html;charset=ISO-8859-1"/>
+            <title>Error 500 </title>
+            </head>
+            <body>
+            <h2>HTTP ERROR: 500</h2>
+            <p>Problem accessing /v1/run. Reason:
+            <pre>    class java.lang.Error</pre></p>
+            <hr /><a href="http://eclipse.org/jetty">Powered by Jetty:// 9.3.z-SNAPSHOT</a><hr/>
+            </body>
+            </html>
         exit: 1
 
 - test: Test remove (bad-path)
