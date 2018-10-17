@@ -702,6 +702,11 @@
     -   in: bn list
         err: "Error: Invalid API key"
         exit: 1
+    -   in: BINARIS_API_KEY=boguskey bn invoke perplexingpersimmon
+        err: |-
+            Unauthorized request. Make sure you're passing the right API key.
+            request_id: *
+        exit: 1
 
 - test: Deploy of 200MB function succeeds
   setup:
