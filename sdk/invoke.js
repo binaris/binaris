@@ -30,8 +30,9 @@ const invoke = async function invoke(funcName, apiKey, funcData) {
     let parsedError;
     try {
       parsedError = JSON.parse(err.error);
-      if (parsedError.stack && (parsedError.error || parsedError.message)) {
-        throw new Error(`${parsedError.error || parsedError.message}\n${parsedError.stack}`);
+      const errorOrMsg = parsedError.error || parsedError.message;
+      if (parsedError.stack && errorOrMsg) {
+        throw new Error(`${errorOrMsg}\n${parsedError.stack}`);
       } else if (parsedError.message && parsedError.request_id) {
         throw new Error(`${parsedError.message}\nrequest_id: ${parsedError.request_id}`);
       }
