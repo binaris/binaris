@@ -30,13 +30,13 @@ const invoke = async function invoke(funcName, apiKey, funcData) {
     let parsedError;
     try {
       parsedError = JSON.parse(err.error);
+      if (parsedError.stack && (parsedError.error || parsedError.message)) {
+        throw new Error(`${parsedError.error || parsedError.message}\n${parsedError.stack}`);
+      } else if (parsedError.message && parsedError.request_id) {
+        throw new Error(`${parsedError.message}\nrequest_id: ${parsedError.request_id}`);
+      }
     } catch (nestedErr) {
-      throw new Error(err.error || err);
-    }
-    if (parsedError.stack && (parsedError.error || parsedError.message)) {
-      throw new Error(`${parsedError.error || parsedError.message}\n${parsedError.stack}`);
-    } else if (parsedError.message && parsedError.request_id) {
-      throw new Error(`${parsedError.message}\nrequest_id: ${parsedError.request_id}`);
+      logger.debug('Failed to parse JSON response', { nestedErr });
     }
     throw new Error(err.error || err);
   }
