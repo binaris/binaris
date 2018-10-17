@@ -33,7 +33,8 @@ const invoke = async function invoke(funcName, apiKey, funcData) {
       const errorOrMsg = parsedError.error || parsedError.message;
       if (parsedError.stack && errorOrMsg) {
         throw new Error(`${errorOrMsg}\n${parsedError.stack}`);
-      } else if (parsedError.message && parsedError.request_id) {
+      }
+      if (parsedError.message && parsedError.request_id) {
         throw new Error(`${parsedError.message}\nrequest_id: ${parsedError.request_id}`);
       }
     } catch (nestedErr) {
