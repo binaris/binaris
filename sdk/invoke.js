@@ -30,6 +30,11 @@ const invoke = async function invoke(funcName, apiKey, funcData) {
     let parsedError;
     try {
       parsedError = JSON.parse(err.error);
+    } catch (nestedErr) {
+      logger.debug('Failed to parse JSON response', { nestedErr });
+    }
+
+    if (parsedError) {
       const errorOrMsg = parsedError.error || parsedError.message;
       if (parsedError.stack && errorOrMsg) {
         throw new Error(`${errorOrMsg}\n${parsedError.stack}`);
@@ -37,9 +42,8 @@ const invoke = async function invoke(funcName, apiKey, funcData) {
       if (parsedError.message && parsedError.request_id) {
         throw new Error(`${parsedError.message}\nrequest_id: ${parsedError.request_id}`);
       }
-    } catch (nestedErr) {
-      logger.debug('Failed to parse JSON response', { nestedErr });
     }
+
     throw new Error(err.error || err);
   }
 };
