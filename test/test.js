@@ -70,6 +70,10 @@ function limitedTest(name, testFn) {
   return test(name, async t => limiter(async () => testFn(t)));
 }
 
+function stripText(origText) {
+  return strip(origText.split('\r').join('').slice(0, -1));
+}
+
 function createTest(rawSubTest) {
   const maybeSerialTest = rawSubTest.serial ? test.serial : limitedTest;
   maybeSerialTest(rawSubTest.test, async (t) => {
@@ -107,9 +111,9 @@ function createTest(rawSubTest) {
       // eslint-disable-next-line no-await-in-loop
       const cmdOut = await t.context.ct.streamIn(step.in);
       if (step.out) {
-        t.true(createRegTest(step.out).test(strip(cmdOut.stdout.slice(0, -1))));
+        t.true(createRegTest(step.out).test(stripText(cmdOut.stdout)));
       } else if (step.err) {
-        t.true(createRegTest(step.err).test(strip(cmdOut.stderr.slice(0, -1))));
+        t.true(createRegTest(step.err).test(stripText(cmdOut.stderr)));
       }
       t.true(cmdOut.exitCode === (step.exit || 0), step.err);
     }

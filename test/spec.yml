@@ -427,6 +427,30 @@
             request_id: *
         exit: 1
 
+- test: Test user code timeout (bad-path)
+  cleanup:
+    - bn remove timeoutforsure
+  steps:
+    -   in: bn create node8 timeoutforsure 
+    -   in: |-
+           cat > function.js << EOL
+           exports.handler = async (body, req) => {
+             const msleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+             await msleep(100000);
+           };
+           EOL
+    -   in: bn deploy timeoutforsure
+    -   in: bn invoke timeoutforsure
+        err: |-
+            <html>
+            <head><title>504 Gateway Time-out</title></head>
+            <body bgcolor="white">
+            <center><h1>504 Gateway Time-out</h1></center>
+            <hr><center>openresty/1.13.6.1</center>
+            </body>
+            </html>
+        exit: 1
+
 - test: Test bad user node8 code (bad-path)
   cleanup:
     - bn remove doomedtofailnode8
@@ -677,6 +701,11 @@
         exit: 1
     -   in: bn list
         err: "Error: Invalid API key"
+        exit: 1
+    -   in: BINARIS_API_KEY=boguskey bn invoke perplexingpersimmon
+        err: |-
+            Unauthorized request. Make sure you're passing the right API key.
+            request_id: *
         exit: 1
 
 - test: Deploy of 200MB function succeeds
