@@ -1,6 +1,6 @@
 const urljoin = require('urljoin');
 const logger = require('../lib/logger');
-const { loggedRequest } = require('./handleError');
+const { getValidatedBody } = require('./handleError');
 
 const { getDeployEndpoint } = require('./config');
 
@@ -22,8 +22,7 @@ const stats = async function stats(apiKey, since, until) { // eslint-disable-lin
   };
 
   logger.debug('Fetching account usage stats', { statsOptions });
-  const { body } = await loggedRequest(statsOptions, 'get');
-  return body;
+  return await getValidatedBody(statsOptions, 'get');
 };
 
 module.exports = stats;

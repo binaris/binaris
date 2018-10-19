@@ -28,12 +28,11 @@ const logs = async function logs(functionName, apiKey, follow, startAfter, token
 
   for (let attempt = 1, backoff = 3; attempt <= 3; attempt += 1, backoff *= 2) {
     // eslint-disable-next-line no-await-in-loop
-    const response = await loggedRequest(options, 'get', false);
     try {
-      validateResponse(response);
+      const { body, headers } = validateResponse(await loggedRequest(options, 'get'));
       return {
-        body: response.body,
-        nextToken: response.headers['x-binaris-next-token'],
+        body,
+        nextToken: headers['x-binaris-next-token'],
       };
     } catch (err) {
       logger.debug('failed to fetch logs', {
