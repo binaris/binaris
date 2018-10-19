@@ -22,7 +22,7 @@ const stats = async function stats(apiKey, since, until) { // eslint-disable-lin
   };
 
   logger.debug('Fetching account usage stats', { statsOptions });
-  return await getValidatedBody(statsOptions, 'get');
+  return getValidatedBody(statsOptions, 'get');
 };
 
 module.exports = stats;

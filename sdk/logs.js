@@ -27,8 +27,8 @@ const logs = async function logs(functionName, apiKey, follow, startAfter, token
   };
 
   for (let attempt = 1, backoff = 3; attempt <= 3; attempt += 1, backoff *= 2) {
-    // eslint-disable-next-line no-await-in-loop
     try {
+      // eslint-disable-next-line no-await-in-loop
       const { body, headers } = validateResponse(await loggedRequest(options, 'get'));
       return {
         body,
