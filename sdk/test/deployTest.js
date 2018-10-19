@@ -54,7 +54,7 @@ test.serial('Just test deploy (good-path)', async (t) => {
 
   const response = await deploy(testFuncName, testApiKey,
     testFuncConf, t.context.fakeTarFileName, deployEndpoint);
-  t.deepEqual({ status: 'ok' }, response.body);
+  t.deepEqual({ status: 'ok' }, response);
 });
 
 test.serial('Test deploy with bad key (bad-path)', async (t) => { // eslint-disable-next-line global-require

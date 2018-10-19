@@ -5,7 +5,7 @@ const request = require('request');
 const logger = require('../lib/logger');
 
 const { getDeployEndpoint } = require('./config');
-const { loggedRequest, validateResponse } = require('./handleError');
+const { getValidatedBody, validateResponse } = require('./handleError');
 
 /**
  * Deploys a tarball, whose contents represent a Binaris function deployment
@@ -85,13 +85,13 @@ ${key}'s value is not a string.`);
     url: urljoin(deployURLBase, 'v2', 'conf', apiKey, funcName),
     body: funcConf,
   };
-  const { digest } = (await loggedRequest(confDeployOptions)).body;
+  const { digest } = await getValidatedBody(confDeployOptions);
 
   const tagDeployOptions = {
     url: urljoin(deployURLBase, 'v2', 'tag', apiKey, funcName, 'latest'),
     body: { digest },
   };
-  const response = await loggedRequest(tagDeployOptions);
+  const response = await getValidatedBody(tagDeployOptions);
   return response;
 };
 

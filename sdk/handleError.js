@@ -26,7 +26,7 @@ function validateResponse(response) {
   return response;
 }
 
-async function loggedRequest(options, type = 'post', validate = true) {
+async function loggedRequest(options, type = 'post') {
   const response = await rp[type]({
     json: true,
     simple: false,
@@ -34,14 +34,17 @@ async function loggedRequest(options, type = 'post', validate = true) {
     ...options,
   });
   logger.debug('raw response', inspect(response, { depth: null }));
-  if (validate) {
-    return validateResponse(response);
-  }
   return response;
+}
+
+async function getValidatedBody(options, type = 'post') {
+  const response = await loggedRequest(options, type);
+  return validateResponse(response).body;
 }
 
 module.exports = {
   APIError,
   loggedRequest,
   validateResponse,
+  getValidatedBody,
 };
