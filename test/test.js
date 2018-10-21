@@ -64,7 +64,7 @@ const testFileNames = ['./test/spec.yml', './test/cases.yml'];
 const testFiles = testFileNames.map(file => yaml.safeLoad(fs.readFileSync(file, 'utf8')));
 const testPlan = [].concat(...testFiles);
 
-const limiter = throat(4);
+const limiter = throat(10);
 
 function limitedTest(name, testFn) {
   return test(name, async t => limiter(async () => testFn(t)));
