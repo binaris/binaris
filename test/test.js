@@ -1,5 +1,5 @@
 // Test runner
-const { test } = require('ava');
+const test = require('ava');
 
 // External dependencies
 const yaml = require('js-yaml');
