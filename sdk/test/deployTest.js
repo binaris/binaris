@@ -1,6 +1,6 @@
 // SDK dir structure confuses eslint
 /* eslint-disable import/no-extraneous-dependencies */
-const { test } = require('ava');
+const test = require('ava');
 const fs = require('mz/fs');
 const fse = require('fs-extra');
 const { generate } = require('randomstring');
@@ -70,7 +70,7 @@ test.serial('Test deploy with bad key (bad-path)', async (t) => { // eslint-disa
     .matchHeader('Content-Type', 'application/gzip')
     .reply(403, { errorCode: 'ERR_BAD_KEY' });
 
-  await t.throws(deploy(testFuncName, someBadKey,
+  await t.throwsAsync(deploy(testFuncName, someBadKey,
     testFuncConf, t.context.fakeTarFileName, deployEndpoint),
     'Error: Invalid API key');
 });
@@ -78,7 +78,7 @@ test.serial('Test deploy with bad key (bad-path)', async (t) => { // eslint-disa
 test.serial('Test deploy with no backend (bad-path)', async (t) => {
   // eslint-disable-next-line global-require
   const deploy = require('../deploy');
-  await t.throws(deploy(testFuncName, testApiKey,
+  await t.throwsAsync(deploy(testFuncName, testApiKey,
     testFuncConf, t.context.fakeTarFileName, 'invalidbinaris.endpoint'),
     'Error: getaddrinfo ENOTFOUND invalidbinaris.endpoint invalidbinaris.endpoint:443');
 });
