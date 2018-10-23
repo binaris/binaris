@@ -22,7 +22,7 @@ const deployCode = async function deployCode(deployURLBase, apiKey, tarPath) {
     headers: {
       'Content-Type': 'application/gzip',
       'X-Binaris-Api-Key': apiKey,
-      'X-Binaris-CLI-Version': version,
+      'X-Binaris-Client-Version': version,
     },
     json: true,
   };
