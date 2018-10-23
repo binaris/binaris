@@ -141,6 +141,11 @@ Usage: $0 <command> [options]` // eslint-disable-line comma-dangle
         type: 'number',
         default: 1,
       })
+      .option('data', {
+        alias: 'd',
+        describe: 'Data to include with performance invocations',
+        type: 'string',
+      })
       .example(
 ` // Run performance test on function foo (100 invocations, serially)
   bn perf foo
@@ -150,6 +155,9 @@ Usage: $0 <command> [options]` // eslint-disable-line comma-dangle
 
   // Run performance test with 1,000 invocations and 4 concurrent connections
   bn perf foo -n 1000 -c 4
+
+  // Run performance test with 1,000 invocations and send JSON data with each request
+  bn perf foo -n 1000 -d '{ "someData": "myData" }'
 `);
   }, async (argv) => {
     await handleCommand(argv, perfHandler);

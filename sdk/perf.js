@@ -14,10 +14,11 @@ const logger = require('../lib/logger');
  *
  * @returns {object} - latency report (based on the loadtest npm package)
  */
-const perf = async function perf(apiKey, funcName, maxRequests, concurrency) {
+const perf = async function perf(apiKey, funcName, maxRequests, concurrency, funcData) {
   const options = {
     url: urljoin(`https://${getInvokeEndpoint()}`, 'v1', 'run', apiKey, funcName),
     headers: { 'Content-Type': 'application/json' },
+    body: funcData,
     // body: TODO: add optional json body
     concurrency,
     maxRequests,
