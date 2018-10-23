@@ -309,6 +309,8 @@
             Removed function *
 
 - test: "envs: deploy invoke remove with secrets"
+  setup:
+    - export INTERPOL_AGENT=drwho
   steps:
     -   in: bn create node8 secretsanta
     -   in: |-
@@ -322,10 +324,11 @@
                     FORWARD_ME:
                     DEFINED_HERE: value
                     BN_FUNCTION: "dont-override"
+                    INTERPOLATE_ME: $INTERPOL_AGENT
             EOF
     -   in: |-
             cat <<EOF >/home/dockeruser/test/function.js
-            exports.handler = () => [process.env.FORWARD_ME, process.env.DEFINED_HERE, process.env.BN_FUNCTION];
+            exports.handler = () => [process.env.FORWARD_ME, process.env.DEFINED_HERE, process.env.BN_FUNCTION, process.env.INTERPOLATE_ME];
             EOF
     -   in: FORWARD_ME=please bn deploy secretsanta
         out: |-
@@ -333,7 +336,7 @@
               (use "bn invoke secretsanta" to invoke the function)
     -   in: bn invoke secretsanta
         out: |-
-            *["please","value","*secretsanta"]*
+            *["please","value","*secretsanta","drwho"]*
     -   in: bn remove secretsanta
         out: |-
             Removed function *

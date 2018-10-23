@@ -55,6 +55,7 @@ const deployCode = async function deployCode(deployURLBase, apiKey, tarPath) {
  * @return {object} - response of tag operation
  */
 const deployConf = async function deployConf(deployURLBase, apiKey, funcName, funcConf) {
+  const interpolRegex = new RegExp(/^\$[a-zA-Z_]{1,}[a-zA-Z0-9_]{0,}/);
   const { env } = funcConf;
   if (env) {
     for (const key of Object.keys(env)) {
@@ -78,6 +79,8 @@ const deployConf = async function deployConf(deployURLBase, apiKey, funcName, fu
       } else if (typeof env[key] !== 'string') {
         logger.error(`Only string values are supported in function env configuration.
 ${key}'s value is not a string.`);
+      } else if (interpolRegex.test(env[key])) {
+        env[key] = process.env[env[key].slice(1)];
       }
     }
   }
