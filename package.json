@@ -15,7 +15,6 @@
   "dependencies": {
     "binaris-pickle": "^1.0.1",
     "columnify": "^1.5.4",
-    "dockerode": "^2.5.5",
     "escape-string-regexp": "^1.0.5",
     "fs-extra": "^4.0.3",
     "inquirer": "^3.3.0",
@@ -37,6 +36,7 @@
     "yargs": "^11.0.0"
   },
   "devDependencies": {
+    "dockerode": "^2.5.5",
     "ava": "^1.0.0-rc.1",
     "eslint": "^3.14.1",
     "eslint-config-airbnb-base": "^11.0.1",
