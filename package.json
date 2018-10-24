@@ -21,6 +21,7 @@
     "js-yaml": "^3.11.0",
     "loadtest": "^3.0.3",
     "lodash.get": "^4.4.2",
+    "lodash.sortby": "^4.7.0",
     "moment": "^2.20.1",
     "mz": "^2.7.0",
     "request": "^2.87.0",
