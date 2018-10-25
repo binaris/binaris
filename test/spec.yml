@@ -20,7 +20,6 @@
 
               Options:
                 --version   Show version number  [boolean]
-                --path, -p  Use directory dir. "create" will create this directory if needed.  [string]
                 --help, -h  Show help  [boolean]*
 - test: Test list help output
   steps:
@@ -30,7 +29,6 @@
 
               Options:
                 --version   Show version number  [boolean]
-                --path, -p  Use directory dir. "create" will create this directory if needed.  [string]
                 --help, -h  Show help  [boolean]
                 --json      Output as JSON*
 - test: Test logs help output (good-path)
@@ -44,7 +42,6 @@
 
               Options:
                 --version    Show version number  [boolean]
-                --path, -p   Use directory dir. "create" will create this directory if needed.  [string]
                 --help, -h   Show help  [boolean]
                 --tail, -t   Outputs logs in "tail -f" fashion  [boolean]
                 --since, -s  Outputs logs after the given ISO timestamp  [string]
@@ -731,7 +728,6 @@
 
         Options:
           --version    Show version number  [boolean]
-          --path, -p   Use directory dir. "create" will create this directory if needed.  [string]
           --help, -h   Show help  [boolean]
           --since, -s  Output statistics after given ISO timestamp (inclusive)  [string]
           --until, -u  Output statistics until given ISO timestamp (non-inclusive)  [string]
