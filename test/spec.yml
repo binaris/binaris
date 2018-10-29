@@ -295,7 +295,8 @@
         out: |-
             Created function * in /home/dockeruser/test
               (use "bn deploy gulliblezebra" to deploy the function)
-    -   in: sed -i '2 a \  console.log(`Hello ${name}!`);' function.js
+    -   in: |-
+            echo 'exports.handler = () => { s = "Hello World!"; console.log(s); return s; };' >function.js
     -   in: bn deploy gulliblezebra
         out: |-
             Deployed function to *
