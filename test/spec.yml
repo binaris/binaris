@@ -591,6 +591,7 @@
         exit: 1
     -   in: bn deploy dispensabledrop
     -   in: bn remove dispensabledrop
+        out: "*Removed function dispensabledrop*"
     -   in: bn remove dispensabledrop
         err: "Error: No such function"
         exit: 1
