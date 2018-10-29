@@ -25,6 +25,10 @@ BRANCH := $(shell if [[ ! -z $${BRANCH_NAME+x} ]]; then echo $${BRANCH_NAME}; el
 build: require-tag
 		$(DOCKER) build $(NO_CACHE) -f binaris.Dockerfile -t $(DOCKER_IMAGE):$(tag) .
 
+.PHONY: rebuild
+rebuild: NO_CACHE=--no-cache
+rebuild: build
+
 .PHONY: tag
 tag: require-tag
 		$(DOCKER) tag $(DOCKER_IMAGE):$(tag) binaris
