@@ -206,6 +206,7 @@
       - bn remove internalnets
   steps:
       - in: bn invoke internalnets
+
 - test: Test logs (good-path)
   setup:
     - export FUNC_NAME=rand$(cat /dev/urandom | tr -dc 'a-z0-9' | fold -w 32 | head -n 1)
@@ -719,6 +720,26 @@
     - in: bn invoke largeData200MB
       out: |-
           "Hello World!"
+
+- test: Test if imagemagick exists in bolt
+  setup:
+      - bn create node8 imagemagick
+      - npm i shelljs
+      - |-
+        cat <<EOF >/home/dockeruser/test/function.js
+        
+        const shell = require('shelljs');
+        exports.handler = async() => {
+          return shell.exec('convert --version');
+        };
+        EOF
+      - bn deploy imagemagick
+  cleanup:
+      - bn remove imagemagick
+  steps:
+      - in: bn invoke imagemagick
+        out: |-
+            "Version: ImageMagick 6.8*
 
 - test: Stats help
   steps:
