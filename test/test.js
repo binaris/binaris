@@ -60,7 +60,7 @@ test.afterEach.always(async (t) => {
  * Iterates over the YAML CLI specification separating and testing each
  * `test` entry separately.
  */
-const testFileNames = ['./test/spec.yml', './test/cases.yml'];
+const testFileNames = ['./test/spec.yml', './test/cases.yml', './test/jsApi.yml'];
 const testFiles = testFileNames.map(file => yaml.safeLoad(fs.readFileSync(file, 'utf8')));
 const testPlan = [].concat(...testFiles);
 
@@ -71,7 +71,7 @@ function limitedTest(name, testFn) {
 }
 
 function stripText(origText) {
-  return strip(origText.split('\r').join('').slice(0, -1));
+  return strip(origText.split('\r').join('').replace(/\n$/, ''));
 }
 
 function createTest(rawSubTest) {

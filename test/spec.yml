@@ -468,7 +468,7 @@
             some error
             Error: some error
                 at Bolt.exports.handler [as userEntryPoint] (/code/function.js:2:9)
-                at Bolt.run (/opt/binaris/dist/bolt.js:62:31)
+                at *
                 at <anonymous>
         exit: 1
 
