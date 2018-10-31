@@ -123,3 +123,43 @@
     -   in: curl -s "${TEST_FUNCTION}/foo/bar/"
         out: '"/foo/bar/"'
     -   in: bn remove returnReqPath
+
+- test: Test js custom response
+  steps:
+    -   in: bn create node8 customResponse
+    -   in: |-
+           cat >function.js << EOL
+           exports.handler = async (_, req, res) => {
+             const response = res({
+               statusCode: 231,
+               headers: {
+                 foo: 123,
+                 err: req.query.throw,
+                 'bar': 'vaz',
+                 'but': '',
+               },
+               body: Buffer.from('no quotes'),
+             });
+             if (req.query.throw) {
+               throw response;
+             }
+             return response;
+           }
+           EOL
+    -   in: bn deploy customResponse
+    -   in: curl --silent --include "https://${BINARIS_INVOKE_ENDPOINT}/v1/run/${BINARIS_API_KEY}/customResponse" | grep -e foo -e err -e bar -e but -e HTTP -e quotes
+        out: |-
+             HTTP/1.1 231 unknown
+             foo: 123
+             bar: vaz
+             but: 
+             no quotes
+    -   in: curl --silent --include "https://${BINARIS_INVOKE_ENDPOINT}/v1/run/${BINARIS_API_KEY}/customResponse?throw=yes" | grep -e foo -e err -e bar -e but -e HTTP -e quotes
+        out: |-
+             HTTP/1.1 231 unknown
+             foo: 123
+             err: yes
+             bar: vaz
+             but: 
+             no quotes
+    -   in: bn remove customResponse
