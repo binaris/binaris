@@ -694,15 +694,23 @@
   steps:
     -   in: bn create node8 perplexingpersimmon
     -   in: bn deploy perplexingpersimmon
-        err: "Error: Invalid API key"
+        err: |-
+            Error: Invalid API key
+
+            Tip: You can export BINARIS_LOG_LEVEL=[silly|debug|verbose|info|warn|error] to view debug logs
         exit: 1
     -   in: bn list
-        err: "Error: Invalid API key"
+        err: |-
+            Error: Invalid API key
+
+            Tip: You can export BINARIS_LOG_LEVEL=[silly|debug|verbose|info|warn|error] to view debug logs
         exit: 1
     -   in: BINARIS_API_KEY=boguskey bn invoke perplexingpersimmon
         err: |-
             Unauthorized request. Make sure you're passing the right API key.
             request_id: *
+
+            Tip: You can export BINARIS_LOG_LEVEL=[silly|debug|verbose|info|warn|error] to view debug logs
         exit: 1
 
 - test: Deploy of 200MB function succeeds
