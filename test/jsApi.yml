@@ -23,20 +23,14 @@
     -   in: bn deploy returnMethod
     -   in: curl -s -X GET "https://${BINARIS_INVOKE_ENDPOINT}/v1/run/${BINARIS_API_KEY}/returnMethod"
         out: '"GET"'
-#    -   in: curl -s -X HEAD "https://${BINARIS_INVOKE_ENDPOINT}/v1/run/${BINARIS_API_KEY}/returnMethod"
-#        out: '"HEAD"'
     -   in: curl -s -X POST "https://${BINARIS_INVOKE_ENDPOINT}/v1/run/${BINARIS_API_KEY}/returnMethod"
         out: '"POST"'
     -   in: curl -s -X PUT "https://${BINARIS_INVOKE_ENDPOINT}/v1/run/${BINARIS_API_KEY}/returnMethod"
         out: '"PUT"'
     -   in: curl -s -X DELETE "https://${BINARIS_INVOKE_ENDPOINT}/v1/run/${BINARIS_API_KEY}/returnMethod"
         out: '"DELETE"'
-#    -   in: curl -s -X CONNECT "https://${BINARIS_INVOKE_ENDPOINT}/v1/run/${BINARIS_API_KEY}/returnMethod"
-#        out: '"CONNECT"'
     -   in: curl -s -X OPTIONS "https://${BINARIS_INVOKE_ENDPOINT}/v1/run/${BINARIS_API_KEY}/returnMethod"
         out: '"OPTIONS"'
-#    -   in: curl -s -X TRACE "https://${BINARIS_INVOKE_ENDPOINT}/v1/run/${BINARIS_API_KEY}/returnMethod"
-#        out: '"TRACE"'
     -   in: curl -s -X PATCH "https://${BINARIS_INVOKE_ENDPOINT}/v1/run/${BINARIS_API_KEY}/returnMethod"
         out: '"PATCH"'
     -   in: bn remove returnMethod
