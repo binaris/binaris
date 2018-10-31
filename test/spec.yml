@@ -721,7 +721,7 @@
       out: |-
           "Hello World!"
 
-- test: Test if imagemagick exists in bolt
+- test: Test if imagemagick exists in runtime environment
   setup:
       - bn create node8 imagemagick
       - npm i shelljs
@@ -739,7 +739,7 @@
   steps:
       - in: bn invoke imagemagick
         out: |-
-            "Version: ImageMagick 6.8*
+            "Version: ImageMagick *
 
 - test: Stats help
   steps:
