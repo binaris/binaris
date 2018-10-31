@@ -10,6 +10,9 @@
   steps:
     -   in: bn deploy -p /home/dockeruser/test/trollycopter icydiceymolecule
         err: "ENOENT: no such file or directory, open '/home/dockeruser/test/trollycopter/binaris.yml'"
+        out: |-
+            
+            Tip: You can export BINARIS_LOG_LEVEL=[silly|debug|verbose|info|warn|error] to view debug logs
         exit: 1
 
 - test: No matching function (bad-path)
@@ -17,6 +20,9 @@
     -   in: bn create node8 unrelatedname
     -   in: bn deploy grouchybear
         err: Cannot find function 'grouchybear' in binaris.yml
+        out: |-
+            
+            Tip: You can export BINARIS_LOG_LEVEL=[silly|debug|verbose|info|warn|error] to view debug logs
         exit: 1
 
 - test: No Binaris backend (bad-path)
@@ -26,9 +32,15 @@
     -   in: bn create node8 naughtyvegetable
     -   in: bn deploy naughtyvegetable
         err: "Error: getaddrinfo ENOTFOUND fake.binaris.neverworks fake.binaris.neverworks:443"
+        out: |-
+            
+            Tip: You can export BINARIS_LOG_LEVEL=[silly|debug|verbose|info|warn|error] to view debug logs
         exit: 1
     -   in: bn remove naughtyvegetable
         err: "Error: getaddrinfo ENOTFOUND fake.binaris.neverworks fake.binaris.neverworks:443"
+        out: |-
+            
+            Tip: You can export BINARIS_LOG_LEVEL=[silly|debug|verbose|info|warn|error] to view debug logs
         exit: 1
 
 - test: Corrupt binaris conf file (bad-path)
@@ -39,6 +51,9 @@
     -   in: bn create node8 didacticbrothers
     -   in: bn deploy didacticbrothers
         err: Invalid Binaris conf file (missing API key) /home/dockeruser/.binaris.yml
+        out: |-
+            
+            Tip: You can export BINARIS_LOG_LEVEL=[silly|debug|verbose|info|warn|error] to view debug logs
         exit: 1
 
 - test: create function with template name
@@ -54,4 +69,7 @@
     -   in: sed -i '5d' binaris.yml
     -   in: bn deploy missfield
         err: "binaris.yml: missing a required field <runtime>"
+        out: |-
+            
+            Tip: You can export BINARIS_LOG_LEVEL=[silly|debug|verbose|info|warn|error] to view debug logs
         exit: 1
