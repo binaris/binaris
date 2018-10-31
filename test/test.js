@@ -71,7 +71,7 @@ function limitedTest(name, testFn) {
 }
 
 function stripText(origText) {
-  return strip(origText.split('\r').join('').slice(0, -1));
+  return strip(origText.split('\r').join('').replace(/\n$/, ''));
 }
 
 function createTest(rawSubTest) {
