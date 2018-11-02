@@ -36,7 +36,7 @@ async function loggedRequest(options, type = 'post') {
     ...options,
     headers: {
       ...(options.headers || {}),
-      'X-binaris-Client-Version': version,
+      'X-Binaris-Client-Version': version,
     },
   });
   logger.debug('raw response', inspect(response, { depth: null }));
