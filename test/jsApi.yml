@@ -130,7 +130,7 @@
     -   in: |-
            cat >function.js << EOL
            exports.handler = async (_, ctx) => {
-             const response = ctx.response({
+             return new ctx.Response({
                statusCode: 231,
                headers: {
                  foo: 123,
@@ -139,10 +139,6 @@
                },
                body: Buffer.from('no quotes'),
              });
-             if (ctx.request.query.throw) {
-               throw response;
-             }
-             return response;
            }
            EOL
     -   in: bn deploy customResponse
