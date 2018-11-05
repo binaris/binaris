@@ -747,6 +747,34 @@
         out: |-
             "Version: ImageMagick *
 
+- test: Test invalid option to command (bad-path)
+  steps:
+    -   in: bn invoke hello --notarealarg
+        err: |-
+            Usage: bn invoke <function> [options]
+            
+            Positionals:
+              function  Function name  [string] [required]
+            
+            Options:
+              --version   Show version number  [boolean]
+              --help, -h  Show help  [boolean]
+              --json, -j  Path to file containing JSON data  [string]
+              --data, -d  Data to send with invocation  [string]
+            
+            Examples:
+                // invoke a function
+                bn invoke foo
+            
+                // invoke using JSON file data
+                bn invoke foo --json ./path/to/myfile.json
+            
+                // invoke foo and send JSON data in the body
+                bn invoke foo --data '{ "name": "helloworld" }'
+            
+            Unknown argument: notarealarg
+        exit: 1
+
 - test: Stats help
   steps:
     - in: bn stats --help
