@@ -312,7 +312,7 @@
         out: |-
           *[201*-*-*T*:*:*Z] Function gulliblezebra deployed (version digest:*)*
           *[201*-*-*T*:*:*Z] Hello World!*
-          *[201*-*-*T*:*:*Z] Function gulliblezebra deleted.*
+          *[201*-*-*T*:*:*Z] Function gulliblezebra removed.*
 
 - test: "envs: deploy invoke remove with secrets"
   steps:
