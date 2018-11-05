@@ -295,6 +295,8 @@
         out: |-
             Created function * in /home/dockeruser/test
               (use "bn deploy gulliblezebra" to deploy the function)
+    -   in: |-
+            echo 'exports.handler = () => { s = "Hello World!"; console.log(s); return s; };' >function.js
     -   in: bn deploy gulliblezebra
         out: |-
             Deployed function to *
@@ -305,6 +307,12 @@
     -   in: bn remove gulliblezebra
         out: |-
             Removed function *
+    -   in: sleep 5
+    -   in: bn logs gulliblezebra
+        out: |-
+          *[201*-*-*T*:*:*Z] Function gulliblezebra deployed (version digest:*)*
+          *[201*-*-*T*:*:*Z] Hello World!*
+          *[201*-*-*T*:*:*Z] Function gulliblezebra removed.*
 
 - test: "envs: deploy invoke remove with secrets"
   steps:
@@ -583,6 +591,7 @@
         exit: 1
     -   in: bn deploy dispensabledrop
     -   in: bn remove dispensabledrop
+        out: "*Removed function dispensabledrop*"
     -   in: bn remove dispensabledrop
         err: "Error: No such function"
         exit: 1
