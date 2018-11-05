@@ -28,7 +28,6 @@ const handleCommand = async function handleCommand(options, specificHandler) {
     msgAndExit(`Invalid subcommand ${cmdSeq[1]} for command ${cmdSeq[0]}`, true);
   }
 
-  console.log(options);
   await specificHandler(options);
   process.exit(0);
 };
