@@ -28,6 +28,7 @@ const handleCommand = async function handleCommand(options, specificHandler) {
     msgAndExit(`Invalid subcommand ${cmdSeq[1]} for command ${cmdSeq[0]}`, true);
   }
 
+  console.log(options);
   await specificHandler(options);
   process.exit(0);
 };
@@ -268,6 +269,7 @@ Usage: $0 <command> [options]` // eslint-disable-line comma-dangle
   })
   // .strict()
   .demand(1, 'Please provide at least 1 valid command')
+  .strict()
   .help('help')
   .alias('help', 'h')
   .wrap(null);
