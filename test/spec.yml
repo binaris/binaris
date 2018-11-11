@@ -653,7 +653,7 @@
         invokestats* function_duration_us* #* #-#-#T#:#:#.#Z* #-#-#T#:#:#.#Z*
         invokestats* function_invocations* #* #-#-#T#:#:#.#Z* #-#-#T#:#:#.#Z*
     - in: bn stats --since "3m" --json
-      out: '{*"metrics":[*]*}'
+      out: '{*"metrics":[*'
 
 - test: Empty stats
   steps:
