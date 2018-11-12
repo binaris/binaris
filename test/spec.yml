@@ -399,8 +399,8 @@
     -   in: bn create node8 a:b?c!d-
         err: Invalid characters in function name a:b?c!d-. Use only letters and digits
         exit: 1
-    -   in: bn create node8 tooooooooooooooooooooooooooooooooooooooooooooooolongggggggggggggggggggggggggggggggggggggggggggggggggggggggggg
-        err: Function names cannot be longer than 58 characters.
+    -   in: bn create node8 binarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinaris12345
+        err: Function names cannot be longer than 200 characters.
         exit: 1
     -   in: bn create
         err: "*Not enough non-option arguments: got 0, need at least 2"
@@ -783,4 +783,13 @@
     - in: bn deploy largeData300MB
       err: "Error: Payload too large"
       exit: 1
+
+- test: Test deploy of long name
+  steps:
+    -   in: bn create node8 binarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinaris1234
+    -   in: bn deploy binarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinaris1234
+    -   in: bn invoke binarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinaris1234
+        out: |-
+            *"Hello World!"*
+    -   in: bn remove binarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinaris1234
 
