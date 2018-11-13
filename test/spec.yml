@@ -399,9 +399,6 @@
     -   in: bn create node8 a:b?c!d-
         err: Invalid characters in function name a:b?c!d-. Use only letters and digits
         exit: 1
-    -   in: bn create node8 binarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinaris12345
-        err: Function names cannot be longer than 200 characters.
-        exit: 1
     -   in: bn create
         err: "*Not enough non-option arguments: got 0, need at least 2"
         exit: 1
@@ -792,4 +789,24 @@
         out: |-
             *"Hello World!"*
     -   in: bn remove binarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinaris1234
+
+- test: Test deploy of somewhat long name
+  steps:
+    -   in: bn create node8 binarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinaris
+    -   in: bn deploy binarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinaris
+        exit: 1
+        err: "Error: ERR_FUNCTION_NAME_TOO_LONG"
+
+- test: Test remove of somewhat long name
+  steps:
+    -   in: bn remove binarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinaris
+        exit: 1
+        err: "Error: ERR_FUNCTION_NAME_TOO_LONG"
+
+- test: Test deploy of very long name
+  steps:
+    -   in: bn create node8 binarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinaris1234
+    -   in: bn deploy binarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinaris1234
+        exit: 1
+        err: "ENAMETOOLONG: name too long, open '/home/dockeruser/test/.binaris/binarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinaris1234.tgz'"
 
