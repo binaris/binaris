@@ -781,7 +781,7 @@
       err: "Error: Payload too large"
       exit: 1
 
-- test: Test deploy of long name
+- test: Test deploy of long name (good-path)
   setup:
     - export LONG_NAME=binarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinaris1234
   steps:
@@ -790,9 +790,9 @@
     -   in: bn invoke $LONG_NAME
         out: |-
             *"Hello World!"*
-    -   in: bn remove binarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinaris1234
+    -   in: bn remove $LONG_NAME
 
-- test: Test deploy of somewhat long name
+- test: Test deploy of somewhat long name (bad-path)
   setup:
     - export SERVER_LONG_NAME=binarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinaris
   steps:
@@ -801,13 +801,13 @@
         exit: 1
         err: "Error: ERR_FUNCTION_NAME_TOO_LONG"
 
-- test: Test remove of somewhat long name
+- test: Test remove of somewhat long name (bad-path)
   steps:
     -   in: bn remove binarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinaris
         exit: 1
         err: "Error: ERR_FUNCTION_NAME_TOO_LONG"
 
-- test: Test deploy of very long name
+- test: Test deploy of very long name (bad-path)
   setup:
     - export LOCAL_LONG_NAME=binarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinaris1111
   steps:
