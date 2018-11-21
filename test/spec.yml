@@ -399,9 +399,6 @@
     -   in: bn create node8 a:b?c!d-
         err: Invalid characters in function name a:b?c!d-. Use only letters and digits
         exit: 1
-    -   in: bn create node8 tooooooooooooooooooooooooooooooooooooooooooooooolongggggggggggggggggggggggggggggggggggggggggggggggggggggggggg
-        err: Function names cannot be longer than 58 characters.
-        exit: 1
     -   in: bn create
         err: "*Not enough non-option arguments: got 0, need at least 2"
         exit: 1
@@ -653,7 +650,7 @@
         invokestats* function_duration_us* #* #-#-#T#:#:#.#Z* #-#-#T#:#:#.#Z*
         invokestats* function_invocations* #* #-#-#T#:#:#.#Z* #-#-#T#:#:#.#Z*
     - in: bn stats --since "3m" --json
-      out: '{*"metrics":[*]*}'
+      out: '{*"metrics":[*'
 
 - test: Empty stats
   steps:
@@ -783,4 +780,39 @@
     - in: bn deploy largeData300MB
       err: "Error: Payload too large"
       exit: 1
+
+- test: Test deploy of long name (good-path)
+  setup:
+    - export LONG_NAME=binarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinaris1234
+  steps:
+    -   in: bn create node8 $LONG_NAME
+    -   in: bn deploy $LONG_NAME
+    -   in: bn invoke $LONG_NAME
+        out: |-
+            *"Hello World!"*
+    -   in: bn remove $LONG_NAME
+
+- test: Test deploy of somewhat long name (bad-path)
+  setup:
+    - export SERVER_LONG_NAME=binarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinaris
+  steps:
+    -   in: bn create node8 $SERVER_LONG_NAME
+    -   in: bn deploy $SERVER_LONG_NAME
+        exit: 1
+        err: "Error: ERR_FUNCTION_NAME_TOO_LONG"
+
+- test: Test remove of somewhat long name (bad-path)
+  steps:
+    -   in: bn remove binarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinaris
+        exit: 1
+        err: "Error: ERR_FUNCTION_NAME_TOO_LONG"
+
+- test: Test deploy of very long name (bad-path)
+  setup:
+    - export LOCAL_LONG_NAME=binarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinaris1111
+  steps:
+    -   in: bn create node8 $LOCAL_LONG_NAME
+    -   in: bn deploy $LOCAL_LONG_NAME
+        exit: 1
+        err: "ENAMETOOLONG: name too long, open '/home/dockeruser/test/.binaris/binaris*1111.tgz'"
 
