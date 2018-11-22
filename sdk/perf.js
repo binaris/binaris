@@ -11,10 +11,11 @@ const logger = require('../lib/logger');
  * @param {string} funcName - name of the function to invoke
  * @param {number} maxRequests - How many invocations in total
  * @param {number} concurrency - How many invocations run in parallel
+ * @param {number} maxSeconds - Maximum seconds to run
  *
  * @returns {object} - latency report (based on the loadtest npm package)
  */
-const perf = async function perf(apiKey, funcName, maxRequests, concurrency, funcData) {
+const perf = async function perf(apiKey, funcName, maxRequests, concurrency, funcData, maxSeconds) {
   const options = {
     url: urljoin(`https://${getInvokeEndpoint()}`, 'v1', 'run', apiKey, funcName),
     headers: { 'Content-Type': 'application/json' },
@@ -22,6 +23,7 @@ const perf = async function perf(apiKey, funcName, maxRequests, concurrency, fun
     // body: TODO: add optional json body
     concurrency,
     maxRequests,
+    maxSeconds,
     agentKeepAlive: true,
   };
   logger.debug('Running perf test on function', options);
