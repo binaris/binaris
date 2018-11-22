@@ -147,7 +147,7 @@ Usage: $0 <command> [options]` // eslint-disable-line comma-dangle
         type: 'string',
       })
       .example(
-` // Run performance test on function foo (100 invocations, serially)
+` // Run performance test on function foo (5000 invocations, serially)
   bn perf foo
 
   // Run performance test with 1,000 invocations
