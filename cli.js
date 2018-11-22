@@ -146,6 +146,11 @@ Usage: $0 <command> [options]` // eslint-disable-line comma-dangle
         describe: 'Data to include with performance invocations',
         type: 'string',
       })
+      .option('maxSeconds', {
+        alias: 't',
+        describe: 'Maximum time in seconds',
+        type: 'number',
+      })
       .example(
 ` // Run performance test on function foo (5000 invocations, serially)
   bn perf foo
@@ -158,6 +163,9 @@ Usage: $0 <command> [options]` // eslint-disable-line comma-dangle
 
   // Run performance test with 1,000 invocations and send JSON data with each request
   bn perf foo -n 1000 -d '{ "someData": "myData" }'
+
+  // Run performance test only up to 10 seconds
+  bn perf foo -t 10
 `);
   }, async (argv) => {
     await handleCommand(argv, perfHandler);

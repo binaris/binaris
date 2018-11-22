@@ -816,3 +816,62 @@
         exit: 1
         err: "ENAMETOOLONG: name too long, open '/home/dockeruser/test/.binaris/binaris*1111.tgz'"
 
+- test: Test perf 1 second (good-path)
+  setup:
+    - bn create node8 measure1sec
+    - bn deploy measure1sec
+  cleanup:
+    - bn remove measure1sec
+  steps:
+    -   in: bn perf -t 1 measure1sec
+        out: |-
+            Running performance test on function measure1sec.
+            Executing 5000 invocations with 1 "thread" up to 1 second.
+            Stand by for results...
+
+            Perf summary
+            ============
+            Total time  * s*
+            Invocations *
+            Errors      *
+            Rate        * rps*
+
+            Latencies
+            =========
+            Mean * ms*
+            Min  * ms*
+            Max  * ms*
+            50%  * ms*
+            90%  * ms*
+            95%  * ms*
+            99%  * ms*
+
+- test: Test perf 100 invocations (good-path)
+  setup:
+    - bn create node8 measure100
+    - bn deploy measure100
+  cleanup:
+    - bn remove measure100
+  steps:
+    -   in: bn perf -n 100 measure100
+        out: |-
+            Running performance test on function measure100.
+            Executing 100 invocations with 1 "thread".
+            Stand by for results...
+
+            Perf summary
+            ============
+            Total time  * s*
+            Invocations *
+            Errors      *
+            Rate        * rps*
+
+            Latencies
+            =========
+            Mean * ms*
+            Min  * ms*
+            Max  * ms*
+            50%  * ms*
+            90%  * ms*
+            95%  * ms*
+            99%  * ms*
