@@ -6,6 +6,8 @@ const logger = require('../lib/logger');
 
 const { translateErrorCode } = require('binaris-pickle');
 
+const { version } = require('../package.json');
+
 class APIError extends Error {}
 
 function validateResponse(response) {
@@ -14,7 +16,7 @@ function validateResponse(response) {
     throw new APIError(`Error: ${translateErrorCode(errorCode)}`);
   }
 
-  const errorText = get(response, 'body.errorText');
+  const errorText = get(response, 'body.error');
   if (errorText) {
     throw new APIError(errorText);
   }
@@ -32,6 +34,10 @@ async function loggedRequest(options, type = 'post') {
     simple: false,
     resolveWithFullResponse: true,
     ...options,
+    headers: {
+      ...(options.headers || {}),
+      'X-Binaris-Client-Version': version,
+    },
   });
   logger.debug('raw response', inspect(response, { depth: null }));
   return response;
@@ -44,7 +50,8 @@ async function getValidatedBody(options, type = 'post') {
 
 module.exports = {
   APIError,
+  getValidatedBody,
   loggedRequest,
   validateResponse,
-  getValidatedBody,
+  version,
 };

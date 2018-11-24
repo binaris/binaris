@@ -5,7 +5,7 @@ const request = require('request');
 const logger = require('../lib/logger');
 
 const { getDeployEndpoint } = require('./config');
-const { getValidatedBody, validateResponse } = require('./handleError');
+const { getValidatedBody, validateResponse, version } = require('./handleError');
 
 /**
  * Deploys a tarball, whose contents represent a Binaris function deployment
@@ -22,6 +22,7 @@ const deployCode = async function deployCode(deployURLBase, apiKey, tarPath) {
     headers: {
       'Content-Type': 'application/gzip',
       'X-Binaris-Api-Key': apiKey,
+      'X-Binaris-Client-Version': version,
     },
     json: true,
   };
@@ -85,8 +86,8 @@ ${key}'s value is not a string.`);
     url: urljoin(deployURLBase, 'v2', 'conf', apiKey, funcName),
     body: funcConf,
   };
-  const { digest } = await getValidatedBody(confDeployOptions);
 
+  const { digest } = await getValidatedBody(confDeployOptions);
   const tagDeployOptions = {
     url: urljoin(deployURLBase, 'v2', 'tag', apiKey, funcName, 'latest'),
     body: { digest },
