@@ -61,7 +61,8 @@ Usage: $0 <command> [options]` // eslint-disable-line comma-dangle
         alias: 'p',
         describe: 'Use directory dir. "create" will create this directory if needed.',
         type: 'string',
-      });
+      })
+      .strict();
   }, async (argv) => {
     await handleCommand(argv, createHandler);
   })
@@ -72,7 +73,8 @@ Usage: $0 <command> [options]` // eslint-disable-line comma-dangle
         describe: 'Function name',
         type: 'string',
       })
-      .option(...pathOption);
+      .option(...pathOption)
+      .strict();
   }, async (argv) => {
     await handleCommand(argv, deployHandler);
   })
@@ -82,7 +84,8 @@ Usage: $0 <command> [options]` // eslint-disable-line comma-dangle
       .positional('function', {
         describe: 'Function name',
         type: 'string',
-      });
+      })
+      .strict();
   }, async (argv) => {
     await handleCommand(argv, removeHandler);
   })
@@ -103,6 +106,7 @@ Usage: $0 <command> [options]` // eslint-disable-line comma-dangle
         describe: 'Data to send with invocation',
         type: 'string',
       })
+      .strict()
       .example(
 `  // invoke a function
   bn invoke foo
@@ -118,7 +122,8 @@ Usage: $0 <command> [options]` // eslint-disable-line comma-dangle
   .command('list [options]', 'List all deployed functions', (yargs0) => {
     yargs0
       .usage('Usage: $0 list [options]')
-      .option('json', { describe: 'Output as JSON' });
+      .option('json', { describe: 'Output as JSON' })
+      .strict();
   }, async (argv) => {
     await handleCommand(argv, listHandler);
   })
@@ -151,6 +156,7 @@ Usage: $0 <command> [options]` // eslint-disable-line comma-dangle
         describe: 'Maximum time in seconds',
         type: 'number',
       })
+      .strict()
       .example(
 ` // Run performance test on function foo (5000 invocations, serially)
   bn perf foo
@@ -187,6 +193,7 @@ Usage: $0 <command> [options]` // eslint-disable-line comma-dangle
         describe: 'Outputs logs after the given ISO timestamp',
         type: 'string',
       })
+      .strict()
       .example(
 `  // retrieve all logs
   bn logs foo
@@ -229,6 +236,7 @@ Usage: $0 <command> [options]` // eslint-disable-line comma-dangle
         type: 'string',
       })
       .option('json', { describe: 'Output as JSON' })
+      .strict()
       .example(
 `  // Retrieve all usage statistics of the account
   bn stats
@@ -262,13 +270,12 @@ Usage: $0 <command> [options]` // eslint-disable-line comma-dangle
   })
   .command('login', 'Login to your Binaris account using an API key', (yargs0) => {
     yargs0
-      .usage('Usage: $0 login');
+      .usage('Usage: $0 login')
+      .strict();
   }, async () => {
     await loginHandler();
   })
-  // .strict()
   .demand(1, 'Please provide at least 1 valid command')
-  .strict()
   .help('help')
   .alias('help', 'h')
   .wrap(null);
