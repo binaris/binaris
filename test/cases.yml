@@ -12,7 +12,7 @@
         err: "ENOENT: no such file or directory, open '/home/dockeruser/test/trollycopter/binaris.yml'"
         out: |-
             
-            Tip: You can export BINARIS_LOG_LEVEL=[silly|debug|verbose|info|warn|error] to view debug logs
+            Tip: You can export BINARIS_LOG_LEVEL=[silly|debug|verbose] to view debug logs
         exit: 1
 
 - test: No matching function (bad-path)
@@ -22,7 +22,7 @@
         err: Cannot find function 'grouchybear' in binaris.yml
         out: |-
             
-            Tip: You can export BINARIS_LOG_LEVEL=[silly|debug|verbose|info|warn|error] to view debug logs
+            Tip: You can export BINARIS_LOG_LEVEL=[silly|debug|verbose] to view debug logs
         exit: 1
 
 - test: No Binaris backend (bad-path)
@@ -34,13 +34,13 @@
         err: "Error: getaddrinfo ENOTFOUND fake.binaris.neverworks fake.binaris.neverworks:443"
         out: |-
             
-            Tip: You can export BINARIS_LOG_LEVEL=[silly|debug|verbose|info|warn|error] to view debug logs
+            Tip: You can export BINARIS_LOG_LEVEL=[silly|debug|verbose] to view debug logs
         exit: 1
     -   in: bn remove naughtyvegetable
         err: "Error: getaddrinfo ENOTFOUND fake.binaris.neverworks fake.binaris.neverworks:443"
         out: |-
             
-            Tip: You can export BINARIS_LOG_LEVEL=[silly|debug|verbose|info|warn|error] to view debug logs
+            Tip: You can export BINARIS_LOG_LEVEL=[silly|debug|verbose] to view debug logs
         exit: 1
 
 - test: Corrupt binaris conf file (bad-path)
@@ -53,7 +53,7 @@
         err: Invalid Binaris conf file (missing API key) /home/dockeruser/.binaris.yml
         out: |-
             
-            Tip: You can export BINARIS_LOG_LEVEL=[silly|debug|verbose|info|warn|error] to view debug logs
+            Tip: You can export BINARIS_LOG_LEVEL=[silly|debug|verbose] to view debug logs
         exit: 1
 
 - test: create function with template name
@@ -71,5 +71,5 @@
         err: "binaris.yml: missing a required field <runtime>"
         out: |-
             
-            Tip: You can export BINARIS_LOG_LEVEL=[silly|debug|verbose|info|warn|error] to view debug logs
+            Tip: You can export BINARIS_LOG_LEVEL=[silly|debug|verbose] to view debug logs
         exit: 1
