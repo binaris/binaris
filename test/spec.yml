@@ -16,6 +16,7 @@
                 bn perf <function> [options]              Measure invocation latency (experimental)
                 bn logs <function> [options]              Print the logs of a function
                 bn login                                  Login to your Binaris account using an API key and account id
+                bn feedback <email> <message>             Provide feedback on the Binaris product
 
               Options:
                 --version   Show version number  [boolean]
@@ -169,6 +170,18 @@
           Invoke with one of:
             "bn invoke public_drymeat"
             "curl https://*"
+
+- test: Test feedback (good-path)
+  steps:
+    -   in: bn feedback "$FEEDBACK_EMAIL" "$FEEDBACK_MESSAGE"
+    -   out: |-
+            Thank you!
+
+- test: Test feedback (good-path)
+  steps:
+    -   in: bn feedback --message "$FEEDBACK_MESSAGE" --email "$FEEDBACK_EMAIL"
+    -   out: |-
+            Thank you!
 
 - test: Test Java
   cleanup:
@@ -456,6 +469,7 @@
 
 - test: Test login endpoint error (bad-path)
   steps:
+
     -   in: unset BINARIS_API_KEY
     -   in: echo 9239239 | BINARIS_DEPLOY_ENDPOINT=fake.api.binaris.invalid. bn login
         err: "Error: getaddrinfo ENOTFOUND fake.api.binaris.invalid. fake.api.binaris.invalid.:443"
@@ -466,6 +480,18 @@
     -   in: unset BINARIS_API_KEY
     -   in: echo 9239239 | BINARIS_INVOKE_ENDPOINT=fake.run.binaris.invalid. bn login
         err: "Error: getaddrinfo ENOTFOUND fake.run.binaris.invalid. fake.run.binaris.invalid.:443"
+        exit: 1
+
+- test: Test feedback empty message (bad-path)
+  steps:
+    -   in: bn feedback "$FEEDBACK_EMAIL" ""
+        err: Not a valid message.
+        exit: 1
+
+- test: Test feedback empty email (bad-path)
+  steps:
+    -   in: bn feedback "" "$FEEDBACK_MESSAGE"
+        err: Not a valid email.
         exit: 1
 
 - test: Test create (bad-path)
