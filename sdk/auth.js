@@ -1,3 +1,5 @@
+'use strict';
+
 const urljoin = require('urljoin');
 const rp = require('request-promise-native');
 

@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+'use strict';
+
 const minNodeVersion = '8.0.0';
 const semver = require('semver');
 

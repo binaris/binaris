@@ -1,3 +1,5 @@
+'use strict';
+
 // Test runner
 const test = require('ava');
 
