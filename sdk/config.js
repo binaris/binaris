@@ -1,3 +1,5 @@
+'use strict';
+
 const getDeployEndpoint = function getDeployEndpoint() {
   return process.env.BINARIS_DEPLOY_ENDPOINT || 'api.binaris.com';
 };

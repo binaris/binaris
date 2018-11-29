@@ -1,3 +1,5 @@
+'use strict';
+
 // SDK dir structure confuses eslint
 /* eslint-disable import/no-extraneous-dependencies */
 const test = require('ava');

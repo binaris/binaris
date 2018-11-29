@@ -1,3 +1,5 @@
+'use strict';
+
 /**
  * Imitates stdc sleep behavior using es6 async/await
  *

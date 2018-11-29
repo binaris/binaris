@@ -1,3 +1,5 @@
+'use strict';
+
 const urljoin = require('urljoin');
 const logger = require('../lib/logger');
 const { getValidatedBody } = require('./handleError');

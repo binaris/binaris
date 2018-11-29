@@ -1,3 +1,5 @@
+'use strict';
+
 // this is just a convenience/wrapper for the individual commands
 const auth = require('./auth');
 const deploy = require('./deploy');

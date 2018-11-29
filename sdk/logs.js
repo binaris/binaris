@@ -1,3 +1,5 @@
+'use strict';
+
 const urljoin = require('urljoin');
 const { loggedRequest, validateResponse } = require('./handleError');
 const logger = require('../lib/logger');

@@ -1,3 +1,5 @@
+'use strict';
+
 const get = require('lodash.get');
 const { inspect } = require('util');
 const rp = require('request-promise-native');

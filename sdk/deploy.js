@@ -1,3 +1,5 @@
+'use strict';
+
 const fs = require('fs');
 const urljoin = require('urljoin');
 const request = require('request');

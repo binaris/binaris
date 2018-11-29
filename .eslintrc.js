@@ -9,6 +9,8 @@ module.exports = {
     "no-unused-vars": ["error", {
       argsIgnorePattern: "^unused",
     }],
+  },
+  "parserOptions": {
+    "sourceType": "script"
   }
-
 };
