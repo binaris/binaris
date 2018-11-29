@@ -28,6 +28,7 @@ const logs = async function logs(functionName, apiKey, follow, startAfter, token
     },
   };
 
+  let recentError;
   for (let attempt = 1, backoff = 3; attempt <= 3; attempt += 1, backoff *= 2) {
     try {
       // eslint-disable-next-line no-await-in-loop
@@ -41,10 +42,12 @@ const logs = async function logs(functionName, apiKey, follow, startAfter, token
         err,
         attempt,
       });
+      recentError = err;
       // eslint-disable-next-line no-await-in-loop
       await msleep(backoff);
     }
   }
+  throw recentError;
 };
 
 module.exports = logs;
