@@ -1,26 +1,32 @@
 'use strict';
 
-const urljoin = require('urljoin');
 const { loadTest } = require('loadtest');
 
-const { getInvokeEndpoint } = require('./config');
+const { getInvokeUrl } = require('./url');
 const logger = require('../lib/logger');
 
 /**
  * Run performance measurements on deployed function
  *
- * @param {string} apiKey - API Key
+ * @param {string} accountId - Binaris account id
  * @param {string} funcName - name of the function to invoke
+ * @param {string} apiKey - API Key
  * @param {number} maxRequests - How many invocations in total
  * @param {number} concurrency - How many invocations run in parallel
  * @param {number} maxSeconds - Maximum seconds to run
  *
  * @returns {object} - latency report (based on the loadtest npm package)
  */
-const perf = async function perf(apiKey, funcName, maxRequests, concurrency, funcData, maxSeconds) {
+const perf = async function perf(
+  accountId, funcName, apiKey, maxRequests, concurrency, funcData, maxSeconds,
+) {
+  const baseHeaders = apiKey ? { 'X-Binaris-Api-Key': apiKey } : {};
   const options = {
-    url: urljoin(`https://${getInvokeEndpoint()}`, 'v1', 'run', apiKey, funcName),
-    headers: { 'Content-Type': 'application/json' },
+    url: getInvokeUrl(accountId, funcName, apiKey),
+    headers: {
+      ...baseHeaders,
+      'Content-Type': 'application/json',
+    },
     body: funcData,
     // body: TODO: add optional json body
     concurrency,

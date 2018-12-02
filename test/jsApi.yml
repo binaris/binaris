@@ -3,7 +3,7 @@
     -   in: bn create node8 returnInput
     -   in: 'echo "exports.handler = (input) => ({ inputType: typeof input, input});" >function.js'
     -   in: bn deploy returnInput
-    -   in: export TEST_FUNCTION="https://${BINARIS_INVOKE_ENDPOINT}/v1/run/${BINARIS_API_KEY}/returnInput"
+    -   in: export TEST_FUNCTION="https://${BINARIS_INVOKE_ENDPOINT}/v2/run/${BINARIS_ACCOUNT_ID}/returnInput"
     -   in: curl -s "${TEST_FUNCTION}"
         out: '{"inputType":"object","input":{}}'
     -   in: curl -s --data '{"' "${TEST_FUNCTION}"
@@ -21,7 +21,7 @@
     -   in: bn create node8 returnMethod
     -   in: 'echo "exports.handler = (_, ctx) => ctx.request.method;" >function.js'
     -   in: bn deploy returnMethod
-    -   in: export TEST_FUNCTION="https://${BINARIS_INVOKE_ENDPOINT}/v1/run/${BINARIS_API_KEY}/returnMethod"
+    -   in: export TEST_FUNCTION="https://${BINARIS_INVOKE_ENDPOINT}/v2/run/${BINARIS_ACCOUNT_ID}/returnMethod"
     -   in: curl -s -X GET "${TEST_FUNCTION}"
         out: '"GET"'
     -   in: curl -s -X POST "${TEST_FUNCTION}"
@@ -41,7 +41,7 @@
     -   in: bn create node8 returnReqBody
     -   in: 'echo "exports.handler = (_, ctx) => ctx.request.body;" >function.js'
     -   in: bn deploy returnReqBody
-    -   in: export TEST_FUNCTION="https://${BINARIS_INVOKE_ENDPOINT}/v1/run/${BINARIS_API_KEY}/returnReqBody"
+    -   in: export TEST_FUNCTION="https://${BINARIS_INVOKE_ENDPOINT}/v2/run/${BINARIS_ACCOUNT_ID}/returnReqBody"
     -   in: curl -s "${TEST_FUNCTION}"
         out: '{"type":"Buffer","data":[]}'
     -   in: curl -s --data '{' "${TEST_FUNCTION}"
@@ -63,7 +63,7 @@
     -   in: bn create node8 returnReqTestHeader
     -   in: 'echo "exports.handler = (_, ctx) => ctx.request.headers.test;" >function.js'
     -   in: bn deploy returnReqTestHeader
-    -   in: export TEST_FUNCTION="https://${BINARIS_INVOKE_ENDPOINT}/v1/run/${BINARIS_API_KEY}/returnReqTestHeader"
+    -   in: export TEST_FUNCTION="https://${BINARIS_INVOKE_ENDPOINT}/v2/run/${BINARIS_ACCOUNT_ID}/returnReqTestHeader"
     -   in: curl -s "${TEST_FUNCTION}"
         out: ''
     -   in: 'curl -s -H "Test;" "${TEST_FUNCTION}"'
@@ -81,7 +81,7 @@
     -   in: bn create node8 returnReqQuery
     -   in: 'echo "exports.handler = (_, ctx) => ctx.request.query;" >function.js'
     -   in: bn deploy returnReqQuery
-    -   in: export TEST_FUNCTION="https://${BINARIS_INVOKE_ENDPOINT}/v1/run/${BINARIS_API_KEY}/returnReqQuery"
+    -   in: export TEST_FUNCTION="https://${BINARIS_INVOKE_ENDPOINT}/v2/run/${BINARIS_ACCOUNT_ID}/returnReqQuery"
     -   in: curl -s "${TEST_FUNCTION}"
         out: '{}'
     -   in: curl -s "${TEST_FUNCTION}?foo=123"
@@ -103,7 +103,7 @@
     -   in: bn create node8 returnReqPath
     -   in: 'echo "exports.handler = (_, ctx) => ctx.request.path;" >function.js'
     -   in: bn deploy returnReqPath
-    -   in: export TEST_FUNCTION="https://${BINARIS_INVOKE_ENDPOINT}/v1/run/${BINARIS_API_KEY}/returnReqPath"
+    -   in: export TEST_FUNCTION="https://${BINARIS_INVOKE_ENDPOINT}/v2/run/${BINARIS_ACCOUNT_ID}/returnReqPath"
     -   in: curl -s "${TEST_FUNCTION}"
         out: '"/"'
     -   in: curl -s "${TEST_FUNCTION}/////"
@@ -142,7 +142,7 @@
            }
            EOL
     -   in: bn deploy customResponse
-    -   in: curl --silent --include "https://${BINARIS_INVOKE_ENDPOINT}/v1/run/${BINARIS_API_KEY}/customResponse" | grep -e foo -e bar -e but -e HTTP -e quotes
+    -   in: curl -H X-Binaris-Api-Key:${BINARIS_API_KEY} --silent --include "https://${BINARIS_INVOKE_ENDPOINT}/v2/run/${BINARIS_ACCOUNT_ID}/customResponse" | grep -e foo -e bar -e but -e HTTP -e quotes
         out: |-
              HTTP/1.1 231 unknown
              foo: 123

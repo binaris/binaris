@@ -270,7 +270,7 @@ Usage: $0 <command> [options]` // eslint-disable-line comma-dangle
     }
     await handleCommand(argv, statsHandler);
   })
-  .command('login', 'Login to your Binaris account using an API key', (yargs0) => {
+  .command('login', 'Login to your Binaris account using an API key and account id', (yargs0) => {
     yargs0
       .usage('Usage: $0 login')
       .strict();
