@@ -1,24 +1,28 @@
 'use strict';
 
-const urljoin = require('urljoin');
 const rp = require('request-promise-native');
 
-const { getInvokeEndpoint } = require('./config');
+const { getInvokeUrl } = require('./url');
 const logger = require('../lib/logger');
 
 /**
  * Invokes a previously deployed Binaris function.
  *
+ * @param {string} accountId - Binaris account id
  * @param {string} funcName - name of the function to invoke
- * @param {string} apiKey - Binaris API key used to authenticate function invocation
+ * @param {string} apiKey - Optional Binaris API key used to authenticate function invocation
  * @param {string} funcData - valid JSON string to send with your invocation
  *
  * @returns {object} - response of function invocation
  */
-const invoke = async function invoke(funcName, apiKey, funcData) {
+const invoke = async function invoke(accountId, funcName, apiKey, funcData) {
+  const baseHeaders = apiKey ? { 'X-Binaris-Api-Key': apiKey } : {};
   const options = {
-    url: urljoin(`https://${getInvokeEndpoint()}`, 'v1', 'run', apiKey, funcName),
-    headers: { 'Content-Type': 'application/json' },
+    url: getInvokeUrl(accountId, funcName, apiKey),
+    headers: {
+      ...baseHeaders,
+      'Content-Type': 'application/json',
+    },
     body: funcData,
     resolveWithFullResponse: true,
   };

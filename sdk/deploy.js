@@ -1,26 +1,25 @@
 'use strict';
 
 const fs = require('fs');
-const urljoin = require('urljoin');
 const request = require('request');
 
 const logger = require('../lib/logger');
 
-const { getDeployEndpoint } = require('./config');
+const { getCodeUploadUrl, getConfUploadUrl, getConfTagUrl } = require('./url');
 const { getValidatedBody, validateResponse, version } = require('./handleError');
 
 /**
  * Deploys a tarball, whose contents represent a Binaris function deployment
  *
- * @param {string} deployURLBase - root deployment URL for conf endpoint
+ * @param {string} accountId - Binaris account ID
  * @param {string} apiKey - Binaris apiKey used to authenticate remote request
  * @param {string} tarPath - path to tarball that will be deployed
  *
  * @return {object} - digest of deployed function
  */
-const deployCode = async function deployCode(deployURLBase, apiKey, tarPath) {
+const deployCode = async function deployCode(accountId, apiKey, tarPath) {
   const codeDeployOptions = {
-    url: urljoin(deployURLBase, 'v2', 'code'),
+    url: getCodeUploadUrl(accountId),
     headers: {
       'Content-Type': 'application/gzip',
       'X-Binaris-Api-Key': apiKey,
@@ -50,14 +49,14 @@ const deployCode = async function deployCode(deployURLBase, apiKey, tarPath) {
  * Deploys the configuration of a previously deployed `tgz` file
  * holding the code for a Binaris function.
  *
- * @param {string} deployURLBase - root deployment URL for conf endpoint
- * @param {string} apiKey - Binaris apiKey used to authenticate remote request
+ * @param {string} accountId - Binaris account ID
  * @param {string} funcName - name of function whose conf is being deployed
+ * @param {string} apiKey - Binaris apiKey used to authenticate remote request
  * @param {string} funcConf - configuration object to deploy for the function
  *
  * @return {object} - response of tag operation
  */
-const deployConf = async function deployConf(deployURLBase, apiKey, funcName, funcConf) {
+const deployConf = async function deployConf(accountId, funcName, apiKey, funcConf) {
   const { env } = funcConf;
   if (env) {
     for (const key of Object.keys(env)) {
@@ -85,13 +84,19 @@ ${key}'s value is not a string.`);
     }
   }
   const confDeployOptions = {
-    url: urljoin(deployURLBase, 'v2', 'conf', apiKey, funcName),
+    url: getConfUploadUrl(accountId, funcName, apiKey),
+    headers: {
+      'X-Binaris-Api-Key': apiKey,
+    },
     body: funcConf,
   };
 
   const { digest } = await getValidatedBody(confDeployOptions);
   const tagDeployOptions = {
-    url: urljoin(deployURLBase, 'v2', 'tag', apiKey, funcName, 'latest'),
+    url: getConfTagUrl(accountId, funcName, apiKey, 'latest'),
+    headers: {
+      'X-Binaris-Api-Key': apiKey,
+    },
     body: { digest },
   };
   const response = await getValidatedBody(tagDeployOptions);
@@ -101,26 +106,18 @@ ${key}'s value is not a string.`);
 /**
  * Deploy a function to the Binaris cloud.
  *
+ * @param {string} accountId - Binaris account ID
  * @param {string} funcName - name of the function to deploy
  * @param {string} apiKey - Binaris API key used to authenticate function removal
  * @param {object} funcConf - configuration of the function to deploy
  * @param {string} tarPath - path of the tarball containing the function to deploy
- * @param {string} endpoint - binaris deploy endpoint
  *
  * @returns {object} - response { status, body }
  */
-const deploy = async function deploy(
-  funcName,
-  apiKey,
-  funcConf,
-  tarPath,
-  endpoint = getDeployEndpoint(),
-) {
-  const deployURLBase = `https://${endpoint}`;
-  const codeDigest = await deployCode(deployURLBase, apiKey, tarPath);
+const deploy = async function deploy(accountId, funcName, apiKey, funcConf, tarPath) {
+  const codeDigest = await deployCode(accountId, apiKey, tarPath);
   const confWithDigest = Object.assign({}, funcConf, { codeDigest });
-  const confDeployResp = await deployConf(deployURLBase, apiKey,
-    funcName, confWithDigest);
+  const confDeployResp = await deployConf(accountId, funcName, apiKey, confWithDigest);
   return confDeployResp;
 };
 

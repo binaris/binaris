@@ -1,26 +1,26 @@
 'use strict';
 
-const urljoin = require('urljoin');
 const { loggedRequest, validateResponse } = require('./handleError');
 const logger = require('../lib/logger');
 
-const { getLogEndpoint } = require('./config');
+const { getLogsUrl } = require('./url');
 
 const msleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 /**
  * Retrieves the logs of a previously deployed Binaris function.
  *
- * @param {string} functionName - name of functions whose logs will be retrieved
+ * @param {string} accountId - Binaris account id
+ * @param {string} funcName - name of functions whose logs will be retrieved
  * @param {string} apiKey - Binaris API key used to authenticate function invocation
  * @param {boolean} follow - as in tail -f
  * @param {Date} startAfter - datetime of first log record to fetch
  * @param {string} token - token for fetching next page (returned by this function)
  */
-const logs = async function logs(functionName, apiKey, follow, startAfter, token) { // eslint-disable-line consistent-return,max-len
+const logs = async function logs(accountId, funcName, apiKey, follow, startAfter, token) { // eslint-disable-line consistent-return,max-len
   const options = {
     forever: true,
-    url: urljoin(`https://${getLogEndpoint()}`, 'v1', 'logs', `${apiKey}-${functionName}`),
+    url: getLogsUrl(accountId, funcName, apiKey),
     qs: {
       startAfter,
       token,
