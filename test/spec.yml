@@ -191,7 +191,7 @@
             for (host of ['169.254.169.254', '172.17.0.1', '172.16.0.1']) {
                 try {
                     await rp.get('http://' + host);
-                    return 'should not be returned';
+                    throw new Error('should not be returned');
                 } catch (err) {
                     if (err.message.indexOf('ECONNREFUSED ' + host) === -1) {
                         throw err;
