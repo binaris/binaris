@@ -14,6 +14,7 @@ define cli_envs
 	-e BINARIS_LOG_LEVEL       \
 	-e tag                     \
 	-e BINARIS_API_KEY         \
+	-e BINARIS_ACCOUNT_ID      \
 	-e BINARIS_INVOKE_ENDPOINT \
 	-e BINARIS_DEPLOY_ENDPOINT \
 	-e BINARIS_LOG_ENDPOINT
