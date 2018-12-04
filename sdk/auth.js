@@ -3,34 +3,46 @@
 const urljoin = require('urljoin');
 const rp = require('request-promise-native');
 
-const { getDeployEndpoint } = require('./config');
+const { getInvokeEndpoint, getDeployEndpoint } = require('./config');
 
 /**
  * Verifies that the provided Binaris API key is correct by
  * querying the remote authentication server.
  *
- * @param {string} accountId - account ID to validate against
  * @param {string} apiKey - the apiKey to validate
  */
-const verifyAPIKey = async function verifyAPIKey(accountId, apiKey) {
-  // TODO: call some new URL in spice
-  const options = {
-    url: urljoin(`https://${getDeployEndpoint()}`, 'v3', 'authenticate', accountId),
-    headers: {
-      'X-Binaris-Api-Key': apiKey,
-    },
-    json: true,
-    simple: false,
-    resolveWithFullResponse: true,
-  };
+const verifyAPIKey = async function verifyAPIKey(apiKey) {
   try {
-    const response = await rp.get(options);
-    if (response.statusCode !== 200) {
-      return false;
+    const { accountId } = await rp.get({
+      url: urljoin(`https://${getDeployEndpoint()}`, 'v3', 'authenticate'),
+      headers: {
+        'X-Binaris-Api-Key': apiKey,
+      },
+      json: true,
+      simple: false,
+    });
+
+    return {
+      error: undefined,
+      accountId,
+    };
+  } catch (_) {
+    try {
+      await rp.get({
+        url: urljoin(`https://${getInvokeEndpoint()}`, 'v1', 'apikey', apiKey),
+        json: true,
+        simple: false,
+      });
+      return {
+        error: undefined,
+        accountId: undefined,
+      };
+    } catch (err) {
+      return {
+        error: err,
+        accountId: undefined,
+      };
     }
-    return true;
-  } catch (err) {
-    return false;
   }
 };
 

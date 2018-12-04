@@ -72,11 +72,10 @@
         out: |-
             Created function * in /home/dockeruser/test
               (use "bn deploy momentousgiants" to deploy the function)
-    -   in: echo "$BINARIS_ACCOUNT_ID\n$BINARIS_API_KEY" | bn login
+    -   in: echo $BINARIS_API_KEY | bn login
         out: |-
-            Please enter your Binaris account ID and API key to deploy and invoke functions.
-            If you don't have an account ID or key, head over to https://binaris.com to request one
-            *? Account ID: *
+            Please enter your Binaris API key to deploy and invoke functions.
+            If you don't have a key, head over to https://binaris.com to request one
             *? API Key: *
             *Authentication Succeeded*
               (use "bn create node8 hello" to create a Node.js template function in your CWD)
@@ -398,7 +397,7 @@
 - test: Test login (bad-path)
   steps:
     -   in: bn create node8 stormysummer
-    -   in: echo "$BINARIS_ACCOUNT_ID\n9239239" | bn login
+    -   in: echo 9239239 | bn login
         err: Invalid API key
         exit: 1
 
