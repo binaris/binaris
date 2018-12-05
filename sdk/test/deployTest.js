@@ -11,6 +11,7 @@ const nock = require('nock');
 // standard length of Binaris API key
 const APIKeyLength = 20;
 
+const testAccountId = generate({ length: 10, charset: 'numeric' });
 const testApiKey = generate(APIKeyLength);
 const testFuncConf = {
   file: 'function.js',
@@ -20,6 +21,16 @@ const testFuncConf = {
 };
 
 const testFuncName = 'binarisTestDeployFunction';
+
+async function withEndpoint(endpoint, fn) {
+  const oldEndpoint = process.env.BINARIS_DEPLOY_ENDPOINT;
+  process.env.BINARIS_DEPLOY_ENDPOINT = endpoint;
+  try {
+    await fn();
+  } finally {
+    process.env.BINARIS_DEPLOY_ENDPOINT = oldEndpoint;
+  }
+}
 
 test.beforeEach(async (t) => {
   // eslint-disable-next-line no-param-reassign
@@ -41,22 +52,26 @@ test.serial('Just test deploy (good-path)', async (t) => {
   // eslint-disable-next-line no-unused-vars
   const deployMock = nock(`https://${deployEndpoint}`);
   deployMock
-    .post('/v2/code')
+    .post(`/v3/code/${testAccountId}`)
     .matchHeader('X-Binaris-Api-Key', testApiKey)
     .matchHeader('Content-Type', 'application/gzip')
     .reply(200, digestObj);
 
   deployMock
-    .post(`/v2/conf/${testApiKey}/${testFuncName}`, testFuncConf)
+    .post(`/v3/conf/${testAccountId}/${testFuncName}`, testFuncConf)
+    .matchHeader('X-Binaris-Api-Key', testApiKey)
     .reply(200, digestObj);
 
   deployMock
-    .post(`/v2/tag/${testApiKey}/${testFuncName}/latest`, digestObj)
+    .post(`/v3/tag/${testAccountId}/${testFuncName}/latest`, digestObj)
+    .matchHeader('X-Binaris-Api-Key', testApiKey)
     .reply(200, { status: 'ok' });
 
-  const response = await deploy(testFuncName, testApiKey,
-    testFuncConf, t.context.fakeTarFileName, deployEndpoint);
-  t.deepEqual({ status: 'ok' }, response);
+  await withEndpoint(deployEndpoint, async () => {
+    const response = await deploy(testAccountId, testFuncName, testApiKey,
+      testFuncConf, t.context.fakeTarFileName);
+    t.deepEqual({ status: 'ok' }, response);
+  });
 });
 
 test.serial('Test deploy with bad key (bad-path)', async (t) => { // eslint-disable-next-line global-require
@@ -67,21 +82,25 @@ test.serial('Test deploy with bad key (bad-path)', async (t) => { // eslint-disa
   const someBadKey = generate(APIKeyLength);
   // eslint-disable-next-line no-unused-vars
   const deployMock = nock(`https://${deployEndpoint}`)
-    .post('/v2/code')
+    .post(`/v3/code/${testAccountId}`)
     .matchHeader('X-Binaris-Api-Key', someBadKey)
     .matchHeader('Content-Type', 'application/gzip')
     .reply(403, { errorCode: 'ERR_BAD_KEY' });
 
-  await t.throwsAsync(deploy(testFuncName, someBadKey,
-    testFuncConf, t.context.fakeTarFileName, deployEndpoint),
-    'Error: Invalid API key');
+  await withEndpoint(deployEndpoint, async () => {
+    await t.throwsAsync(deploy(testAccountId, testFuncName, someBadKey,
+      testFuncConf, t.context.fakeTarFileName),
+      'Error: Invalid API key');
+  });
 });
 
 test.serial('Test deploy with no backend (bad-path)', async (t) => {
   // eslint-disable-next-line global-require
   const deploy = require('../deploy');
-  await t.throwsAsync(deploy(testFuncName, testApiKey,
-    testFuncConf, t.context.fakeTarFileName, 'invalidbinaris.endpoint'),
-    'Error: getaddrinfo ENOTFOUND invalidbinaris.endpoint invalidbinaris.endpoint:443');
+  await withEndpoint('invalidbinaris.endpoint', async () => {
+    await t.throwsAsync(deploy(testAccountId, testFuncName, testApiKey,
+      testFuncConf, t.context.fakeTarFileName),
+      'Error: getaddrinfo ENOTFOUND invalidbinaris.endpoint invalidbinaris.endpoint:443');
+  });
 });
 
