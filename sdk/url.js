@@ -51,6 +51,14 @@ const getListUrl = function getListUrl(accountId, apiKey) {
   return urljoin(`https://${getDeployEndpoint()}`, 'v3', 'functions', accountId);
 };
 
+const getStatsUrl = function getStatsUrl(accountId, apiKey) {
+  // TODO: remove this when we phase out V1 URLs, this is here to not break current customers' usage
+  if (!accountId) {
+    return urljoin(`https://${getDeployEndpoint()}`, 'v2', 'metrics', apiKey);
+  }
+  return urljoin(`https://${getDeployEndpoint()}`, 'v3', 'metrics', accountId);
+};
+
 module.exports = {
   getCodeUploadUrl,
   getConfUploadUrl,
@@ -58,4 +66,5 @@ module.exports = {
   getInvokeUrl,
   getLogsUrl,
   getListUrl,
+  getStatsUrl,
 };
