@@ -9,6 +9,7 @@ const logs = require('./logs');
 const remove = require('./remove');
 const perf = require('./perf');
 const stats = require('./stats');
+const { forceRealm } = require('./config');
 
 module.exports = {
   auth,
@@ -19,4 +20,5 @@ module.exports = {
   perf,
   remove,
   stats,
+  forceRealm,
 };

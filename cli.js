@@ -3,12 +3,14 @@
 const yargs = require('yargs');
 
 const logger = require('./lib/logger');
+const { getRealm } = require('./lib/userConf');
 const { parseTimeString } = require('./lib/timeUtil');
 const {
   deployHandler, createHandler, invokeHandler, listHandler,
   logsHandler, loginHandler, removeHandler, perfHandler,
   statsHandler,
 } = require('./lib');
+const { forceRealm } = require('./sdk');
 
 /**
  * Prints the provided message(along with optionally displayed help)
@@ -24,6 +26,10 @@ const msgAndExit = function msgAndExit(message, displayHelp) {
 };
 
 const handleCommand = async function handleCommand(options, specificHandler) {
+  const realm = await getRealm();
+  if (realm) {
+    forceRealm(realm);
+  }
   const cmdSeq = options._;
   // `_` is the array holding all commands given to yargs
   if (cmdSeq.length > 1) {
