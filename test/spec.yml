@@ -84,7 +84,7 @@
           Deployed function momentousgiants
           Invoke with one of:
             "bn invoke momentousgiants"
-            "curl -H X-Binaris-Api-Key:${X_BINARIS_API_KEY} https://*"
+            "curl -H X-Binaris-Api-Key:* https://*"
 
 - test: Test create (good-path)
   steps:
@@ -110,13 +110,13 @@
           Deployed function drybeef
           Invoke with one of:
             "bn invoke drybeef"
-            "curl -H X-Binaris-Api-Key:${X_BINARIS_API_KEY} https://*"
+            "curl -H X-Binaris-Api-Key:* https://*"
     -   in: bn deploy drybeef
         out: |-
           Deployed function drybeef
           Invoke with one of:
             "bn invoke drybeef"
-            "curl -H X-Binaris-Api-Key:${X_BINARIS_API_KEY} https://*"
+            "curl -H X-Binaris-Api-Key:* https://*"
 
 - test: Test Java
   steps:
@@ -174,7 +174,7 @@
             Deployed function extrasmallaunt
             Invoke with one of:
               "bn invoke extrasmallaunt"
-              "curl -H X-Binaris-Api-Key:${X_BINARIS_API_KEY} https://*"
+              "curl -H X-Binaris-Api-Key:* https://*"
     -   in: cd /home/
     -   in: bn invoke extrasmallaunt
         out: |-
@@ -228,7 +228,7 @@
             Deployed function *
             Invoke with one of:
               "bn invoke *"
-              "curl -H X-Binaris-Api-Key:${X_BINARIS_API_KEY} https://*"
+              "curl -H X-Binaris-Api-Key:* https://*"
     -   in: bn invoke $FUNC_NAME
         out: |-
             "Hello World!"
@@ -290,7 +290,7 @@
             Deployed function *
             Invoke with one of:
               "bn invoke *"
-              "curl -H X-Binaris-Api-Key:${X_BINARIS_API_KEY} https://*"
+              "curl -H X-Binaris-Api-Key:* https://*"
     -   in: |-
           bn invoke $FUNC_NAME -d '{"name": "Binaris"}'
         out: |-
@@ -314,7 +314,7 @@
             Deployed function gulliblezebra
             Invoke with one of:
               "bn invoke gulliblezebra"
-              "curl -H X-Binaris-Api-Key:${X_BINARIS_API_KEY} https://*"
+              "curl -H X-Binaris-Api-Key:* https://*"
     -   in: bn invoke gulliblezebra
         out: |-
             "Hello World!"
@@ -352,7 +352,7 @@
             Deployed function secretsanta
             Invoke with one of:
               "bn invoke secretsanta"
-              "curl -H X-Binaris-Api-Key:${X_BINARIS_API_KEY} https://*"
+              "curl -H X-Binaris-Api-Key:* https://*"
     -   in: bn invoke secretsanta
         out: |-
             *["please","value","*secretsanta"]*
@@ -485,7 +485,7 @@
             Deployed function doomedtofailnode8
             Invoke with one of:
               "bn invoke doomedtofailnode8"
-              "curl -H X-Binaris-Api-Key:${X_BINARIS_API_KEY} https://*"
+              "curl -H X-Binaris-Api-Key:* https://*"
     -   in: bn invoke doomedtofailnode8
         err: |-
             some error
@@ -510,7 +510,7 @@
             Deployed function doomedtofailpy2
             Invoke with one of:
               "bn invoke doomedtofailpy2"
-              "curl -H X-Binaris-Api-Key:${X_BINARIS_API_KEY} https://*"
+              "curl -H X-Binaris-Api-Key:* https://*"
     -   in: bn invoke doomedtofailpy2
         err: |-
             global name 'sdasda' is not defined
@@ -536,7 +536,7 @@
             Deployed function doomedtofailpy3
             Invoke with one of:
               "bn invoke doomedtofailpy3"
-              "curl -H X-Binaris-Api-Key:${X_BINARIS_API_KEY} https://*"
+              "curl -H X-Binaris-Api-Key:* https://*"
     -   in: bn invoke doomedtofailpy3
         err: |-
             name 'sdasda' is not defined
@@ -562,7 +562,7 @@
             Deployed function doomedtofailpy2
             Invoke with one of:
               "bn invoke doomedtofailpy2"
-              "curl -H X-Binaris-Api-Key:${X_BINARIS_API_KEY} https://*"
+              "curl -H X-Binaris-Api-Key:* https://*"
     -   in: bn invoke doomedtofailpypy2
         err: |-
             global name 'sdasda' is not defined
@@ -589,7 +589,7 @@
             Deployed function doomedtofailjava8
             Invoke with one of:
               "bn invoke doomedtofailjava8"
-              "curl -H X-Binaris-Api-Key:${X_BINARIS_API_KEY} https://*"
+              "curl -H X-Binaris-Api-Key:* https://*"
     -   in: bn invoke doomedtofailjava8
         err: |-
             <html>
@@ -750,7 +750,7 @@
           Deployed function *
           Invoke with one of:
             "bn invoke *"
-            "curl -H X-Binaris-Api-Key:${X_BINARIS_API_KEY} https://*"
+            "curl -H X-Binaris-Api-Key:* https://*"
     - in: bn invoke largeData200MB
       out: |-
           "Hello World!"
