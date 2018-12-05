@@ -38,7 +38,7 @@
   steps:
     -   in: bn create node8 didacticbrothers
     -   in: bn deploy didacticbrothers
-        err: Invalid Binaris conf file (missing API key) /home/dockeruser/.binaris.yml
+        err: Invalid Binaris conf file (missing apiKey) /home/dockeruser/.binaris.yml
         exit: 1
 
 - test: create function with template name

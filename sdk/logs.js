@@ -21,6 +21,9 @@ const logs = async function logs(accountId, funcName, apiKey, follow, startAfter
   const options = {
     forever: true,
     url: getLogsUrl(accountId, funcName, apiKey),
+    headers: {
+      'X-Binaris-Api-Key': apiKey,
+    },
     qs: {
       startAfter,
       token,
