@@ -1,21 +1,27 @@
 'use strict';
 
+const defaultEndpoints = {
+  deploy: 'api.binaris.com',
+  invoke: 'run.binaris.com',
+  logs: 'log.binaris.com',
+};
+
 const getDeployEndpoint = function getDeployEndpoint() {
-  return process.env.BINARIS_DEPLOY_ENDPOINT || 'api.binaris.com';
+  return process.env.BINARIS_DEPLOY_ENDPOINT || defaultEndpoints.deploy;
 };
 
 const getInvokeEndpoint = function getInvokeEndpoint() {
-  return process.env.BINARIS_INVOKE_ENDPOINT || 'run.binaris.com';
+  return process.env.BINARIS_INVOKE_ENDPOINT || defaultEndpoints.invoke;
 };
 
 const getLogEndpoint = function getLogEndpoint() {
-  return process.env.BINARIS_LOG_ENDPOINT || 'log.binaris.com';
+  return process.env.BINARIS_LOG_ENDPOINT || defaultEndpoints.logs;
 };
 
 const forceRealm = function forceRealm(realm) {
-  process.env.BINARIS_DEPLOY_ENDPOINT = process.env.BINARIS_DEPLOY_ENDPOINT || `api-${realm}.binaris.com`;
-  process.env.BINARIS_INVOKE_ENDPOINT = process.env.BINARIS_INVOKE_ENDPOINT || `run-${realm}.binaris.com`;
-  process.env.BINARIS_LOG_ENDPOINT = process.env.BINARIS_LOG_ENDPOINT || `log-${realm}.binaris.com`;
+  defaultEndpoints.deploy = `api-${realm}.binaris.com`;
+  defaultEndpoints.invoke = `run-${realm}.binaris.com`;
+  defaultEndpoints.logs = `log-${realm}.binaris.com`;
 };
 
 module.exports = {
