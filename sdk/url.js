@@ -43,10 +43,19 @@ const getConfTagUrl = function getConfTagUploadUrl(accountId, funcName, apiKey, 
   return urljoin(`https://${getDeployEndpoint()}`, 'v3', 'tag', accountId, funcName, tag);
 };
 
+const getListUrl = function getListUrl(accountId, apiKey) {
+  // TODO: remove this when we phase out V1 URLs, this is here to not break current customers' usage
+  if (!accountId) {
+    return urljoin(`https://${getDeployEndpoint()}`, 'v2', 'functions', apiKey);
+  }
+  return urljoin(`https://${getDeployEndpoint()}`, 'v3', 'functions', accountId);
+};
+
 module.exports = {
   getCodeUploadUrl,
   getConfUploadUrl,
   getConfTagUrl,
   getInvokeUrl,
   getLogsUrl,
+  getListUrl,
 };
