@@ -396,7 +396,7 @@
 
 - test: Test login (bad-path)
   steps:
-    -   in: bn create node8 stormysummer
+    -   in: unset BINARIS_API_KEY
     -   in: echo 9239239 | bn login
         err: Invalid API key
         exit: 1
@@ -559,9 +559,9 @@
             sed -i.bak "2i\    sdasda" function.py
     -   in: bn deploy doomedtofailpypy2
         out: |-
-            Deployed function doomedtofailpy2
+            Deployed function doomedtofailpypy2
             Invoke with one of:
-              "bn invoke doomedtofailpy2"
+              "bn invoke doomedtofailpypy2"
               "curl -H X-Binaris-Api-Key:* https://*"
     -   in: bn invoke doomedtofailpypy2
         err: |-
@@ -599,7 +599,7 @@
             </head>
             <body>
             <h2>HTTP ERROR: 500</h2>
-            <p>Problem accessing /v2/run. Reason:
+            <p>Problem accessing /v1/run. Reason:
             <pre>    class java.lang.Error</pre></p>
             <hr /><a href="http://eclipse.org/jetty">Powered by Jetty:// 9.3.z-SNAPSHOT</a><hr/>
             </body>
