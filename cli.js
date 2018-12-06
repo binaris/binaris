@@ -230,7 +230,7 @@ Usage: $0 <command> [options]` // eslint-disable-line comma-dangle
     }
     await handleCommand(argv, logsHandler);
   })
-  .command('stats [options]', 'Print usage statistics', (yargs0) => {
+  .command('stats [options]', /* hidden: 'Print usage statistics' */ false, (yargs0) => {
     yargs0
       .usage('Usage: $0 stats [options]')
       .option('since', {
