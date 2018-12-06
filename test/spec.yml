@@ -63,6 +63,32 @@
                   bn logs foo --since 13hours
                   bn logs foo --since 9s*
 
+- test: Test old endpoints
+  cleanup:
+    - bn remove momentousgiants
+  steps:
+    -   in: unset BINARIS_API_KEY
+    -   in: unset BINARIS_ACCOUNT_ID
+    -   in: bn create node8 momentousgiants
+        out: |-
+            Created function * in /home/dockeruser/test
+              (use "bn deploy momentousgiants" to deploy the function)
+    -   in: echo $BINARIS_TEMPORARY_API_KEY_FOR_TESTING_OLD_ENDPOINTS | bn login
+        out: |-
+            Please enter your Binaris API key to deploy and invoke functions.
+            If you don't have a key, head over to https://binaris.com to request one
+            *? API Key: *
+            *Authentication Succeeded*
+              (use "bn create node8 hello" to create a Node.js template function in your CWD)
+    -   in: bn deploy momentousgiants
+        out: |-
+          Deployed function momentousgiants
+          Invoke with one of:
+            "bn invoke momentousgiants"
+            "curl -H X-Binaris-Api-Key:* https://*"
+    -   in: bn invoke momentousgiants
+        out: '"Hello World!"'
+
 - test: Test login (good-path)
   cleanup:
     - bn remove momentousgiants
