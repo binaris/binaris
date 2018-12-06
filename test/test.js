@@ -16,7 +16,8 @@ const propagatedEnvVars = [
   'BINARIS_API_KEY',
   'BINARIS_DEPLOY_ENDPOINT',
   'BINARIS_INVOKE_ENDPOINT',
-  'BINARIS_LOG_ENDPOINT'];
+  'BINARIS_LOG_ENDPOINT',
+];
 
 const commonBashOpts = 'set -o pipefail;';
 
@@ -66,8 +67,26 @@ const testFiles = testFileNames.map(file => yaml.safeLoad(fs.readFileSync(file, 
 const testPlan = [].concat(...testFiles);
 
 function stripText(origText) {
-  return strip(origText.split('\r').join('').replace(/\n$/, ''));
+  return strip(origText)
+    .replace(/\r+/g, '')
+    .replace(/\s+$/g, '');
 }
+
+const createRegTest = function createRegTest(expected) {
+  const DIGIT_ESCAPE = 'ESCAPESEQUENCEDIGIT';
+  const STAR_ESCAPE = 'ESCAPESEQUENCESPACE';
+  const PERCENT_ESCAPE = 'ESCAPESEQUENCEPERCENT';
+  const protectedEscapes = expected
+        .replace(/#/g, DIGIT_ESCAPE)
+        .replace(/\*/g, STAR_ESCAPE)
+        .replace(/%/g, PERCENT_ESCAPE);
+  const protectedRegexps = regEsc(protectedEscapes);
+  const regex = protectedRegexps
+        .replace(new RegExp(DIGIT_ESCAPE, 'g'), '\\d+')
+        .replace(new RegExp(STAR_ESCAPE, 'g'), '[\\s\\S]*?')
+        .replace(new RegExp(PERCENT_ESCAPE, 'g'), '.*?');
+  return new RegExp(regex);
+};
 
 function createTest(rawSubTest) {
   const maybeSerialTest = rawSubTest.serial ? test.serial : test;
@@ -90,25 +109,18 @@ function createTest(rawSubTest) {
     // eslint-disable-next-line no-param-reassign
     t.context.cleanup = rawSubTest.cleanup;
 
-    const createRegTest = function createRegTest(expected) {
-      const DIGIT_ESCAPE = 'ESCAPESEQUENCEDIGIT';
-      const STAR_ESCAPE = 'ESCAPESEQUENCESPACE';
-      let regex = expected.replace(/#/g, DIGIT_ESCAPE);
-      regex = regex.replace(/\*/g, STAR_ESCAPE);
-      regex = regEsc(regex);
-      regex = regex.split(DIGIT_ESCAPE).join('\\d+');
-      regex = regex.split(STAR_ESCAPE).join('[\\s\\S]*');
-      regex = `^${regex}\\s*$`;
-      return new RegExp(regex);
+    const matchText = function matchText(expected, text) {
+      return createRegTest(expected).test(stripText(text));
     };
 
     for (const step of rawSubTest.steps) {
       // eslint-disable-next-line no-await-in-loop
       const cmdOut = await t.context.ct.streamIn(step.in);
       if (step.out) {
-        t.true(createRegTest(step.out).test(stripText(cmdOut.stdout)));
-      } else if (step.err) {
-        t.true(createRegTest(step.err).test(stripText(cmdOut.stderr)));
+        t.true(matchText(step.out, cmdOut.stdout));
+      }
+      if (step.err) {
+        t.true(matchText(step.err, cmdOut.stderr));
       }
       t.true(cmdOut.exitCode === (step.exit || 0), step.err);
     }
