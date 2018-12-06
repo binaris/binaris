@@ -15,7 +15,6 @@
                 bn list [options]                         List all deployed functions
                 bn perf <function> [options]              Measure invocation latency (experimental)
                 bn logs <function> [options]              Print the logs of a function
-                bn stats [options]                        Print usage statistics
                 bn login                                  Login to your Binaris account using an API key and account id
 
               Options:
