@@ -35,7 +35,7 @@ const logs = async function logs(functionName, apiKey, follow, startAfter, token
     },
   };
 
-  let backoffSecs = [1, 2, 4];
+  const backoffSecs = [1, 2, 4];
   // eslint-disable-next-line no-constant-condition
   while (true) {  // exits inside loop.
     // eslint-disable-next-line no-await-in-loop
