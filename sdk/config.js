@@ -21,7 +21,7 @@ const getLogEndpoint = function getLogEndpoint() {
 const forceRealm = function forceRealm(realm) {
   defaultEndpoints.deploy = `api-${realm}.binaris.com`;
   defaultEndpoints.invoke = `run-${realm}.binaris.com`;
-  defaultEndpoints.logs = `log-${realm}.binaris.com`;
+  defaultEndpoints.logs = `logs-${realm}.binaris.com`;
 };
 
 module.exports = {
