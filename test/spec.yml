@@ -654,8 +654,8 @@
         err: |-
              Invalid offset format, unknown unit "daysf"
         exit: 1
-    -   in: BINARIS_LOG_ENDPOINT=fake.binaris.com bn logs amillionamillion
-        err: "Error: getaddrinfo ENOTFOUND fake.binaris.com fake.binaris.com:443"
+    -   in: BINARIS_LOG_ENDPOINT=fake.logs.binaris.invalid. bn logs amillionamillion
+        err: "Error: getaddrinfo ENOTFOUND fake.logs.binaris.invalid. fake.logs.binaris.invalid.:443"
         exit: 1
 
 - test: Invalid name in binaris.yml  (bad-path)
