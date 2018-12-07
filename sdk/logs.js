@@ -1,11 +1,18 @@
 'use strict';
 
 const { loggedRequest, validateResponse } = require('./handleError');
-const logger = require('../lib/logger');
 
 const { getLogsUrl } = require('./url');
 
 const msleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+
+async function orError(func) {
+  try {
+    return [await func()];
+  } catch (e) {
+    return [null, e];
+  }
+}
 
 /**
  * Retrieves the logs of a previously deployed Binaris function.
@@ -31,22 +38,23 @@ const logs = async function logs(accountId, funcName, apiKey, follow, startAfter
     },
   };
 
-  for (let attempt = 1, backoff = 3; attempt <= 3; attempt += 1, backoff *= 2) {
-    try {
-      // eslint-disable-next-line no-await-in-loop
-      const { body, headers } = validateResponse(await loggedRequest(options, 'get'));
+  const backoffSecs = [1, 2, 4];
+  // eslint-disable-next-line no-constant-condition
+  while (true) {  // exits inside loop.
+    // eslint-disable-next-line no-await-in-loop
+    const [ok, notOk] = await orError(async () => {
+      const { body, headers } =
+        validateResponse(await loggedRequest(options, 'get'));
       return {
         body,
         nextToken: headers['x-binaris-next-token'],
       };
-    } catch (err) {
-      logger.debug('failed to fetch logs', {
-        err,
-        attempt,
-      });
-      // eslint-disable-next-line no-await-in-loop
-      await msleep(backoff);
-    }
+    });
+
+    if (ok) return ok;
+    const backoffSec = backoffSecs.shift();
+    if (backoffSec === undefined) throw notOk;
+    msleep(backoffSec * 1000);
   }
 };
 
