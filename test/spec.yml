@@ -84,7 +84,7 @@
         Deployed function *
         Invoke with one of:
           "bn invoke *"
-          "curl -H X-Binaris-Api-Key:* https://*"
+          "curl https://*"
     - in: bn invoke $FUNC_NAME
       out: '"Hello World!"'
     - in: sleep 5
@@ -149,6 +149,21 @@
           Invoke with one of:
             "bn invoke drybeef"
             "curl -H X-Binaris-Api-Key:* https://*"
+
+- test: Test public deploy (good-path)
+  cleanup:
+    - bn remove public_drymeat
+  steps:
+    -   in: bn create node8 public_drymeat
+        out: |-
+            Created function * in /home/dockeruser/test
+              (use "bn deploy public_drymeat" to deploy the function)
+    -   in: bn deploy public_drymeat
+        out: |-
+          Deployed function public_drymeat
+          Invoke with one of:
+            "bn invoke public_drymeat"
+            "curl https://*"
 
 - test: Test Java
   steps:
