@@ -13,7 +13,9 @@ const regEsc = require('escape-string-regexp');
 const Container = require('./helpers/container');
 
 const propagatedEnvVars = [
+  'BINARIS_TEMPORARY_API_KEY_FOR_TESTING_OLD_ENDPOINTS',
   'BINARIS_API_KEY',
+  'BINARIS_ACCOUNT_ID',
   'BINARIS_DEPLOY_ENDPOINT',
   'BINARIS_INVOKE_ENDPOINT',
   'BINARIS_LOG_ENDPOINT',

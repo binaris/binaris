@@ -15,8 +15,7 @@
                 bn list [options]                         List all deployed functions
                 bn perf <function> [options]              Measure invocation latency (experimental)
                 bn logs <function> [options]              Print the logs of a function
-                bn stats [options]                        Print usage statistics
-                bn login                                  Login to your Binaris account using an API key
+                bn login                                  Login to your Binaris account using an API key and account id
 
               Options:
                 --version   Show version number  [boolean]
@@ -64,6 +63,39 @@
                   bn logs foo --since 13hours
                   bn logs foo --since 9s*
 
+- test: Test old endpoints
+  setup:
+    - export FUNC_NAME=rand$(cat /dev/urandom | tr -dc 'a-z0-9' | fold -w 32 | head -n 1)
+    - bn create node8 $FUNC_NAME
+    - unset BINARIS_API_KEY
+    - unset BINARIS_ACCOUNT_ID
+  cleanup:
+    - bn remove $FUNC_NAME
+  steps:
+    - in: echo $BINARIS_TEMPORARY_API_KEY_FOR_TESTING_OLD_ENDPOINTS | bn login
+      out: |-
+          Please enter your Binaris API key to deploy and invoke functions.
+          If you don't have a key, head over to https://binaris.com to request one
+          *? API Key: *
+          *Authentication Succeeded*
+            (use "bn create node8 hello" to create a Node.js template function in your CWD)
+    - in: bn deploy $FUNC_NAME
+      out: |-
+        Deployed function *
+        Invoke with one of:
+          "bn invoke *"
+          "curl -H X-Binaris-Api-Key:* https://*"
+    - in: bn invoke $FUNC_NAME
+      out: '"Hello World!"'
+    - in: sleep 5
+    - in: bn logs $FUNC_NAME
+      out: |-
+        [201*-*-*T*:*:*Z] Function * deployed (version digest: *)
+        [201*-*-*T*:*:*Z] Function invocation took * us
+    - in: bn list --json
+      out: |-
+        *[*{"name":"rand*","lastDeployed":"[20*-*-*T*:*:*Z]"}*]*
+
 - test: Test login (good-path)
   cleanup:
     - bn remove momentousgiants
@@ -72,7 +104,7 @@
         out: |-
             Created function * in /home/dockeruser/test
               (use "bn deploy momentousgiants" to deploy the function)
-    -   in: echo "$BINARIS_API_KEY" | bn login
+    -   in: echo $BINARIS_API_KEY | bn login
         out: |-
             Please enter your Binaris API key to deploy and invoke functions.
             If you don't have a key, head over to https://binaris.com to request one
@@ -81,8 +113,10 @@
               (use "bn create node8 hello" to create a Node.js template function in your CWD)
     -   in: bn deploy momentousgiants
         out: |-
-            Deployed function to *
-              (use "bn invoke momentousgiants" to invoke the function)
+          Deployed function momentousgiants
+          Invoke with one of:
+            "bn invoke momentousgiants"
+            "curl -H X-Binaris-Api-Key:* https://*"
 
 - test: Test create (good-path)
   steps:
@@ -105,12 +139,16 @@
               (use "bn deploy drybeef" to deploy the function)
     -   in: bn deploy drybeef
         out: |-
-            Deployed function to *
-              (use "bn invoke drybeef" to invoke the function)
+          Deployed function drybeef
+          Invoke with one of:
+            "bn invoke drybeef"
+            "curl -H X-Binaris-Api-Key:* https://*"
     -   in: bn deploy drybeef
         out: |-
-            Deployed function to *
-              (use "bn invoke drybeef" to invoke the function)
+          Deployed function drybeef
+          Invoke with one of:
+            "bn invoke drybeef"
+            "curl -H X-Binaris-Api-Key:* https://*"
 
 - test: Test Java
   steps:
@@ -165,8 +203,10 @@
               (use "bn deploy extrasmallaunt" to deploy the function)
     -   in: bn deploy extrasmallaunt
         out: |-
-            Deployed function to *
-              (use "bn invoke extrasmallaunt" to invoke the function)
+            Deployed function extrasmallaunt
+            Invoke with one of:
+              "bn invoke extrasmallaunt"
+              "curl -H X-Binaris-Api-Key:* https://*"
     -   in: cd /home/
     -   in: bn invoke extrasmallaunt
         out: |-
@@ -217,8 +257,10 @@
   steps:
     -   in: bn deploy $FUNC_NAME
         out: |-
-            Deployed function to *
-              (use "bn invoke *" to invoke the function)
+            Deployed function *
+            Invoke with one of:
+              "bn invoke *"
+              "curl -H X-Binaris-Api-Key:* https://*"
     -   in: bn invoke $FUNC_NAME
         out: |-
             "Hello World!"
@@ -277,8 +319,10 @@
   steps:
     -   in: bn deploy $FUNC_NAME
         out: |-
-            Deployed function to *
-              (use "bn invoke *" to invoke the function)
+            Deployed function *
+            Invoke with one of:
+              "bn invoke *"
+              "curl -H X-Binaris-Api-Key:* https://*"
     -   in: |-
           bn invoke $FUNC_NAME -d '{"name": "Binaris"}'
         out: |-
@@ -299,8 +343,10 @@
             echo 'exports.handler = () => { s = "Hello World!"; console.log(s); return s; };' >function.js
     -   in: bn deploy gulliblezebra
         out: |-
-            Deployed function to *
-              (use "bn invoke gulliblezebra" to invoke the function)
+            Deployed function gulliblezebra
+            Invoke with one of:
+              "bn invoke gulliblezebra"
+              "curl -H X-Binaris-Api-Key:* https://*"
     -   in: bn invoke gulliblezebra
         out: |-
             "Hello World!"
@@ -335,8 +381,10 @@
             EOF
     -   in: FORWARD_ME=please bn deploy secretsanta
         out: |-
-            Deployed function to *
-              (use "bn invoke secretsanta" to invoke the function)
+            Deployed function secretsanta
+            Invoke with one of:
+              "bn invoke secretsanta"
+              "curl -H X-Binaris-Api-Key:* https://*"
     -   in: bn invoke secretsanta
         out: |-
             *["please","value","*secretsanta"]*
@@ -387,8 +435,8 @@
 
 - test: Test login (bad-path)
   steps:
-    -   in: bn create node8 stormysummer
-    -   in: echo "9239239" | bn login
+    -   in: unset BINARIS_API_KEY
+    -   in: echo 9239239 | bn login
         err: Invalid API key
         out: |-
             *
@@ -489,8 +537,10 @@
             sed -i.bak "2i\  throw new Error('some error');" function.js
     -   in: bn deploy doomedtofailnode8
         out: |-
-            Deployed function to *
-              (use "bn invoke doomedtofailnode8" to invoke the function)
+            Deployed function doomedtofailnode8
+            Invoke with one of:
+              "bn invoke doomedtofailnode8"
+              "curl -H X-Binaris-Api-Key:* https://*"
     -   in: bn invoke doomedtofailnode8
         err: |-
             some error
@@ -517,8 +567,10 @@
             sed -i.bak "2i\    sdasda" function.py
     -   in: bn deploy doomedtofailpy2
         out: |-
-            Deployed function to *
-              (use "bn invoke doomedtofailpy2" to invoke the function)
+            Deployed function doomedtofailpy2
+            Invoke with one of:
+              "bn invoke doomedtofailpy2"
+              "curl -H X-Binaris-Api-Key:* https://*"
     -   in: bn invoke doomedtofailpy2
         err: |-
             global name 'sdasda' is not defined
@@ -544,8 +596,10 @@
             sed -i.bak "2i\    sdasda" function.py
     -   in: bn deploy doomedtofailpy3
         out: |-
-            Deployed function to *
-              (use "bn invoke doomedtofailpy3" to invoke the function)
+            Deployed function doomedtofailpy3
+            Invoke with one of:
+              "bn invoke doomedtofailpy3"
+              "curl -H X-Binaris-Api-Key:* https://*"
     -   in: bn invoke doomedtofailpy3
         err: |-
             name 'sdasda' is not defined
@@ -571,8 +625,10 @@
             sed -i.bak "2i\    sdasda" function.py
     -   in: bn deploy doomedtofailpypy2
         out: |-
-            Deployed function to *
-              (use "bn invoke doomedtofailpypy2" to invoke the function)
+            Deployed function doomedtofailpypy2
+            Invoke with one of:
+              "bn invoke doomedtofailpypy2"
+              "curl -H X-Binaris-Api-Key:* https://*"
     -   in: bn invoke doomedtofailpypy2
         err: |-
             global name 'sdasda' is not defined
@@ -599,8 +655,10 @@
     -   in: gradle jar
     -   in: bn deploy doomedtofailjava8
         out: |-
-            Deployed function to *
-              (use "bn invoke doomedtofailjava8" to invoke the function)
+            Deployed function doomedtofailjava8
+            Invoke with one of:
+              "bn invoke doomedtofailjava8"
+              "curl -H X-Binaris-Api-Key:* https://*"
     -   in: bn invoke doomedtofailjava8
         err: |-
             <html>
@@ -794,8 +852,10 @@
   steps:
     - in: bn deploy largeData200MB
       out: |-
-          Deployed function to *
-            (use "bn invoke *" to invoke the function)
+          Deployed function *
+          Invoke with one of:
+            "bn invoke *"
+            "curl -H X-Binaris-Api-Key:* https://*"
     - in: bn invoke largeData200MB
       out: |-
           "Hello World!"

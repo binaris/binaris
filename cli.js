@@ -3,12 +3,14 @@
 const yargs = require('yargs');
 
 const logger = require('./lib/logger');
+const { getRealm } = require('./lib/userConf');
 const { parseTimeString } = require('./lib/timeUtil');
 const {
   deployHandler, createHandler, invokeHandler, listHandler,
   logsHandler, loginHandler, removeHandler, perfHandler,
   statsHandler,
 } = require('./lib');
+const { forceRealm } = require('./sdk');
 
 /**
  * Prints the provided message(along with optionally displayed help)
@@ -24,6 +26,10 @@ const msgAndExit = function msgAndExit(message, displayHelp) {
 };
 
 const handleCommand = async function handleCommand(options, specificHandler) {
+  const realm = await getRealm();
+  if (realm) {
+    forceRealm(realm);
+  }
   const cmdSeq = options._;
   // `_` is the array holding all commands given to yargs
   if (cmdSeq.length > 1) {
@@ -224,7 +230,7 @@ Usage: $0 <command> [options]` // eslint-disable-line comma-dangle
     }
     await handleCommand(argv, logsHandler);
   })
-  .command('stats [options]', 'Print usage statistics', (yargs0) => {
+  .command('stats [options]', /* hidden: 'Print usage statistics' */ false, (yargs0) => {
     yargs0
       .usage('Usage: $0 stats [options]')
       .option('since', {
@@ -270,7 +276,7 @@ Usage: $0 <command> [options]` // eslint-disable-line comma-dangle
     }
     await handleCommand(argv, statsHandler);
   })
-  .command('login', 'Login to your Binaris account using an API key', (yargs0) => {
+  .command('login', 'Login to your Binaris account using an API key and account id', (yargs0) => {
     yargs0
       .usage('Usage: $0 login')
       .strict();

@@ -50,7 +50,7 @@
   steps:
     -   in: bn create node8 didacticbrothers
     -   in: bn deploy didacticbrothers
-        err: Invalid Binaris conf file (missing API key) /home/dockeruser/.binaris.yml
+        err: Invalid Binaris conf file (missing apiKey) /home/dockeruser/.binaris.yml
         out: |-
             
             Tip: You can export BINARIS_LOG_LEVEL=[silly|debug|verbose] to view debug logs

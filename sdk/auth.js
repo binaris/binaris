@@ -1,9 +1,11 @@
 'use strict';
 
+const { inspect } = require('util');
 const urljoin = require('urljoin');
 const rp = require('request-promise-native');
 
-const { getInvokeEndpoint } = require('./config');
+const logger = require('../lib/logger');
+const { getInvokeEndpoint, getDeployEndpoint } = require('./config');
 
 /**
  * Verifies that the provided Binaris API key is correct by
@@ -12,20 +14,38 @@ const { getInvokeEndpoint } = require('./config');
  * @param {string} apiKey - the apiKey to validate
  */
 const verifyAPIKey = async function verifyAPIKey(apiKey) {
-  const options = {
-    url: urljoin(`https://${getInvokeEndpoint()}`, 'v1', 'apikey', apiKey),
-    json: true,
-    simple: false,
-    resolveWithFullResponse: true,
-  };
   try {
-    const response = await rp.get(options);
-    if (response.statusCode !== 200) {
-      return false;
+    const { accountId } = await rp.get({
+      url: urljoin(`https://${getDeployEndpoint()}`, 'v3', 'authenticate'),
+      headers: {
+        'X-Binaris-Api-Key': apiKey,
+      },
+      json: true,
+    });
+
+    return {
+      error: undefined,
+      accountId,
+    };
+  } catch (accountErr) {
+    logger.debug('Failed to authenticate via account', { error: inspect(accountErr) });
+    try {
+      await rp.get({
+        url: urljoin(`https://${getInvokeEndpoint()}`, 'v1', 'apikey', apiKey),
+        json: true,
+      });
+
+      return {
+        error: undefined,
+        accountId: undefined,
+      };
+    } catch (apiErr) {
+      logger.debug('Failed to authenticate via api key', { error: inspect(apiErr) });
+      return {
+        error: new Error('Invalid API key'),
+        accountId: undefined,
+      };
     }
-    return true;
-  } catch (err) {
-    return false;
   }
 };
 
