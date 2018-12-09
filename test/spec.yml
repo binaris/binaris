@@ -1107,3 +1107,18 @@
     -   in: bn deploy numericfunctions
         exit: 1
         err: "binaris.yml section <functions> is not a dictionary"
+
+- test: bad runtime yml
+  steps:
+    -   in: |-
+            cat <<EOF >>/home/dockeruser/test/binaris.yml
+            functions:
+              noRuntime:
+                file: function.js
+                entrypoint: handler
+                runtime:
+                  foo: 123
+            EOF
+    -   in: bn deploy noRuntime
+        exit: 1
+        err: "binaris.yml field <runtime> is not a string"
