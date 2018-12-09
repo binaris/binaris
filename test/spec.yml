@@ -1073,3 +1073,15 @@
             Empty existing env var 'nosuchenv' is not supported
         exit: 1
     -  in: bn remove emptyenv
+
+- test: non dict env
+  steps:
+    -   in: bn create node8 nondictenv
+    -   in: |-
+            cat <<EOF >>/home/dockeruser/test/binaris.yml
+                env:
+                    value
+            EOF
+    -   in: bn deploy nondictenv
+        exit: 1
+        err: YAML env section must be a dictionary.
