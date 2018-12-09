@@ -74,8 +74,10 @@ const deployConf = async function deployConf(accountId, funcName, apiKey, funcCo
       }
       if (env[key] == null) {
         env[key] = process.env[key];
-        if (!env[key] || env[key] === '') {
+        if (env[key] === undefined) {
           logger.warn(`Ignoring empty env ${key}`);
+        }
+        if (!env[key] || env[key] === '') {
           delete env[key];
         }
       } else if (typeof env[key] !== 'string') {
