@@ -1067,4 +1067,7 @@
     -   in: bn deploy emptyenv
         out: |-
             Ignoring empty env nosuchenv*
+    -   in: |-
+            nosuchenv= bn deploy emptyenv | grep Ignoring
+        exit: 1
     -  in: bn remove emptyenv
