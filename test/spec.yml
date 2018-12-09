@@ -1084,4 +1084,4 @@
             EOF
     -   in: bn deploy nondictenv
         exit: 1
-        err: YAML env section must be a dictionary.
+        err: binaris.yml env section must be a dictionary.

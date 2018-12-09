@@ -60,7 +60,7 @@ const deployConf = async function deployConf(accountId, funcName, apiKey, funcCo
   const { env } = funcConf;
   if (env) {
     if (typeof env !== 'object') {
-      throw new Error('YAML env section must be a dictionary.');
+      throw new Error('binaris.yml env section must be a dictionary.');
     }
     for (const key of Object.keys(env)) {
       if (env[key] === '') {
