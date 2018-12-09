@@ -1066,8 +1066,10 @@
             EOF
     -   in: bn deploy emptyenv
         out: |-
-            Ignoring empty env nosuchenv*
+            Ignoring non existing env var 'nosuchenv'*
     -   in: |-
-            nosuchenv= bn deploy emptyenv | grep Ignoring
+            nosuchenv= bn deploy emptyenv
+        err: |-
+            Empty existing env var 'nosuchenv' is not supported
         exit: 1
     -  in: bn remove emptyenv
