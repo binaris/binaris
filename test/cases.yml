@@ -27,17 +27,17 @@
 
 - test: No Binaris backend (bad-path)
   setup:
-    - export BINARIS_DEPLOY_ENDPOINT=fake.binaris.neverworks
+    - export BINARIS_DEPLOY_ENDPOINT=fake.binaris.invalid.
   steps:
     -   in: bn create node8 naughtyvegetable
     -   in: bn deploy naughtyvegetable
-        err: "Error: getaddrinfo ENOTFOUND fake.binaris.neverworks fake.binaris.neverworks:443"
+        err: "Error: getaddrinfo ENOTFOUND fake.binaris.invalid. fake.binaris.invalid.:443"
         out: |-
             
             Tip: You can export BINARIS_LOG_LEVEL=[silly|debug|verbose] to view debug logs
         exit: 1
     -   in: bn remove naughtyvegetable
-        err: "Error: getaddrinfo ENOTFOUND fake.binaris.neverworks fake.binaris.neverworks:443"
+        err: "Error: getaddrinfo ENOTFOUND fake.binaris.invalid. fake.binaris.invalid.:443"
         out: |-
             
             Tip: You can export BINARIS_LOG_LEVEL=[silly|debug|verbose] to view debug logs

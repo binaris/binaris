@@ -97,10 +97,10 @@ test.serial('Test deploy with bad key (bad-path)', async (t) => { // eslint-disa
 test.serial('Test deploy with no backend (bad-path)', async (t) => {
   // eslint-disable-next-line global-require
   const deploy = require('../deploy');
-  await withEndpoint('invalidbinaris.endpoint', async () => {
+  await withEndpoint('invalidbinaris.endpoint.invalid.', async () => {
     await t.throwsAsync(deploy(testAccountId, testFuncName, testApiKey,
       testFuncConf, t.context.fakeTarFileName),
-      'Error: getaddrinfo ENOTFOUND invalidbinaris.endpoint invalidbinaris.endpoint:443');
+      'Error: getaddrinfo ENOTFOUND invalidbinaris.endpoint.invalid. invalidbinaris.endpoint.invalid.:443');
   });
 });
 
