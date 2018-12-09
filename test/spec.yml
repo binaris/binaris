@@ -406,6 +406,7 @@
     -   in: bn remove secretsanta
         out: |-
             Removed function *
+
 - test: "envs: fail to deploy if non-string in env"
   steps:
     -   in: bn create node8 invalidenv
@@ -1054,3 +1055,16 @@
             90%  * ms*
             95%  * ms*
             99%  * ms*
+
+- test: empty env
+  steps:
+    -   in: bn create node8 emptyenv
+    -   in: |-
+            cat <<EOF >>/home/dockeruser/test/binaris.yml
+                env:
+                    nosuchenv:
+            EOF
+    -   in: bn deploy emptyenv
+        out: |-
+            Ignoring empty env nosuchenv*
+    -  in: bn remove emptyenv
