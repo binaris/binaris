@@ -60,35 +60,25 @@ const deployConf = async function deployConf(accountId, funcName, apiKey, funcCo
   const { env } = funcConf;
   if (env) {
     if (typeof env !== 'object') {
-      throw new Error('binaris.yml env section must be a dictionary.');
+      throw new Error('binaris.yml section <env> is not a dictionary');
     }
     for (const key of Object.keys(env)) {
       if (env[key] === '') {
-        logger.error(`
-  Empty string values for env key ${key} not supported.
-  To forward the calling process's environment variables when deploying, use the following syntax in binaris.yml:
-    env:
-      ${key}:
-  Instead of:
-    env:
-      ${key}: ''
-  `);
-        throw new Error('Invalid env param');
+        throw new Error(`Empty string env '${key}' in binaris.yml is not supported`);
       }
       if (env[key] == null) {
         env[key] = process.env[key];
         if (env[key] === undefined) {
-          logger.warn(`Ignoring non existing env var '${key}'`);
+          logger.warn(`Non existing env var '${key}' is ignored`);
         }
         if (env[key] === '') {
           throw new Error(`Empty existing env var '${key}' is not supported`);
         }
-        if (!env[key]) {
-          delete env[key];
-        }
       } else if (typeof env[key] !== 'string') {
-        logger.error(`Only string values are supported in function env configuration.
-${key}'s value is not a string.`);
+        throw new Error(`binaris.yml env var '${key}' is not a string`);
+      }
+      if (!env[key]) {
+        delete env[key];
       }
     }
   }

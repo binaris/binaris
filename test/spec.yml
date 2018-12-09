@@ -422,8 +422,7 @@
             EOF
     -   in: bn deploy invalidenv
         exit: 1
-        err: |-
-            *A_NUMBER's value is not a string*
+        err: "binaris.yml env var 'A_NUMBER' is not a string"
         out: |-
             
             Tip: You can export BINARIS_LOG_LEVEL=[silly|debug|verbose] to view debug logs
@@ -443,8 +442,7 @@
             EOF
     -   in: bn deploy emptiness
         exit: 1
-        err: |-
-            *Empty string *EMPTY not supported.*
+        err: "Empty string env 'EMPTY' in binaris.yml is not supported"
         out: |-
             
             Tip: You can export BINARIS_LOG_LEVEL=[silly|debug|verbose] to view debug logs
@@ -462,16 +460,16 @@
 - test: Test create (bad-path)
   steps:
     -   in: bn create node8 a*b*c*
-        err: Invalid characters in function name a*b*c*. Use only letters and digits
+        err: "Invalid characters in function name 'a*b*c*'. Use only letters and digits"
         exit: 1
     -   in: bn create node8 a_bשcd@e+
-        err: Invalid characters in function name a_bשcd@e+. Use only letters and digits
+        err: "Invalid characters in function name 'a_bשcd@e+'. Use only letters and digits"
         exit: 1
     -   in: bn create node8 a=b~c,d.
-        err: Invalid characters in function name a=b~c,d.. Use only letters and digits
+        err: "Invalid characters in function name 'a=b~c,d.'. Use only letters and digits"
         exit: 1
     -   in: bn create node8 a:b?c!d-
-        err: Invalid characters in function name a:b?c!d-. Use only letters and digits
+        err: "Invalid characters in function name 'a:b?c!d-'. Use only letters and digits"
         exit: 1
     -   in: bn create
         err: "*Not enough non-option arguments: got 0, need at least 2"
@@ -739,7 +737,7 @@
     - sed -i '2 c \  inv@a-d:' binaris.yml
   steps:
     - in: bn deploy "inv@a-d"
-      err: Invalid characters in function name inv@a-d. Use only letters and digits
+      err: "Invalid characters in function name 'inv@a-d'. Use only letters and digits"
       out: |-
           
           Tip: You can export BINARIS_LOG_LEVEL=[silly|debug|verbose] to view debug logs
@@ -1066,7 +1064,7 @@
             EOF
     -   in: bn deploy emptyenv
         out: |-
-            Ignoring non existing env var 'nosuchenv'*
+            Non existing env var 'nosuchenv' is ignored*
     -   in: |-
             nosuchenv= bn deploy emptyenv
         err: |-
@@ -1084,7 +1082,7 @@
             EOF
     -   in: bn deploy nondictenv
         exit: 1
-        err: binaris.yml env section must be a dictionary.
+        err: "binaris.yml section <env> is not a dictionary"
 
 - test: empty binaris.yml
   steps:
@@ -1092,8 +1090,7 @@
             touch /home/dockeruser/test/binaris.yml
     -   in: bn deploy emptyyml
         exit: 1
-        err: |-
-             Your binaris.yml did not contain a require field: <functions>
+        err: "binaris.yml is missing section <functions>"
 
 - test: empty functions yml
   steps:
@@ -1101,7 +1098,7 @@
             echo "functions:" >/home/dockeruser/test/binaris.yml
     -   in: bn deploy emptyfunctions
         exit: 1
-        err: Your binaris.yml must contain a <functions> dictionary.
+        err: "binaris.yml section <functions> is not a dictionary"
 
 - test: numeric functions yml
   steps:
@@ -1109,4 +1106,4 @@
             echo "functions: 3" >/home/dockeruser/test/binaris.yml
     -   in: bn deploy numericfunctions
         exit: 1
-        err: Your binaris.yml must contain a <functions> dictionary.
+        err: "binaris.yml section <functions> is not a dictionary"

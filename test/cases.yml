@@ -19,7 +19,7 @@
   steps:
     -   in: bn create node8 unrelatedname
     -   in: bn deploy grouchybear
-        err: Cannot find function 'grouchybear' in binaris.yml
+        err: "binaris.yml is missing function 'grouchybear'"
         out: |-
             
             Tip: You can export BINARIS_LOG_LEVEL=[silly|debug|verbose] to view debug logs
@@ -68,7 +68,7 @@
     -   in: bn create node8 missfield
     -   in: sed -i '5d' binaris.yml
     -   in: bn deploy missfield
-        err: "binaris.yml: missing a required field <runtime>"
+        err: "binaris.yml is missing field <runtime>"
         out: |-
             
             Tip: You can export BINARIS_LOG_LEVEL=[silly|debug|verbose] to view debug logs
