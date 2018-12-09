@@ -1085,3 +1085,28 @@
     -   in: bn deploy nondictenv
         exit: 1
         err: binaris.yml env section must be a dictionary.
+
+- test: empty binaris.yml
+  steps:
+    -   in: |-
+            touch /home/dockeruser/test/binaris.yml
+    -   in: bn deploy emptyyml
+        exit: 1
+        err: |-
+             Your binaris.yml did not contain a require field: <functions>
+
+- test: empty functions yml
+  steps:
+    -   in: |-
+            echo "functions:" >/home/dockeruser/test/binaris.yml
+    -   in: bn deploy emptyfunctions
+        exit: 1
+        err: Your binaris.yml must contain a <functions> dictionary.
+
+- test: numeric functions yml
+  steps:
+    -   in: |-
+            echo "functions: 3" >/home/dockeruser/test/binaris.yml
+    -   in: bn deploy numericfunctions
+        exit: 1
+        err: Your binaris.yml must contain a <functions> dictionary.
