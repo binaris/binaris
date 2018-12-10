@@ -20,6 +20,10 @@
               Options:
                 --version   Show version number  [boolean]
                 --help, -h  Show help  [boolean]*
+
+              Tip:
+                You can export BINARIS_LOG_LEVEL=[silly|debug|verbose] to view debug logs
+
 - test: Test list help output
   steps:
     -   in: bn list --help
@@ -30,6 +34,7 @@
                 --version   Show version number  [boolean]
                 --help, -h  Show help  [boolean]
                 --json      Output as JSON*
+
 - test: Test logs help output (good-path)
   steps:
     -   in: bn logs --help
@@ -423,9 +428,6 @@
     -   in: bn deploy invalidenv
         exit: 1
         err: "binaris.yml env var 'A_NUMBER' is not a string"
-        out: |-
-            
-            Tip: You can export BINARIS_LOG_LEVEL=[silly|debug|verbose] to view debug logs
 
 - test: "envs: fail to deploy if empty string in env"
   steps:
@@ -443,18 +445,12 @@
     -   in: bn deploy emptiness
         exit: 1
         err: "Empty string env 'EMPTY' in binaris.yml is not supported"
-        out: |-
-            
-            Tip: You can export BINARIS_LOG_LEVEL=[silly|debug|verbose] to view debug logs
 
 - test: Test login (bad-path)
   steps:
     -   in: unset BINARIS_API_KEY
     -   in: echo 9239239 | bn login
         err: Invalid API key
-        out: |-
-            *
-            Tip: You can export BINARIS_LOG_LEVEL=[silly|debug|verbose] to view debug logs
         exit: 1
 
 - test: Test login endpoint error (bad-path)
@@ -462,9 +458,6 @@
     -   in: unset BINARIS_API_KEY
     -   in: echo 9239239 | BINARIS_DEPLOY_ENDPOINT=fake.api.binaris.invalid. bn login
         err: "Error: getaddrinfo ENOTFOUND fake.api.binaris.invalid. fake.api.binaris.invalid.:443"
-        out: |-
-            *
-            Tip: You can export BINARIS_LOG_LEVEL=[silly|debug|verbose] to view debug logs
         exit: 1
 
 - test: Test login backcompat endpoint error (bad-path)
@@ -472,9 +465,6 @@
     -   in: unset BINARIS_API_KEY
     -   in: echo 9239239 | BINARIS_INVOKE_ENDPOINT=fake.run.binaris.invalid. bn login
         err: "Error: getaddrinfo ENOTFOUND fake.run.binaris.invalid. fake.run.binaris.invalid.:443"
-        out: |-
-            *
-            Tip: You can export BINARIS_LOG_LEVEL=[silly|debug|verbose] to view debug logs
         exit: 1
 
 - test: Test create (bad-path)
@@ -509,15 +499,9 @@
     -   in: bn create node8 quarrelsometest -p /home/dockeruser/test/alloftheoptions
     -   in: bn invoke quarrelsometest -j myFile.json -d data
         err: Invoke flags --json(-j) and --data(-d) are mutually exclusive
-        out: |-
-            
-            Tip: You can export BINARIS_LOG_LEVEL=[silly|debug|verbose] to view debug logs
         exit: 1
     -   in: bn invoke quarrelsometest -j myFile.json
         err: "ENOENT: no such file or directory, open 'myFile.json'"
-        out: |-
-            
-            Tip: You can export BINARIS_LOG_LEVEL=[silly|debug|verbose] to view debug logs
         exit: 1
     -   in: bn invoke nosuchfunction
         err: |-
@@ -526,9 +510,6 @@
             If this keeps happening, please contact support@binaris.com with the request ID.
             
             request_id: *
-        out: |-
-            
-            Tip: You can export BINARIS_LOG_LEVEL=[silly|debug|verbose] to view debug logs
         exit: 1
 
 - test: Test user code timeout (bad-path)
@@ -553,9 +534,6 @@
             <hr><center>openresty/1.13.6.1</center>
             </body>
             </html>
-        out: |-
-            
-            Tip: You can export BINARIS_LOG_LEVEL=[silly|debug|verbose] to view debug logs
 
         exit: 1
 
@@ -582,10 +560,6 @@
                 at Bolt.exports.handler [as userEntryPoint] (/code/function.js:2:9)
                 at *
                 at <anonymous>
-            
-        out: |-
-            
-            Tip: You can export BINARIS_LOG_LEVEL=[silly|debug|verbose] to view debug logs
 
         exit: 1
 
@@ -612,10 +586,6 @@
                 response = yield gen.maybe_future(self._handler(body, request))
             ,  File "/code/function.py", line 2, in handler
                 sdasda
-            
-        out: |-
-            
-            Tip: You can export BINARIS_LOG_LEVEL=[silly|debug|verbose] to view debug logs
         exit: 1
 
 - test: Test bad user python3 code (bad-path)
@@ -641,10 +611,6 @@
                 response = yield gen.maybe_future(self._handler(body, request))
             ,  File "/code/function.py", line 2, in handler
                 sdasda
-            
-        out: |-
-            
-            Tip: You can export BINARIS_LOG_LEVEL=[silly|debug|verbose] to view debug logs
         exit: 1
 
 - test: Test bad user pypy2 code (bad-path)
@@ -670,10 +636,6 @@
                 response = yield gen.maybe_future(self._handler(body, request))
             ,  File "/code/function.py", line 2, in handler
                 sdasda
-
-        out: |-
-            
-            Tip: You can export BINARIS_LOG_LEVEL=[silly|debug|verbose] to view debug logs
         exit: 1
 
 - test: Test bad user java8 code (bad-path)
@@ -707,9 +669,6 @@
             <hr /><a href="http://eclipse.org/jetty">Powered by Jetty:// 9.3.z-SNAPSHOT</a><hr/>
             </body>
             </html>
-        out: |-
-            
-            Tip: You can export BINARIS_LOG_LEVEL=[silly|debug|verbose] to view debug logs
         exit: 1
 
 - test: Test remove (bad-path)
@@ -717,18 +676,12 @@
     -   in: bn create node8 dispensabledrop
     -   in: bn remove dispensabledrop
         err: "Error: No such function"
-        out: |-
-            
-            Tip: You can export BINARIS_LOG_LEVEL=[silly|debug|verbose] to view debug logs
         exit: 1
     -   in: bn deploy dispensabledrop
     -   in: bn remove dispensabledrop
         out: "*Removed function dispensabledrop*"
     -   in: bn remove dispensabledrop
         err: "Error: No such function"
-        out: |-
-            
-            Tip: You can export BINARIS_LOG_LEVEL=[silly|debug|verbose] to view debug logs
         exit: 1
     -   in: bn remove
         err: "*Not enough non-option arguments: got 0, need at least 1"
@@ -758,9 +711,6 @@
   steps:
     - in: bn deploy "inv@a-d"
       err: "Invalid characters in function name 'inv@a-d'. Use only letters and digits"
-      out: |-
-          
-          Tip: You can export BINARIS_LOG_LEVEL=[silly|debug|verbose] to view debug logs
       exit: 1
 
 - test: Unknown command (bad-path)
@@ -777,9 +727,6 @@
   steps:
     -   in: bn create node8 orangehero -p /home/dockeruser/test/securedir
         err: "EACCES: permission denied, unlink '/home/dockeruser/test/securedir/*"
-        out: |-
-            
-            Tip: You can export BINARIS_LOG_LEVEL=[silly|debug|verbose] to view debug logs
         exit: 1
 
 - test: Invocation stats
@@ -832,9 +779,6 @@
   steps:
     -   in: bn deploy livelyhall -p /home/dockeruser/test/bogus/comeon/really/hello.js
         err: "ENOENT: no such file or directory, open '/home/dockeruser/test/bogus/comeon/really/hello.js/binaris.yml'"
-        out: |-
-            
-            Tip: You can export BINARIS_LOG_LEVEL=[silly|debug|verbose] to view debug logs
         exit: 1
 
 - test: No API key or conf file (bad-path)
@@ -844,9 +788,6 @@
     -   in: bn create node8 handsomelycalendar
     -   in: bn deploy handsomelycalendar
         err: Binaris conf file could not be read and BINARIS_API_KEY is undefined, please use "bn login"
-        out: |-
-            
-            Tip: You can export BINARIS_LOG_LEVEL=[silly|debug|verbose] to view debug logs
         exit: 1
 
 - test: Invalid API key (bad-path)
@@ -857,24 +798,15 @@
     -   in: bn deploy perplexingpersimmon
         err: |-
             Error: Invalid API key
-        out: |-
-            
-            Tip: You can export BINARIS_LOG_LEVEL=[silly|debug|verbose] to view debug logs
         exit: 1
     -   in: bn list
         err: |-
             Error: Invalid API key
-        out: |-
-            
-            Tip: You can export BINARIS_LOG_LEVEL=[silly|debug|verbose] to view debug logs
         exit: 1
     -   in: BINARIS_API_KEY=boguskey bn invoke perplexingpersimmon
         err: |-
             Unauthorized request. Make sure you're passing the right API key.
             request_id: *
-        out: |-
-            
-            Tip: You can export BINARIS_LOG_LEVEL=[silly|debug|verbose] to view debug logs
         exit: 1
 
 - test: Deploy of 200MB function succeeds
@@ -974,9 +906,6 @@
   steps:
     - in: bn deploy largeData300MB
       err: "Error: Payload too large"
-      out: |-
-          
-          Tip: You can export BINARIS_LOG_LEVEL=[silly|debug|verbose] to view debug logs
       exit: 1
 
 - test: Test deploy of long name (good-path)
