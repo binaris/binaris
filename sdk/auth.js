@@ -29,23 +29,35 @@ const verifyAPIKey = async function verifyAPIKey(apiKey) {
     };
   } catch (accountErr) {
     logger.debug('Failed to authenticate via account', { error: inspect(accountErr) });
-    try {
-      await rp.get({
-        url: urljoin(`https://${getInvokeEndpoint()}`, 'v1', 'apikey', apiKey),
-        json: true,
-      });
-
+    if (accountErr.statusCode !== 403) {
       return {
-        error: undefined,
-        accountId: undefined,
-      };
-    } catch (apiErr) {
-      logger.debug('Failed to authenticate via api key', { error: inspect(apiErr) });
-      return {
-        error: new Error('Invalid API key'),
+        error: accountErr,
         accountId: undefined,
       };
     }
+  }
+  try {
+    await rp.get({
+      url: urljoin(`https://${getInvokeEndpoint()}`, 'v1', 'apikey', apiKey),
+      json: true,
+    });
+
+    return {
+      error: undefined,
+      accountId: undefined,
+    };
+  } catch (apiErr) {
+    logger.debug('Failed to authenticate via api key', { error: inspect(apiErr) });
+    if (apiErr.statusCode !== 404) {
+      return {
+        error: apiErr,
+        accountId: undefined,
+      };
+    }
+    return {
+      error: new Error('Invalid API key'),
+      accountId: undefined,
+    };
   }
 };
 
