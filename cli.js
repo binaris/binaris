@@ -285,6 +285,8 @@ Usage: $0 <command> [options]` // eslint-disable-line comma-dangle
   })
   .demand(1, 'Please provide at least 1 valid command')
   .help('help')
+  .epilog(`Tip:
+  You can export BINARIS_LOG_LEVEL=[silly|debug|verbose] to view debug logs`)
   .alias('help', 'h')
   .wrap(null);
 
