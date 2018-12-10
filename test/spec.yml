@@ -457,6 +457,26 @@
             Tip: You can export BINARIS_LOG_LEVEL=[silly|debug|verbose] to view debug logs
         exit: 1
 
+- test: Test login endpoint error (bad-path)
+  steps:
+    -   in: unset BINARIS_API_KEY
+    -   in: echo 9239239 | BINARIS_DEPLOY_ENDPOINT=fake.api.binaris.invalid. bn login
+        err: "Error: getaddrinfo ENOTFOUND fake.api.binaris.invalid. fake.api.binaris.invalid.:443"
+        out: |-
+            *
+            Tip: You can export BINARIS_LOG_LEVEL=[silly|debug|verbose] to view debug logs
+        exit: 1
+
+- test: Test login backcompat endpoint error (bad-path)
+  steps:
+    -   in: unset BINARIS_API_KEY
+    -   in: echo 9239239 | BINARIS_INVOKE_ENDPOINT=fake.run.binaris.invalid. bn login
+        err: "Error: getaddrinfo ENOTFOUND fake.run.binaris.invalid. fake.run.binaris.invalid.:443"
+        out: |-
+            *
+            Tip: You can export BINARIS_LOG_LEVEL=[silly|debug|verbose] to view debug logs
+        exit: 1
+
 - test: Test create (bad-path)
   steps:
     -   in: bn create node8 a*b*c*
