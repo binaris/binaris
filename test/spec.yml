@@ -197,10 +197,10 @@
           if ! echo "$out" | grep -e "No such function" -e "Removed function"; then false; fi
           done;
   steps:
-    -   in: bn create node8 listtest1
-    -   in: bn deploy listtest1
-    -   in: bn create node8 listtest2
-    -   in: bn deploy listtest2
+    -   in: bn create node8 listtest1 -p 1
+    -   in: bn deploy listtest1 -p 1
+    -   in: bn create node8 listtest2 -p 2
+    -   in: bn deploy listtest2 -p 2
     -   in: bn list
         out: |-
              FUNCTION                 *LAST DEPLOYED*
@@ -1071,3 +1071,10 @@
     -   in: bn deploy noRuntime
         exit: 1
         err: "binaris.yml field <runtime> is not a string"
+
+- test: existing files
+  steps:
+    -   in: touch binaris.yml
+    -   in: bn create node8 alreadyExists
+        exit: 1
+        err: "/home/dockeruser/test/binaris.yml already exists"
