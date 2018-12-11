@@ -926,13 +926,13 @@
     -   in: bn create node8 $SERVER_LONG_NAME
     -   in: bn deploy $SERVER_LONG_NAME
         exit: 1
-        err: "Error: ERR_FUNCTION_NAME_TOO_LONG"
+        err: "Function name cannot be longer than 200"
 
 - test: Test remove of somewhat long name (bad-path)
   steps:
     -   in: bn remove binarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinaris
         exit: 1
-        err: "Error: ERR_FUNCTION_NAME_TOO_LONG"
+        err: "Function name cannot be longer than 200"
 
 - test: Test deploy of very long name (bad-path)
   setup:
