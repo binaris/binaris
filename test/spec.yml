@@ -721,12 +721,12 @@
 
 - test: No permission
   setup:
-    - mkdir /home/dockeruser/test/securedir
-    - echo binaris | sudo  -S chown root:root /home/dockeruser/test/securedir
-    - echo binaris | sudo  -S chmod 700 /home/dockeruser/test/securedir
+    # aufs and fs-extra do not play nice together
+    - mkdir foo
+    - chmod -rwx foo
   steps:
-    -   in: bn create node8 orangehero -p /home/dockeruser/test/securedir
-        err: "EACCES: permission denied, unlink '/home/dockeruser/test/securedir/*"
+    -   in: bn create node8 orangehero -p foo/bar
+        err: "EACCES: permission denied, mkdir '/home/dockeruser/test/foo/bar'"
         exit: 1
 
 - test: Invocation stats
