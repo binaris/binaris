@@ -77,7 +77,7 @@
   cleanup:
     - bn remove $FUNC_NAME
   steps:
-    - in: echo $BINARIS_TEMPORARY_API_KEY_FOR_TESTING_OLD_ENDPOINTS | bn login
+    - in: echo "$BINARIS_TEMPORARY_API_KEY_FOR_TESTING_OLD_ENDPOINTS" | bn login
       out: |-
           Please enter your Binaris API key to deploy and invoke functions.
           If you don't have a key, head over to https://binaris.com to request one
@@ -808,6 +808,33 @@
             Unauthorized request. Make sure you're passing the right API key.
             request_id: *
         exit: 1
+
+- test: Invalid characters in API key when invoking (bad-path)
+  setup:
+    - export BINARIS_API_KEY=יוניקוד
+  steps:
+    - in: bn invoke whatever
+      err: |-
+        Non-ASCII characters are not allowed in API key.
+      exit: 1
+
+- test: Invalid characters in API key when logging in (bad-path)
+  setup:
+    - export BINARIS_API_KEY=יוניקוד
+  steps:
+    - in: echo $BINARIS_API_KEY | bn login
+      err: |-
+        Non-ASCII characters are not allowed in API key.
+      exit: 1
+
+- test: Invalid characters in account ID from environment variable (bad-path)
+  setup:
+    - export BINARIS_ACCOUNT_ID=יוניקוד
+  steps:
+    - in: bn invoke whatever
+      err: |-
+        Non-ASCII characters are not allowed in account ID.
+      exit: 1
 
 - test: Deploy of 200MB function succeeds
   setup:
