@@ -6,7 +6,7 @@ const rp = require('request-promise-native');
 
 const logger = require('../lib/logger');
 
-const { translateErrorCode } = require('binaris-pickle');
+const { maybeTranslateErrorCode } = require('binaris-pickle');
 
 const { version } = require('../package.json');
 
@@ -15,12 +15,21 @@ class APIError extends Error {}
 function validateResponse(response) {
   const errorCode = get(response, 'body.errorCode');
   if (errorCode) {
-    throw new APIError(`Error: ${translateErrorCode(errorCode)}`);
+    const readableErrorMessage = maybeTranslateErrorCode(errorCode);
+    if (readableErrorMessage) {
+      throw new APIError(`Error: ${readableErrorMessage}`);
+    }
   }
 
-  const errorText = get(response, 'body.error');
+  // An error is anything with an error message, or any error code
+  // with an untranslated message.
+  const errorText = get(response, 'body.error') || (errorCode && get(response, 'body.message'));
   if (errorText) {
     throw new APIError(errorText);
+  }
+
+  if (errorCode) {
+    throw new APIError(`Error: ${errorCode}`);
   }
 
   if (response.statusCode < 200 || response.statusCode >= 300) {
