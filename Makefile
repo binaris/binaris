@@ -57,8 +57,8 @@ test: build
 
 .PHONY: publish
 publish: require-npm-creds require-npm-tag
-		git tag $(version)/$(NPM_TAG)
-		git push origin $(version)/$(NPM_TAG)
+		git tag $(version)
+		git push origin $(version)
 		export tag=$(tag)
 		$(DOCKER) run                                                                                              \
 			--rm                                                                                                     \
