@@ -815,7 +815,7 @@
   steps:
     - in: bn invoke whatever
       err: |-
-        Non-ASCII characters are not allowed in API key.
+        Non-ASCII characters are not allowed in API key
       exit: 1
 
 - test: Invalid characters in API key when logging in (bad-path)
@@ -824,7 +824,7 @@
   steps:
     - in: echo $BINARIS_API_KEY | bn login
       err: |-
-        Non-ASCII characters are not allowed in API key.
+        Non-ASCII characters are not allowed in API key
       exit: 1
 
 - test: Invalid characters in account ID from environment variable (bad-path)
@@ -833,7 +833,7 @@
   steps:
     - in: bn invoke whatever
       err: |-
-        Non-ASCII characters are not allowed in account ID.
+        Non-ASCII characters are not allowed in account ID
       exit: 1
 
 - test: Deploy of 200MB function succeeds
