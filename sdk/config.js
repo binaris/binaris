@@ -1,9 +1,9 @@
 'use strict';
 
 const defaultEndpoints = {
-  deploy: 'api.binaris.com',
-  invoke: 'run.binaris.com',
-  logs: 'log.binaris.com',
+  deploy: 'api-prod.binaris.com',
+  invoke: 'run-prod.binaris.com',
+  logs: 'log-prod.binaris.com',
 };
 
 const getDeployEndpoint = function getDeployEndpoint() {
