@@ -527,14 +527,11 @@
     -   in: bn deploy timeoutforsure
     -   in: bn invoke timeoutforsure
         err: |-
-            <html>
-            <head><title>504 Gateway Time-out</title></head>
-            <body bgcolor="white">
-            <center><h1>504 Gateway Time-out</h1></center>
-            <hr><center>openresty/1.13.6.1</center>
-            </body>
-            </html>
-
+            Something went wrong, and it's not your fault.
+            If this keeps happening, please contact support@binaris.com with the request ID.
+            Apologies.
+            
+            request_id: *
         exit: 1
 
 - test: Test bad user node8 code (bad-path)
