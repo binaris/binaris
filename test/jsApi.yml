@@ -21,7 +21,7 @@
   steps:
     -   in: export BASE_ARGS="-H X-Binaris-Api-Key:${BINARIS_API_KEY}"
     -   in: export TEST_FUNCTION="https://${BINARIS_INVOKE_ENDPOINT}/v2/run/${BINARIS_ACCOUNT_ID}/returnJSMethod"
-    -   in: bn create node8 returnMethod
+    -   in: bn create node8 returnJSMethod
     -   in: 'echo "exports.handler = (_, ctx) => ctx.request.method;" >function.js'
     -   in: bn deploy returnJSMethod
     -   in: curl -s -X GET ${BASE_ARGS} "${TEST_FUNCTION}"
