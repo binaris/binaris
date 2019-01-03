@@ -64,7 +64,8 @@ test.afterEach.always(async (t) => {
  * Iterates over the YAML CLI specification separating and testing each
  * `test` entry separately.
  */
-const testFileNames = ['./test/spec.yml', './test/cases.yml', './test/jsApi.yml'];
+const testFileNames = ['./test/spec.yml', './test/cases.yml',
+  './test/jsApi.yml', './test/py2Api.yml'];
 const testFiles = testFileNames.map(file => yaml.safeLoad(fs.readFileSync(file, 'utf8')));
 const testPlan = [].concat(...testFiles);
 
