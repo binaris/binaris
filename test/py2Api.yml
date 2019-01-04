@@ -155,3 +155,20 @@
         out: '"/foo/bar/"'
     -   in: bn remove returnPy2ReqPath
 
+- test: Test Py2 custom response
+  steps:
+    -   in: bn create python2 customPy2Response
+    -   in: |-
+          cat > function.py << EOL
+          def handler(input, ctx):
+            headers = dict(foo = str(123), bar = 'vaz', but = '')
+            return ctx.HTTPResponse(231, headers, 'no quotes')
+          EOL
+    -   in: bn deploy customPy2Response
+    -   in: curl -H X-Binaris-Api-Key:${BINARIS_API_KEY} --silent --include "https://${BINARIS_INVOKE_ENDPOINT}/v2/run/${BINARIS_ACCOUNT_ID}/customPy2Response" | grep -e Foo -e Bar -e But -e HTTP -e quotes
+        out: |-
+             HTTP/1.1 231 Unknown*
+             Bar: vaz*
+             But:*
+             Foo: 123*
+             no quotes
