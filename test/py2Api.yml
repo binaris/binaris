@@ -79,7 +79,7 @@
 
 - test: Test Py2 headers input
   cleanup:
-    -   bn remove returnPy2ReqTestHeaders
+    -   bn remove returnPy2ReqTestHeader
   steps:
     -   in: export BASE_ARGS="-H X-Binaris-Api-Key:${BINARIS_API_KEY}"
     -   in: export TEST_FUNCTION="https://${BINARIS_INVOKE_ENDPOINT}/v2/run/${BINARIS_ACCOUNT_ID}/returnPy2ReqTestHeader"
