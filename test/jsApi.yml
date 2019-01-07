@@ -1,4 +1,6 @@
 - test: Test js input
+  cleanup:
+    -   bn remove returnJSInput
   steps:
     -   in: export BASE_ARGS="-H X-Binaris-Api-Key:${BINARIS_API_KEY}"
     -   in: export TEST_FUNCTION="https://${BINARIS_INVOKE_ENDPOINT}/v2/run/${BINARIS_ACCOUNT_ID}/returnJSInput"
@@ -15,9 +17,10 @@
         out: '{"inputType":"object","input":{"foo":"bar","yet":123}}'
     -   in: curl -s --data '["foo","bar"]' ${BASE_ARGS} "${TEST_FUNCTION}"
         out: '{"inputType":"object","input":["foo","bar"]}'
-    -   in: bn remove returnJSInput
 
 - test: Test js method 
+  cleanup:
+    -   bn remove returnJSMethod
   steps:
     -   in: export BASE_ARGS="-H X-Binaris-Api-Key:${BINARIS_API_KEY}"
     -   in: export TEST_FUNCTION="https://${BINARIS_INVOKE_ENDPOINT}/v2/run/${BINARIS_ACCOUNT_ID}/returnJSMethod"
@@ -36,9 +39,10 @@
         out: '"OPTIONS"'
     -   in: curl -s -X PATCH ${BASE_ARGS} "${TEST_FUNCTION}"
         out: '"PATCH"'
-    -   in: bn remove returnJSMethod
 
 - test: Test js data input
+  cleanup:
+    -   bn remove returnJSReqBody
   steps:
     -   in: export BASE_ARGS="-H X-Binaris-Api-Key:${BINARIS_API_KEY}"
     -   in: export TEST_FUNCTION="https://${BINARIS_INVOKE_ENDPOINT}/v2/run/${BINARIS_ACCOUNT_ID}/returnJSReqBody"
@@ -59,9 +63,10 @@
         out: '{"type":"Buffer","data":[10]}'
     -   in: echo | gzip -n | curl -s --data-binary @- ${BASE_ARGS} "${TEST_FUNCTION}"
         out: '{"type":"Buffer","data":[31,139,8,0,0,0,0,0,0,3,227,2,0,147,6,215,50,1,0,0,0]}'
-    -   in: bn remove returnJSReqBody
 
 - test: Test js headers input
+  cleanup:
+    -   bn remove returnJSReqTestHeader
   steps:
     -   in: export BASE_ARGS="-H X-Binaris-Api-Key:${BINARIS_API_KEY}"
     -   in: export TEST_FUNCTION="https://${BINARIS_INVOKE_ENDPOINT}/v2/run/${BINARIS_ACCOUNT_ID}/returnJSReqTestHeader"
@@ -78,9 +83,10 @@
         out: '"123"'
     -   in: 'curl -s -H "Test: foo" -H "Test: bar" ${BASE_ARGS} "${TEST_FUNCTION}"'
         out: '"foo, bar"'
-    -   in: bn remove returnJSReqTestHeader
 
 - test: Test js query input
+  cleanup:
+    -   bn remove returnJSReqQuery
   steps:
     -   in: export BASE_ARGS="-H X-Binaris-Api-Key:${BINARIS_API_KEY}"
     -   in: export TEST_FUNCTION="https://${BINARIS_INVOKE_ENDPOINT}/v2/run/${BINARIS_ACCOUNT_ID}/returnJSReqQuery"
@@ -101,9 +107,10 @@
         out: '{"foo":"123","bar":"this"}'
     -   in: curl -s ${BASE_ARGS} "${TEST_FUNCTION}?foo="
         out: '{"foo":""}'
-    -   in: bn remove returnJSReqQuery
 
 - test: Test js path input
+  cleanup:
+    -   bn remove returnJSReqPath
   steps:
     -   in: export BASE_ARGS="-H X-Binaris-Api-Key:${BINARIS_API_KEY}"
     -   in: export TEST_FUNCTION="https://${BINARIS_INVOKE_ENDPOINT}/v2/run/${BINARIS_ACCOUNT_ID}/returnJSReqPath"
@@ -128,9 +135,10 @@
         out: '"/foo/bar"'
     -   in: curl -s ${BASE_ARGS} "${TEST_FUNCTION}/foo/bar/"
         out: '"/foo/bar/"'
-    -   in: bn remove returnJSReqPath
 
 - test: Test js custom response
+  cleanup:
+    -   bn remove customJSResponse
   steps:
     -   in: bn create node8 customJSResponse
     -   in: |-
@@ -155,4 +163,3 @@
              bar: vaz
              but: 
              no quotes
-    -   in: bn remove customJSResponse
