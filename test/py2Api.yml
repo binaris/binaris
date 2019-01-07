@@ -1,4 +1,6 @@
 - test: Test Py2 input
+  cleanup:
+    -   bn remove returnPy2Input
   steps:
     -   in: export BASE_ARGS="-H X-Binaris-Api-Key:${BINARIS_API_KEY}"
     -   in: export TEST_FUNCTION="https://${BINARIS_INVOKE_ENDPOINT}/v2/run/${BINARIS_ACCOUNT_ID}/returnPy2Input"
@@ -22,9 +24,10 @@
         out: '{"input": {"foo": "bar", "yet": 123}, "inputType": "dict"}'
     -   in: curl -s --data '["foo","bar"]' ${BASE_ARGS} "${TEST_FUNCTION}"
         out: '{"input": ["foo", "bar"], "inputType": "list"}'
-    -   in: bn remove returnPy2Input
 
 - test: Test Py2 method 
+  cleanup:
+    -   bn remove returnPy2Method
   steps:
     -   in: export BASE_ARGS="-H X-Binaris-Api-Key:${BINARIS_API_KEY}"
     -   in: export TEST_FUNCTION="https://${BINARIS_INVOKE_ENDPOINT}/v2/run/${BINARIS_ACCOUNT_ID}/returnPy2Method"
@@ -47,9 +50,10 @@
         out: '"OPTIONS"'
     -   in: curl -s -X PATCH ${BASE_ARGS} "${TEST_FUNCTION}"
         out: '"PATCH"'
-    -   in: bn remove returnPy2Method
 
 - test: Test Py2 data input
+  cleanup:
+    -   bn remove returnPy2ReqBody
   steps:
     -   in: export BASE_ARGS="-H X-Binaris-Api-Key:${BINARIS_API_KEY}"
     -   in: export TEST_FUNCTION="https://${BINARIS_INVOKE_ENDPOINT}/v2/run/${BINARIS_ACCOUNT_ID}/returnPy2ReqBody"
@@ -72,9 +76,10 @@
         out: '"%20"'
     -   in: echo | curl -s --data-binary @- ${BASE_ARGS} "${TEST_FUNCTION}"
         out: '"\n"'
-    -   in: bn remove returnPy2ReqBody
 
 - test: Test Py2 headers input
+  cleanup:
+    -   bn remove returnPy2ReqTestHeaders
   steps:
     -   in: export BASE_ARGS="-H X-Binaris-Api-Key:${BINARIS_API_KEY}"
     -   in: export TEST_FUNCTION="https://${BINARIS_INVOKE_ENDPOINT}/v2/run/${BINARIS_ACCOUNT_ID}/returnPy2ReqTestHeader"
@@ -95,9 +100,10 @@
         out: '"123"'
     -   in: 'curl -s -H "Test: foo" -H "Test: bar" ${BASE_ARGS} "${TEST_FUNCTION}"'
         out: '"foo,bar"'
-    -   in: bn remove returnPy2ReqTestHeader
 
 - test: Test Py2 query input
+  cleanup:
+    -   bn remove returnPy2ReqQuery
   steps:
     -   in: export BASE_ARGS="-H X-Binaris-Api-Key:${BINARIS_API_KEY}"
     -   in: export TEST_FUNCTION="https://${BINARIS_INVOKE_ENDPOINT}/v2/run/${BINARIS_ACCOUNT_ID}/returnPy2ReqQuery"
@@ -122,9 +128,10 @@
         out: '{"foo": "123", "bar": "this"}'
     -   in: curl -s ${BASE_ARGS} "${TEST_FUNCTION}?foo="
         out: '{"foo": ""}'
-    -   in: bn remove returnPy2ReqQuery
 
 - test: Test Py2 path input
+  cleanup:
+    -   bn remove returnPy2ReqPath
   steps:
     -   in: export BASE_ARGS="-H X-Binaris-Api-Key:${BINARIS_API_KEY}"
     -   in: export TEST_FUNCTION="https://${BINARIS_INVOKE_ENDPOINT}/v2/run/${BINARIS_ACCOUNT_ID}/returnPy2ReqPath"
@@ -153,9 +160,10 @@
         out: '"/foo/bar"'
     -   in: curl -s ${BASE_ARGS} "${TEST_FUNCTION}/foo/bar/"
         out: '"/foo/bar/"'
-    -   in: bn remove returnPy2ReqPath
 
 - test: Test Py2 custom response
+  cleanup:
+    -   bn remove customPy2Response
   steps:
     -   in: bn create python2 customPy2Response
     -   in: |-
