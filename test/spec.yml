@@ -172,14 +172,11 @@
             "curl https://*"
 
 - test: Test feedback (good-path)
+  setup:
+    - export FEEDBACK_EMAIL=test@binaris.com
+    - export FEEDBACK_MESSAGE=ZL3FtCMyqeRQjP5GESTRbDRwMEjshHhjYAXHiMRZg3EOtutyWvEWcYJN7704ch3W
   steps:
     -   in: bn feedback "$FEEDBACK_EMAIL" "$FEEDBACK_MESSAGE"
-    -   out: |-
-            Thank you!
-
-- test: Test feedback (good-path)
-  steps:
-    -   in: bn feedback --message "$FEEDBACK_MESSAGE" --email "$FEEDBACK_EMAIL"
     -   out: |-
             Thank you!
 
@@ -482,12 +479,16 @@
         exit: 1
 
 - test: Test feedback empty message (bad-path)
+  setup:
+    - export FEEDBACK_EMAIL=test@binaris.com
   steps:
     -   in: bn feedback "$FEEDBACK_EMAIL" ""
         err: Not a valid message.
         exit: 1
 
 - test: Test feedback empty email (bad-path)
+  setup:
+    - export FEEDBACK_MESSAGE=ZL3FtCMyqeRQjP5GESTRbDRwMEjshHhjYAXHiMRZg3EOtutyWvEWcYJN7704ch3W
   steps:
     -   in: bn feedback "" "$FEEDBACK_MESSAGE"
         err: Not a valid email.
