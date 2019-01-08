@@ -171,6 +171,8 @@
             "curl https://*"
 
 - test: Test Java
+  cleanup:
+    - bn remove ventimacchiato
   steps:
     -   in: bn create java8 ventimacchiato
     -   in: gradle jar --no-daemon
@@ -178,7 +180,6 @@
     -   in: bn invoke ventimacchiato
         out: |-
             *"Hello, world"*
-    -   in: bn remove ventimacchiato
 
 - test: Test list
   serial: true
@@ -933,6 +934,8 @@
       exit: 1
 
 - test: Test deploy of long name (good-path)
+  cleanup:
+    - bn remove $LONG_NAME
   setup:
     - export LONG_NAME=binarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinaris1234
   steps:
@@ -941,7 +944,6 @@
     -   in: bn invoke $LONG_NAME
         out: |-
             *"Hello World!"*
-    -   in: bn remove $LONG_NAME
 
 - test: Test deploy of somewhat long name (bad-path)
   setup:
@@ -1028,6 +1030,8 @@
             99%  * ms*
 
 - test: empty env
+  cleanup:
+    - bn remove emptyenv
   steps:
     -   in: bn create node8 emptyenv
     -   in: |-
@@ -1043,7 +1047,6 @@
         err: |-
             Empty existing env var 'nosuchenv' is not supported
         exit: 1
-    -  in: bn remove emptyenv
 
 - test: non dict env
   steps:
