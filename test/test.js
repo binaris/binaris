@@ -113,17 +113,19 @@ function createTest(rawSubTest) {
     t.context.cleanup = rawSubTest.cleanup;
 
     const matchText = function matchText(expected, text) {
-      return createRegTest(expected).test(stripText(text));
+      return createRegTest(expected).test(text);
     };
 
     for (const step of rawSubTest.steps) {
       // eslint-disable-next-line no-await-in-loop
       const cmdOut = await t.context.ct.streamIn(step.in);
       if (step.out) {
-        t.true(matchText(step.out, cmdOut.stdout));
+        const stripStdout = stripText(cmdOut.stdout);
+        t.true(matchText(step.out, stripStdout));
       }
       if (step.err) {
-        t.true(matchText(step.err, cmdOut.stderr));
+        const stripStderr = stripText(cmdOut.stderr);
+        t.true(matchText(step.err, stripStderr));
       }
       t.true(cmdOut.exitCode === (step.exit || 0), step.err);
     }
