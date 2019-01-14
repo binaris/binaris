@@ -12,12 +12,20 @@ const { version } = require('../package.json');
 
 class APIError extends Error {}
 
+function appendDebugId(message, debugId) {
+  if (debugId) {
+    return `${message}\nPlease refer to the request ID: ${debugId} for support on this error`;
+  }
+  return message;
+}
+
 function validateResponse(response) {
   const errorCode = get(response, 'body.errorCode');
+  const debugId = get(response, 'body.debugId');
   if (errorCode) {
     const readableErrorMessage = maybeTranslateErrorCode(errorCode);
     if (readableErrorMessage) {
-      throw new APIError(`Error: ${readableErrorMessage}`);
+      throw new APIError(appendDebugId(`Error: ${readableErrorMessage}`, errorCode === 'ERR_INTERNAL' && debugId));
     }
   }
 
