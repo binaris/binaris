@@ -1,0 +1,182 @@
+- test: Test Py2 input
+  cleanup:
+    -   bn remove returnPy2Input
+  steps:
+    -   in: export BASE_ARGS="-H X-Binaris-Api-Key:${BINARIS_API_KEY}"
+    -   in: export TEST_FUNCTION="https://${BINARIS_INVOKE_ENDPOINT}/v2/run/${BINARIS_ACCOUNT_ID}/returnPy2Input"
+    -   in: bn create python2 returnPy2Input
+    -   in: |-
+          cat > function.py << EOL
+          def handler(input, ctx):
+            return { 
+              'inputType': type(input).__name__,
+              'input': input,
+            }
+          EOL
+    -   in: bn deploy returnPy2Input
+    -   in: curl -s ${BASE_ARGS} "${TEST_FUNCTION}"
+        out: '{"input": {}, "inputType": "dict"}'
+    -   in: curl -s --data '{"' ${BASE_ARGS} "${TEST_FUNCTION}"
+        out: '{"input": null, "inputType": "NoneType"}'
+    -   in: curl -s --data '{}' ${BASE_ARGS} "${TEST_FUNCTION}"
+        out: '{"input": {}, "inputType": "dict"}'
+    -   in: curl -s --data '{"foo":"bar","yet":123}' ${BASE_ARGS} "${TEST_FUNCTION}"
+        out: '{"input": {"foo": "bar", "yet": 123}, "inputType": "dict"}'
+    -   in: curl -s --data '["foo","bar"]' ${BASE_ARGS} "${TEST_FUNCTION}"
+        out: '{"input": ["foo", "bar"], "inputType": "list"}'
+
+- test: Test Py2 method 
+  cleanup:
+    -   bn remove returnPy2Method
+  steps:
+    -   in: export BASE_ARGS="-H X-Binaris-Api-Key:${BINARIS_API_KEY}"
+    -   in: export TEST_FUNCTION="https://${BINARIS_INVOKE_ENDPOINT}/v2/run/${BINARIS_ACCOUNT_ID}/returnPy2Method"
+    -   in: bn create python2 returnPy2Method
+    -   in: |-
+          cat > function.py << EOL
+          def handler(body, ctx):
+            return ctx.request.method
+          EOL
+    -   in: bn deploy returnPy2Method
+    -   in: curl -s -X GET ${BASE_ARGS} "${TEST_FUNCTION}"
+        out: '"GET"'
+    -   in: curl -s -X POST ${BASE_ARGS} "${TEST_FUNCTION}"
+        out: '"POST"'
+    -   in: curl -s -X PUT ${BASE_ARGS} "${TEST_FUNCTION}"
+        out: '"PUT"'
+    -   in: curl -s -X DELETE ${BASE_ARGS} "${TEST_FUNCTION}"
+        out: '"DELETE"'
+    -   in: curl -s -X OPTIONS ${BASE_ARGS} "${TEST_FUNCTION}"
+        out: '"OPTIONS"'
+    -   in: curl -s -X PATCH ${BASE_ARGS} "${TEST_FUNCTION}"
+        out: '"PATCH"'
+
+- test: Test Py2 data input
+  cleanup:
+    -   bn remove returnPy2ReqBody
+  steps:
+    -   in: export BASE_ARGS="-H X-Binaris-Api-Key:${BINARIS_API_KEY}"
+    -   in: export TEST_FUNCTION="https://${BINARIS_INVOKE_ENDPOINT}/v2/run/${BINARIS_ACCOUNT_ID}/returnPy2ReqBody"
+    -   in: bn create python2 returnPy2ReqBody
+    -   in: |-
+          cat > function.py << EOL
+          def handler(input, ctx):
+            return ctx.request.body
+          EOL
+    -   in: bn deploy returnPy2ReqBody
+    -   in: curl -s ${BASE_ARGS} "${TEST_FUNCTION}"
+        out: ''
+    -   in: curl -s --data '{' ${BASE_ARGS} "${TEST_FUNCTION}"
+        out: '"{"'
+    -   in: curl -s --data '{}' ${BASE_ARGS} "${TEST_FUNCTION}"
+        out: '"{}"'
+    -   in: curl -s --data ' ' ${BASE_ARGS} "${TEST_FUNCTION}"
+        out: '" "'
+    -   in: curl -s --data-urlencode ' ' ${BASE_ARGS} "${TEST_FUNCTION}"
+        out: '"%20"'
+    -   in: echo | curl -s --data-binary @- ${BASE_ARGS} "${TEST_FUNCTION}"
+        out: '"\n"'
+
+- test: Test Py2 headers input
+  cleanup:
+    -   bn remove returnPy2ReqTestHeader
+  steps:
+    -   in: export BASE_ARGS="-H X-Binaris-Api-Key:${BINARIS_API_KEY}"
+    -   in: export TEST_FUNCTION="https://${BINARIS_INVOKE_ENDPOINT}/v2/run/${BINARIS_ACCOUNT_ID}/returnPy2ReqTestHeader"
+    -   in: bn create python2 returnPy2ReqTestHeader
+    -   in: |-
+          cat > function.py << EOL
+          def handler(input, ctx):
+            return ctx.request.headers["Test"]
+          EOL
+    -   in: bn deploy returnPy2ReqTestHeader
+    -   in: curl -s ${BASE_ARGS} "${TEST_FUNCTION}"
+        out: ''
+    -   in: 'curl -s -H "Test;" ${BASE_ARGS} "${TEST_FUNCTION}"'
+        out: '""'
+    -   in: 'curl -s -H "Test: foo" ${BASE_ARGS} "${TEST_FUNCTION}"'
+        out: '"foo"'
+    -   in: 'curl -s -H "Test: 123" ${BASE_ARGS} "${TEST_FUNCTION}"'
+        out: '"123"'
+    -   in: 'curl -s -H "Test: foo" -H "Test: bar" ${BASE_ARGS} "${TEST_FUNCTION}"'
+        out: '"foo,bar"'
+
+- test: Test Py2 query input
+  cleanup:
+    -   bn remove returnPy2ReqQuery
+  steps:
+    -   in: export BASE_ARGS="-H X-Binaris-Api-Key:${BINARIS_API_KEY}"
+    -   in: export TEST_FUNCTION="https://${BINARIS_INVOKE_ENDPOINT}/v2/run/${BINARIS_ACCOUNT_ID}/returnPy2ReqQuery"
+    -   in: bn create python2 returnPy2ReqQuery
+    -   in: |-
+          cat > function.py << EOL
+          def handler(input, ctx):
+            return ctx.request.query
+          EOL
+    -   in: bn deploy returnPy2ReqQuery
+    -   in: curl -s ${BASE_ARGS} "${TEST_FUNCTION}"
+        out: '{}'
+    -   in: curl -s ${BASE_ARGS} "${TEST_FUNCTION}?foo=123"
+        out: '{"foo": "123"}'
+    -   in: curl -s ${BASE_ARGS} "${TEST_FUNCTION}?foo=123&bar=this"
+        out: '{"foo": "123", "bar": "this"}'
+    -   in: curl -s ${BASE_ARGS} "${TEST_FUNCTION}?foo="
+        out: '{"foo": ""}'
+    -   in: curl -s ${BASE_ARGS} "${TEST_FUNCTION}/some/where?foo=123"
+        out: '{"foo": "123"}'
+    -   in: curl -s ${BASE_ARGS} "${TEST_FUNCTION}/some/where/?foo=123&bar=this"
+        out: '{"foo": "123", "bar": "this"}'
+    -   in: curl -s ${BASE_ARGS} "${TEST_FUNCTION}?foo="
+        out: '{"foo": ""}'
+
+- test: Test Py2 path input
+  cleanup:
+    -   bn remove returnPy2ReqPath
+  steps:
+    -   in: export BASE_ARGS="-H X-Binaris-Api-Key:${BINARIS_API_KEY}"
+    -   in: export TEST_FUNCTION="https://${BINARIS_INVOKE_ENDPOINT}/v2/run/${BINARIS_ACCOUNT_ID}/returnPy2ReqPath"
+    -   in: bn create python2 returnPy2ReqPath
+    -   in: |-
+          cat > function.py << EOL
+          def handler(input, ctx):
+            return ctx.request.path
+          EOL
+    -   in: bn deploy returnPy2ReqPath
+    -   in: curl -s ${BASE_ARGS} "${TEST_FUNCTION}"
+        out: 'null'
+    -   in: curl -s ${BASE_ARGS} "${TEST_FUNCTION}/////"
+        out: '"/"'
+    -   in: curl -s ${BASE_ARGS} "${TEST_FUNCTION}/foo"
+        out: '"/foo"'
+    -   in: curl -s ${BASE_ARGS} "${TEST_FUNCTION}/foo?qs"
+        out: '"/foo"'
+    -   in: curl -s ${BASE_ARGS} "${TEST_FUNCTION}/foo/"
+        out: '"/foo/"'
+    -   in: curl -s ${BASE_ARGS} "${TEST_FUNCTION}/foo/?qs=1"
+        out: '"/foo/"'
+    -   in: curl -s ${BASE_ARGS} "${TEST_FUNCTION}/foo///"
+        out: '"/foo/"'
+    -   in: curl -s ${BASE_ARGS} "${TEST_FUNCTION}/foo/bar"
+        out: '"/foo/bar"'
+    -   in: curl -s ${BASE_ARGS} "${TEST_FUNCTION}/foo/bar/"
+        out: '"/foo/bar/"'
+
+- test: Test Py2 custom response
+  cleanup:
+    -   bn remove customPy2Response
+  steps:
+    -   in: bn create python2 customPy2Response
+    -   in: |-
+          cat > function.py << EOL
+          def handler(input, ctx):
+            headers = dict(foo = str(123), bar = 'vaz', but = '')
+            return ctx.HTTPResponse(231, headers, 'no quotes')
+          EOL
+    -   in: bn deploy customPy2Response
+    -   in: curl -H X-Binaris-Api-Key:${BINARIS_API_KEY} --silent --include "https://${BINARIS_INVOKE_ENDPOINT}/v2/run/${BINARIS_ACCOUNT_ID}/customPy2Response" | grep -e Foo -e Bar -e But -e HTTP -e quotes
+        out: |-
+             HTTP/1.1 231 Unknown
+             Bar: vaz
+             But: 
+             Foo: 123
+             no quotes

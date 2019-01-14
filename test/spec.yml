@@ -181,6 +181,8 @@
             Thank you!
 
 - test: Test Java
+  cleanup:
+    - bn remove ventimacchiato
   steps:
     -   in: bn create java8 ventimacchiato
     -   in: gradle jar --no-daemon
@@ -188,7 +190,6 @@
     -   in: bn invoke ventimacchiato
         out: |-
             *"Hello, world"*
-    -   in: bn remove ventimacchiato
 
 - test: Test list
   serial: true
@@ -554,14 +555,11 @@
     -   in: bn deploy timeoutforsure
     -   in: bn invoke timeoutforsure
         err: |-
-            <html>
-            <head><title>504 Gateway Time-out</title></head>
-            <body bgcolor="white">
-            <center><h1>504 Gateway Time-out</h1></center>
-            <hr><center>openresty/1.13.6.1</center>
-            </body>
-            </html>
-
+            Something went wrong, and it's not your fault.
+            If this keeps happening, please contact support@binaris.com with the request ID.
+            Apologies.
+            
+            request_id: *
         exit: 1
 
 - test: Test bad user node8 code (bad-path)
@@ -609,8 +607,8 @@
     -   in: bn invoke doomedtofailpy2
         err: |-
             global name 'sdasda' is not defined
-              File "/opt/binaris/py2/main.py", line 160, in run_handler
-                response = yield gen.maybe_future(self._handler(body, request))
+              File "/opt/binaris/py2/main.py", line *, in run_handler
+                *
             ,  File "/code/function.py", line 2, in handler
                 sdasda
         exit: 1
@@ -659,8 +657,8 @@
     -   in: bn invoke doomedtofailpypy2
         err: |-
             global name 'sdasda' is not defined
-              File "/opt/binaris/py2/main.py", line 160, in run_handler
-                response = yield gen.maybe_future(self._handler(body, request))
+              File "/opt/binaris/py2/main.py", line *, in run_handler
+                *
             ,  File "/code/function.py", line 2, in handler
                 sdasda
         exit: 1
@@ -963,6 +961,8 @@
       exit: 1
 
 - test: Test deploy of long name (good-path)
+  cleanup:
+    - bn remove $LONG_NAME
   setup:
     - export LONG_NAME=binarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinaris1234
   steps:
@@ -971,7 +971,6 @@
     -   in: bn invoke $LONG_NAME
         out: |-
             *"Hello World!"*
-    -   in: bn remove $LONG_NAME
 
 - test: Test deploy of somewhat long name (bad-path)
   setup:
@@ -1058,6 +1057,8 @@
             99%  * ms*
 
 - test: empty env
+  cleanup:
+    - bn remove emptyenv
   steps:
     -   in: bn create node8 emptyenv
     -   in: |-
@@ -1073,7 +1074,6 @@
         err: |-
             Empty existing env var 'nosuchenv' is not supported
         exit: 1
-    -  in: bn remove emptyenv
 
 - test: non dict env
   steps:
