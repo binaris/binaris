@@ -283,7 +283,7 @@ Usage: $0 <command> [options]` // eslint-disable-line comma-dangle
   }, async () => {
     await loginHandler();
   })
-  .command('feedback <email> <message>', 'Provide your feedback on our product', (yargs0) => {
+  .command('feedback <email> <message>', 'Provide feedback on the Binaris product', (yargs0) => {
     yargs0
       .usage('Usage: $0 feedback <email> <message>')
       .positional('email', {
