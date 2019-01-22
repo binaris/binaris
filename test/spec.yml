@@ -177,7 +177,7 @@
     - export FEEDBACK_MESSAGE=ZL3FtCMyqeRQjP5GESTRbDRwMEjshHhjYAXHiMRZg3EOtutyWvEWcYJN7704ch3W
   steps:
     -   in: bn feedback "$FEEDBACK_EMAIL" "$FEEDBACK_MESSAGE"
-    -   out: |-
+        out: |-
             Thank you!
 
 - test: Test Java
