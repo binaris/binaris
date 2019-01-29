@@ -457,6 +457,48 @@
         exit: 1
         err: "Empty string env 'EMPTY' in binaris.yml is not supported"
 
+- test: "concurrent execution model: deploy invoke multiple times"
+  steps:
+    -   in: |-
+            cat <<EOF >/home/dockeruser/test/binaris.yml
+            functions:
+              concurrentfunc:
+                file: function.js
+                entrypoint: handler
+                runtime: node8
+                executionModel: concurrent
+            EOF
+    -   in: |-
+            cat <<EOF >/home/dockeruser/test/function.js
+            function msleep(ms) {
+              return new Promise((resolve) => {
+                  setTimeout(resolve, ms);
+              });
+            }
+            let duringFlight = false;
+            exports.handler = async () => {
+              if (duringFlight) {
+                return true;
+              } else {
+                duringFlight = true;
+                await msleep(10000);
+                duringFlight = false;
+                return false;
+              }
+            }
+            EOF
+    -   in: bn deploy concurrentfunc
+        out: |-
+            Deployed function concurrentfunc
+            Invoke with one of:
+              "bn invoke concurrentfunc"
+              "curl -H X-Binaris-Api-Key:* https://*"
+    # we do 3 simultaneous invokations be cause testing minbolts=2
+    -   in: "(for i in `seq 1 3`; do bn invoke concurrentfunc & done) | grep true"
+    -   in: bn remove concurrentfunc
+        out: |-
+            Removed function *
+
 - test: Test login (bad-path)
   steps:
     -   in: unset BINARIS_API_KEY
@@ -536,7 +578,7 @@
             Sorry, your function is not ready yet.
             Please try again.
             If this keeps happening, please contact support@binaris.com with the request ID.
-            
+
             request_id: *
         exit: 1
 
@@ -544,7 +586,7 @@
   cleanup:
     - bn remove timeoutforsure
   steps:
-    -   in: bn create node8 timeoutforsure 
+    -   in: bn create node8 timeoutforsure
     -   in: |-
            cat > function.js << EOL
            exports.handler = async (body, req) => {
@@ -558,7 +600,7 @@
             Something went wrong, and it's not your fault.
             If this keeps happening, please contact support@binaris.com with the request ID.
             Apologies.
-            
+
             request_id: *
         exit: 1
 
@@ -884,7 +926,7 @@
       - npm i shelljs
       - |-
         cat <<EOF >/home/dockeruser/test/function.js
-        
+
         const shell = require('shelljs');
         exports.handler = async() => {
           return shell.exec('convert --version');
@@ -903,26 +945,26 @@
     -   in: bn invoke hello --notarealarg
         err: |-
             Usage: bn invoke <function> [options]
-            
+
             Positionals:
               function  Function name  [string] [required]
-            
+
             Options:
               --version   Show version number  [boolean]
               --help, -h  Show help  [boolean]
               --json, -j  Path to file containing JSON data  [string]
               --data, -d  Data to send with invocation  [string]
-            
+
             Examples:
                 // invoke a function
                 bn invoke foo
-            
+
                 // invoke using JSON file data
                 bn invoke foo --json ./path/to/myfile.json
-            
+
                 // invoke foo and send JSON data in the body
                 bn invoke foo --data '{ "name": "helloworld" }'
-            
+
             Unknown argument: notarealarg
         exit: 1
 
