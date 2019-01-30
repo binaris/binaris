@@ -42,6 +42,8 @@ const handleCommand = async function handleCommand(options, specificHandler) {
 
 const runtimes = require('./lib/runtimes');
 
+const executionModels = ['exclusive', 'concurrent'];
+
 const pathOption = ['path', {
   alias: 'p',
   describe: 'Use directory dir.',
@@ -64,6 +66,12 @@ Usage: $0 <command> [options]` // eslint-disable-line comma-dangle
       .positional('function', {
         describe: 'Function name',
         type: 'string',
+      })
+      .option('executionModel', {
+        alias: 'e',
+        choices: executionModels,
+        describe: 'Execution model for your function',
+        default: 'concurrent',
       })
       .option('path', {
         alias: 'p',
