@@ -459,17 +459,9 @@
 
 - test: "concurrent execution model: deploy invoke multiple times"
   steps:
+    -   in: bn create node8 concurrentFunc -e concurrent
     -   in: |-
-            cat <<EOF >/home/dockeruser/test/binaris.yml
-            functions:
-              concurrentfunc:
-                file: function.js
-                entrypoint: handler
-                runtime: node8
-                executionModel: concurrent
-            EOF
-    -   in: |-
-            cat <<EOF >/home/dockeruser/test/function.js
+            cat > function.js << EOL
             function msleep(ms) {
               return new Promise((resolve) => {
                   setTimeout(resolve, ms);
@@ -486,16 +478,16 @@
                 return false;
               }
             }
-            EOF
-    -   in: bn deploy concurrentfunc
+            EOL
+    -   in: bn deploy concurrentFunc
         out: |-
-            Deployed function concurrentfunc
+            Deployed function concurrentFunc
             Invoke with one of:
-              "bn invoke concurrentfunc"
+              "bn invoke concurrentFunc"
               "curl -H X-Binaris-Api-Key:* https://*"
     # we do 3 simultaneous invokations be cause testing minbolts=2
-    -   in: "(for i in `seq 1 3`; do bn invoke concurrentfunc & done) | grep true"
-    -   in: bn remove concurrentfunc
+    -   in: "(for i in `seq 1 3`; do bn invoke concurrentFunc & done) | grep true"
+    -   in: bn remove concurrentFunc
         out: |-
             Removed function *
 
