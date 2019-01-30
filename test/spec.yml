@@ -632,8 +632,8 @@
     -   in: bn invoke doomedtofailpy3
         err: |-
             name 'sdasda' is not defined
-              File "/opt/binaris/py3/main.py", line 160, in run_handler
-                response = yield gen.maybe_future(self._handler(body, request))
+              File "/opt/binaris/py3/main.py", line *, in run_handler
+                *
             ,  File "/code/function.py", line 2, in handler
                 sdasda
         exit: 1
