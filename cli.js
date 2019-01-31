@@ -71,7 +71,6 @@ Usage: $0 <command> [options]` // eslint-disable-line comma-dangle
         alias: 'e',
         choices: executionModels,
         describe: 'Execution model for your function',
-        default: 'exclusive',
         hidden: true,
       })
       .option('path', {
