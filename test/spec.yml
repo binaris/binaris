@@ -250,6 +250,30 @@
         out: |-
             "Hello unguessable!"
 
+- test: Test invoke methods
+  setup:
+    - bn create node8 largebluetrickster
+    - |-
+      cat <<EOF >/home/dockeruser/test/function.js
+      exports.handler = async (_, req) => req.method;
+      EOF
+    - bn deploy largebluetrickster
+  steps:
+    - in: bn invoke largebluetrickster
+      out: POST
+    - in: bn invoke -X PUT largebluetrickster
+      out: PUT
+    - in: bn invoke --method get largebluetrickster
+      out: GET
+    - in: bn invoke --method DELETE largebluetrickster
+      out: DELETE
+    - in: bn invoke --method PATCH largebluetrickster
+      out: PATCH
+    - in: bn invoke --method HEAD largebluetrickster # Node HEAD doesn't return data.
+      out:
+    - in: bn invoke --method OPTIONS largebluetrickster
+      out: OPTIONS
+
 - test: Block access to internal network
   setup:
       - bn create node8 internalnets

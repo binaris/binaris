@@ -117,6 +117,13 @@ Usage: $0 <command> [options]` // eslint-disable-line comma-dangle
         describe: 'Path to file containing JSON data',
         type: 'string',
       })
+      .option('method', {
+        alias: 'X',
+        describe: 'HTTP method to use',
+        coerce: s => s.toUpperCase(),
+        choices: ['GET', 'PUT', 'POST', 'DELETE', 'PATCH', 'HEAD', 'OPTIONS'],
+        default: 'POST',
+      })
       .option('data', {
         alias: 'd',
         describe: 'Data to send with invocation',
@@ -131,7 +138,10 @@ Usage: $0 <command> [options]` // eslint-disable-line comma-dangle
   bn invoke foo --json ./path/to/myfile.json
 
   // invoke foo and send JSON data in the body
-  bn invoke foo --data '{ "name": "helloworld" }'`);
+  bn invoke foo --data '{ "name": "helloworld" }'
+
+  // invoke foo using DELETE
+  bn invoke foo --method DELETE`);
   }, async (argv) => {
     await handleCommand(argv, invokeHandler);
   })

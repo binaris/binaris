@@ -12,12 +12,14 @@ const logger = require('../lib/logger');
  * @param {string} funcName - name of the function to invoke
  * @param {string} apiKey - Optional Binaris API key used to authenticate function invocation
  * @param {string} funcData - valid JSON string to send with your invocation
+ * @param {string} methodName - uppercase name of HTTP method to use, default "POST"
  *
  * @returns {object} - response of function invocation
  */
-const invoke = async function invoke(accountId, funcName, apiKey, funcData) {
+const invoke = async function invoke(accountId, funcName, apiKey, funcData, methodName) {
   const baseHeaders = apiKey ? { 'X-Binaris-Api-Key': apiKey } : {};
   const options = {
+    method: methodName || 'POST',
     url: getInvokeUrl(accountId, funcName, apiKey),
     headers: {
       ...baseHeaders,
@@ -28,7 +30,7 @@ const invoke = async function invoke(accountId, funcName, apiKey, funcData) {
   };
   logger.debug('Invoking function', options);
   try {
-    const res = await rp.post(options);
+    const res = await rp(options);
     const { statusCode, headers, body } = res;
     logger.debug('Invoke response', { statusCode, headers, body });
     return res;
