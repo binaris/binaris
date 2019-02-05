@@ -252,27 +252,30 @@
 
 - test: Test invoke methods
   setup:
-    - bn create node8 largebluetrickster
+    - export FUNC_NAME=largebluetrickster$(cat /dev/urandom | tr -dc 'a-z0-9' | fold -w 32 | head -n 1)
+    - bn create node8 $FUNC_NAME
     - |-
       cat <<EOF >/home/dockeruser/test/function.js
       exports.handler = async (_, req) => req.method;
       EOF
-    - bn deploy largebluetrickster
+    - bn deploy $FUNC_NAME
   steps:
-    - in: bn invoke largebluetrickster
+    - in: bn invoke $FUNC_NAME
       out: POST
-    - in: bn invoke -X PUT largebluetrickster
+    - in: bn invoke -X PUT $FUNC_NAME
       out: PUT
-    - in: bn invoke --method get largebluetrickster
+    - in: bn invoke --method get $FUNC_NAME
       out: GET
-    - in: bn invoke --method DELETE largebluetrickster
+    - in: bn invoke --method DELETE $FUNC_NAME
       out: DELETE
-    - in: bn invoke --method PATCH largebluetrickster
+    - in: bn invoke --method PATCH $FUNC_NAME
       out: PATCH
-    - in: bn invoke --method HEAD largebluetrickster # Node HEAD doesn't return data.
+    - in: bn invoke --method HEAD $FUNC_NAME # Node HEAD doesn't return data.
       out:
-    - in: bn invoke --method OPTIONS largebluetrickster
+    - in: bn invoke --method OPTIONS $FUNC_NAME
       out: OPTIONS
+  cleanup:
+    - bn remove $FUNC_NAME
 
 - test: Block access to internal network
   setup:
