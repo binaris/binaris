@@ -299,8 +299,8 @@ Usage: $0 <command> [options]` // eslint-disable-line comma-dangle
         (argv) => {
           if (!argv.account_id && !argv.api_key) throw new Error('Must specify what to show.');
           return true;
-        })
-  }, async (argv) => await handleCommand(argv, showHandler))
+        });
+  }, argv => handleCommand(argv, showHandler))
   .command('login', 'Login to your Binaris account using an API key and account id', (yargs0) => {
     yargs0
       .usage('Usage: $0 login')
