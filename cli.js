@@ -8,7 +8,7 @@ const { parseTimeString } = require('./lib/timeUtil');
 const {
   deployHandler, createHandler, feedbackHandler, invokeHandler,
   listHandler, logsHandler, loginHandler, removeHandler, perfHandler,
-  statsHandler,
+  showHandler, statsHandler,
 } = require('./lib');
 const { forceRealm } = require('./sdk');
 
@@ -284,6 +284,23 @@ Usage: $0 <command> [options]` // eslint-disable-line comma-dangle
     }
     await handleCommand(argv, statsHandler);
   })
+  .command('show', 'Show information about your Binaris account', (yargs0) => {
+    yargs0
+      .usage('Usage: $0 show [options]')
+      .option('account_id', {
+        describe: 'Show configured account ID',
+        requiresArg: false,
+      })
+      .option('api_key', {
+        describe: 'Show configured account API key',
+        requiresArg: false,
+      })
+      .check(
+        (argv) => {
+          if (!argv.account_id && !argv.api_key) throw new Error('Must specify what to show.');
+          return true;
+        })
+  }, async (argv) => await handleCommand(argv, showHandler))
   .command('login', 'Login to your Binaris account using an API key and account id', (yargs0) => {
     yargs0
       .usage('Usage: $0 login')
