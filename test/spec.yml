@@ -124,6 +124,13 @@
             "bn invoke momentousgiants"
             "curl -H X-Binaris-Api-Key:* https://*"
 
+- test: Test show
+  steps:
+    - in: BINARIS_ACCOUNT_ID=1066 bn show --account_id
+      out: "1066"
+    - in: BINARIS_API_KEY=17890505 bn show --api_key
+      out: "17890505"
+
 - test: Test create (good-path)
   steps:
     -   in: bn create node8 snowmanolympics
