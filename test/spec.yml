@@ -15,7 +15,7 @@
                 bn list [options]                         List all deployed functions
                 bn perf <function> [options]              Measure invocation latency (experimental)
                 bn logs <function> [options]              Print the logs of a function
-                bn show                                   Show information about your Binaris account
+                bn show <config>                          Show Binaris account configuration
                 bn login                                  Login to your Binaris account using an API key and account id
                 bn feedback <email> <message>             Provide feedback on the Binaris product
 
@@ -127,9 +127,9 @@
 
 - test: Test show
   steps:
-    - in: BINARIS_ACCOUNT_ID=1066 bn show --accountId
+    - in: BINARIS_ACCOUNT_ID=1066 bn show accountId
       out: "1066"
-    - in: BINARIS_API_KEY=17890505 bn show --apiKey
+    - in: BINARIS_API_KEY=17890505 bn show apiKey
       out: "17890505"
 
 - test: Test create (good-path)
