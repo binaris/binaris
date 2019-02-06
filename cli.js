@@ -287,17 +287,19 @@ Usage: $0 <command> [options]` // eslint-disable-line comma-dangle
   .command('show', 'Show information about your Binaris account', (yargs0) => {
     yargs0
       .usage('Usage: $0 show [options]')
-      .option('account_id', {
-        describe: 'Show configured account ID',
-        requiresArg: false,
+      .option('accountId', {
+        describe: 'Configured account ID',
+        defaultValue: true,
+        type: 'boolean',
       })
-      .option('api_key', {
-        describe: 'Show configured account API key',
-        requiresArg: false,
+      .option('apiKey', {
+        describe: 'Configured account API key',
+        defaultValue: true,
+        type: 'boolean',
       })
       .check(
         (argv) => {
-          if (!argv.account_id && !argv.api_key) throw new Error('Must specify what to show.');
+          if (!argv.accountId && !argv.apiKey) throw new Error('Must specify what to show.');
           return true;
         });
   }, argv => handleCommand(argv, showHandler))
