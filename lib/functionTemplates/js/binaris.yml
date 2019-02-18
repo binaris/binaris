@@ -2,3 +2,4 @@ functions:
     hello:
         file: function.js
         entrypoint: handler
+        executionModel: concurrent

@@ -2,3 +2,4 @@ functions:
     hello:
         file: function.py
         entrypoint: handler
+        executionModel: exclusive
