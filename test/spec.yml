@@ -622,7 +622,6 @@
               "curl -H X-Binaris-Api-Key:* https://*"
     -   in: bn invoke doomedtofailnode8
         err: |-
-            DebugID: *
             some error
             Error: some error
                 at Bolt.exports.handler [as userEntryPoint] (/code/function.js:5:9)
@@ -744,7 +743,7 @@
     -   in: bn create node8 dispensabledrop
     -   in: bn remove dispensabledrop
         err: |-
-            DebugID: *
+            DebugId: *
             Error: No such function
         exit: 1
     -   in: bn deploy dispensabledrop
@@ -752,7 +751,7 @@
         out: "*Removed function dispensabledrop*"
     -   in: bn remove dispensabledrop
         err: |-
-            DebugID: *
+            DebugId: *
             Error: No such function
         exit: 1
     -   in: bn remove
