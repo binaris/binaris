@@ -10,14 +10,20 @@ const { maybeTranslateErrorCode } = require('binaris-pickle');
 
 const { version } = require('../package.json');
 
-class APIError extends Error {}
+class APIError extends Error {
+  constructor(message, debugIDString) {
+    super(`${debugIDString || ''}${message}`);
+  }
+}
 
 function validateResponse(response) {
+  const debugId = get(response, 'body.debugId');
+  const debugIdString = debugId ? `DebugId: ${debugId}\n` : '';
   const errorCode = get(response, 'body.errorCode');
   if (errorCode) {
     const readableErrorMessage = maybeTranslateErrorCode(errorCode);
     if (readableErrorMessage) {
-      throw new APIError(`Error: ${readableErrorMessage}`);
+      throw new APIError(`Error: ${readableErrorMessage}`, debugIdString);
     }
   }
 
@@ -25,15 +31,15 @@ function validateResponse(response) {
   // with an untranslated message.
   const errorText = get(response, 'body.error') || (errorCode && get(response, 'body.message'));
   if (errorText) {
-    throw new APIError(errorText);
+    throw new APIError(errorText, debugIdString);
   }
 
   if (errorCode) {
-    throw new APIError(`Error: ${errorCode}`);
+    throw new APIError(`Error: ${errorCode}`, debugIdString);
   }
 
   if (response.statusCode < 200 || response.statusCode >= 300) {
-    throw new APIError(`Unexpected response ${response.statusCode}`);
+    throw new APIError(`Unexpected response ${response.statusCode}`, debugIdString);
   }
 
   return response;
