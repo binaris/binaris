@@ -622,6 +622,7 @@
               "curl -H X-Binaris-Api-Key:* https://*"
     -   in: bn invoke doomedtofailnode8
         err: |-
+            DebugID: *
             some error
             Error: some error
                 at Bolt.exports.handler [as userEntryPoint] (/code/function.js:5:9)
@@ -742,13 +743,17 @@
   steps:
     -   in: bn create node8 dispensabledrop
     -   in: bn remove dispensabledrop
-        err: "Error: No such function"
+        err: |-
+            DebugID: *
+            Error: No such function
         exit: 1
     -   in: bn deploy dispensabledrop
     -   in: bn remove dispensabledrop
         out: "*Removed function dispensabledrop*"
     -   in: bn remove dispensabledrop
-        err: "Error: No such function"
+        err: |-
+            DebugID: *
+            Error: No such function
         exit: 1
     -   in: bn remove
         err: "*Not enough non-option arguments: got 0, need at least 1"
@@ -864,10 +869,12 @@
     -   in: bn create node8 perplexingpersimmon
     -   in: bn deploy perplexingpersimmon
         err: |-
+            DebugId: *
             Error: Invalid API key
         exit: 1
     -   in: bn list
         err: |-
+            DebugId: *
             Error: Invalid API key
         exit: 1
     -   in: BINARIS_API_KEY=boguskey bn invoke perplexingpersimmon
@@ -999,7 +1006,9 @@
     - dd if=/dev/urandom bs=1048576 count=300 of=very.large.data
   steps:
     - in: bn deploy largeData300MB
-      err: "Error: Payload too large"
+      err: |-
+        DebugId: *
+        Error: Payload too large
       exit: 1
 
 - test: Test deploy of long name (good-path)
