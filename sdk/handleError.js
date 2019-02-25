@@ -11,19 +11,19 @@ const { maybeTranslateErrorCode } = require('binaris-pickle');
 const { version } = require('../package.json');
 
 class APIError extends Error {
-  constructor(message, debugIDString) {
-    super(`${debugIDString || ''}${message}`);
+  constructor(message, requestIdString) {
+    super(`${requestIdString || ''}${message}`);
   }
 }
 
 function validateResponse(response) {
-  const debugId = get(response, 'body.debugId');
-  const debugIdString = debugId ? `DebugId: ${debugId}\n` : '';
+  const requestId = get(response, 'headers.X-Binaris-Request-ID');
+  const requestIdString = requestId ? `RequestId: ${requestId}\n` : '';
   const errorCode = get(response, 'body.errorCode');
   if (errorCode) {
     const readableErrorMessage = maybeTranslateErrorCode(errorCode);
     if (readableErrorMessage) {
-      throw new APIError(`Error: ${readableErrorMessage}`, debugIdString);
+      throw new APIError(`Error: ${readableErrorMessage}`, requestIdString);
     }
   }
 
@@ -31,15 +31,15 @@ function validateResponse(response) {
   // with an untranslated message.
   const errorText = get(response, 'body.error') || (errorCode && get(response, 'body.message'));
   if (errorText) {
-    throw new APIError(errorText, debugIdString);
+    throw new APIError(errorText, requestIdString);
   }
 
   if (errorCode) {
-    throw new APIError(`Error: ${errorCode}`, debugIdString);
+    throw new APIError(`Error: ${errorCode}`, requestIdString);
   }
 
   if (response.statusCode < 200 || response.statusCode >= 300) {
-    throw new APIError(`Unexpected response ${response.statusCode}`, debugIdString);
+    throw new APIError(`Unexpected response ${response.statusCode}`, requestIdString);
   }
 
   return response;

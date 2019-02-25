@@ -743,7 +743,7 @@
     -   in: bn create node8 dispensabledrop
     -   in: bn remove dispensabledrop
         err: |-
-            DebugId: *
+            RequestId: *
             Error: No such function
         exit: 1
     -   in: bn deploy dispensabledrop
@@ -751,7 +751,7 @@
         out: "*Removed function dispensabledrop*"
     -   in: bn remove dispensabledrop
         err: |-
-            DebugId: *
+            RequestId: *
             Error: No such function
         exit: 1
     -   in: bn remove
@@ -868,12 +868,12 @@
     -   in: bn create node8 perplexingpersimmon
     -   in: bn deploy perplexingpersimmon
         err: |-
-            DebugId: *
+            RequestId: *
             Error: Invalid API key
         exit: 1
     -   in: bn list
         err: |-
-            DebugId: *
+            RequestId: *
             Error: Invalid API key
         exit: 1
     -   in: BINARIS_API_KEY=boguskey bn invoke perplexingpersimmon
@@ -1006,7 +1006,7 @@
   steps:
     - in: bn deploy largeData300MB
       err: |-
-        DebugId: *
+        RequestId: *
         Error: Payload too large
       exit: 1
 
