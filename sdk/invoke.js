@@ -34,9 +34,15 @@ const invoke = async function invoke(accountId, funcName, apiKey, funcData) {
     logger.debug('Invoke response', { statusCode, headers, body });
     return res;
   } catch (err) {
+    const fallbackError = err.error || err;
     if (err instanceof StatusCodeError) {
       const requestId = err.response.headers['x-binaris-request-id'];
-      const parsedError = JSON.parse(err.error);
+      let parsedError;
+      try {
+        parsedError = JSON.parse(err.error);
+      } catch (parseError) {
+        parsedError = { error: fallbackError };
+      }
       const fullError = [`RequestId: ${requestId}`, parsedError.error || parsedError.message];
 
       if (parsedError.stack) {
@@ -45,7 +51,7 @@ const invoke = async function invoke(accountId, funcName, apiKey, funcData) {
       throw new Error(fullError.join('\n'));
     }
 
-    throw new Error(err.error || err);
+    throw new Error(fallbackError);
   }
 };
 
