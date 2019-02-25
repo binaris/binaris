@@ -575,11 +575,10 @@
         exit: 1
     -   in: bn invoke nosuchfunction
         err: |-
+            RequestId: *
             Sorry, your function is not ready yet.
             Please try again.
             If this keeps happening, please contact support@binaris.com with the request ID.
-
-            request_id: *
         exit: 1
 
 - test: Test user code timeout (bad-path)
@@ -597,11 +596,10 @@
     -   in: bn deploy timeoutforsure
     -   in: bn invoke timeoutforsure
         err: |-
+            RequestId: *
             Something went wrong, and it's not your fault.
             If this keeps happening, please contact support@binaris.com with the request ID.
             Apologies.
-
-            request_id: *
         exit: 1
 
 - test: Test bad user node8 code (bad-path)
@@ -878,8 +876,8 @@
         exit: 1
     -   in: BINARIS_API_KEY=boguskey bn invoke perplexingpersimmon
         err: |-
+            RequestId: *
             Unauthorized request. Make sure you're passing the right API key.
-            request_id: *
         exit: 1
 
 - test: Invalid characters in API key when invoking (bad-path)
