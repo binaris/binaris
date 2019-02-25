@@ -82,9 +82,9 @@ Usage: $0 <command> [options]` // eslint-disable-line comma-dangle
   }, async (argv) => {
     await handleCommand(argv, createHandler);
   })
-  .command('deploy <function> [options]', 'Deploys a function to the cloud', (yargs0) => {
+  .command('deploy <function> [otherFunctions..]', 'Deploys a function to the cloud', (yargs0) => {
     yargs0
-      .usage('Usage: $0 deploy <function> [options]')
+      .usage('Usage: $0 deploy <function> [otherFunctions..]')
       .positional('function', {
         describe: 'Function name',
         type: 'string',
@@ -94,9 +94,9 @@ Usage: $0 <command> [options]` // eslint-disable-line comma-dangle
   }, async (argv) => {
     await handleCommand(argv, deployHandler);
   })
-  .command('remove <function> [options]', 'Remove a previously deployed function', (yargs0) => {
+  .command('remove <function> [otherFunctions..]', 'Remove a previously deployed function', (yargs0) => {
     yargs0
-      .usage('Usage: $0 remove <function> [options]')
+      .usage('Usage: $0 remove <function> [otherFunctions..]')
       .positional('function', {
         describe: 'Function name',
         type: 'string',
