@@ -17,7 +17,7 @@ class APIError extends Error {
 }
 
 function validateResponse(response) {
-  const requestId = get(response, 'headers.X-Binaris-Request-ID');
+  const requestId = get(response, 'headers.x-binaris-request-id');
   const requestIdString = requestId ? `RequestId: ${requestId}\n` : '';
   const errorCode = get(response, 'body.errorCode');
   if (errorCode) {
