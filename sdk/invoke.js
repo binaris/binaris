@@ -1,6 +1,7 @@
 'use strict';
 
 const rp = require('request-promise-native');
+const { StatusCodeError } = require('request-promise-native/errors');
 
 const { getInvokeUrl } = require('./url');
 const logger = require('../lib/logger');
@@ -33,21 +34,15 @@ const invoke = async function invoke(accountId, funcName, apiKey, funcData) {
     logger.debug('Invoke response', { statusCode, headers, body });
     return res;
   } catch (err) {
-    let parsedError;
-    try {
-      parsedError = JSON.parse(err.error);
-    } catch (nestedErr) {
-      logger.debug('Failed to parse JSON response', { nestedErr });
-    }
+    if (err instanceof StatusCodeError) {
+      const requestId = err.response.headers['x-binaris-request-id'];
+      const parsedError = JSON.parse(err.error);
+      const fullError = [`RequestId: ${requestId}`, parsedError.error || parsedError.message];
 
-    if (parsedError) {
-      const errorOrMsg = parsedError.error || parsedError.message;
-      if (parsedError.stack && errorOrMsg) {
-        throw new Error(`${errorOrMsg}\n${parsedError.stack}`);
+      if (parsedError.stack) {
+        fullError.push(parsedError.stack);
       }
-      if (parsedError.message && parsedError.request_id) {
-        throw new Error(`${parsedError.message}\nrequest_id: ${parsedError.request_id}`);
-      }
+      throw new Error(fullError.join('\n'));
     }
 
     throw new Error(err.error || err);
