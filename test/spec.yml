@@ -290,7 +290,7 @@
   setup:
     - export FUNC_NAME=rand$(cat /dev/urandom | tr -dc 'a-z0-9' | fold -w 32 | head -n 1)
     - bn create node8 $FUNC_NAME
-    - sed -i '2 a \  console.log(`Hello ${name}!`);' function.js
+    - sed -i '5 a \  console.log(`Hello ${name}!`);' function.js
   cleanup:
     - bn remove $FUNC_NAME
   steps:
@@ -613,7 +613,7 @@
             Created function * in /home/dockeruser/test
               (use "bn deploy doomedtofailnode8" to deploy the function)
     -   in: |-
-            sed -i.bak "2i\  throw new Error('some error');" function.js
+            sed -i.bak "5i\  throw new Error('some error');" function.js
     -   in: bn deploy doomedtofailnode8
         out: |-
             Deployed function doomedtofailnode8
