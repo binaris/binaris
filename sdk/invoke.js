@@ -34,24 +34,21 @@ const invoke = async function invoke(accountId, funcName, apiKey, funcData) {
     logger.debug('Invoke response', { statusCode, headers, body });
     return res;
   } catch (err) {
-    const fallbackError = err.error || err;
     if (err instanceof StatusCodeError) {
       const requestId = err.response.headers['x-binaris-request-id'];
-      let parsedError;
+      const fullError = [`RequestId: ${requestId}`];
       try {
-        parsedError = JSON.parse(err.error);
-      } catch (parseError) {
-        parsedError = { error: fallbackError };
-      }
-      const fullError = [`RequestId: ${requestId}`, parsedError.error || parsedError.message];
-
-      if (parsedError.stack) {
-        fullError.push(parsedError.stack);
+        const parsedError = JSON.parse(err.response.body);
+        fullError.push(parsedError.error);
+        if (parsedError.stack) {
+          fullError.push(parsedError.stack);
+        }
+      } catch (_) {
+        fullError.push(err.response.body);
       }
       throw new Error(fullError.join('\n'));
     }
-
-    throw new Error(fallbackError);
+    throw err;
   }
 };
 
