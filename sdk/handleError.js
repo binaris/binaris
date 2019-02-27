@@ -14,7 +14,7 @@ class APIError extends Error {
   constructor(message, requestId) {
     super(message);
     const requestIdString = requestId ? `RequestId: ${requestId}\n` : '';
-    this.message = `${requestIdString}${message}`);
+    this.message = `${requestIdString}${message}`;
   }
 }
 
