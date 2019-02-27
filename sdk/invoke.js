@@ -39,7 +39,7 @@ const invoke = async function invoke(accountId, funcName, apiKey, funcData) {
       const fullError = [`RequestId: ${requestId}`];
       try {
         const parsedError = JSON.parse(err.response.body);
-        fullError.push(parsedError.error);
+        fullError.push(parsedError.error || parsedError.message);
         if (parsedError.stack) {
           fullError.push(parsedError.stack);
         }
