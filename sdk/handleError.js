@@ -12,9 +12,8 @@ const { version } = require('../package.json');
 
 class APIError extends Error {
   constructor(message, requestId) {
-    super(message);
     const requestIdString = requestId ? `RequestId: ${requestId}\n` : '';
-    this.message = `${requestIdString}${message}`;
+    super(`${requestIdString}${message}`);
   }
 }
 
