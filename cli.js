@@ -316,7 +316,7 @@ Usage: $0 <command> [options]` // eslint-disable-line comma-dangle
     }
     await handleCommand(argv, statsHandler);
   })
-  .command('show <config>', 'Show Binaris account configuration', (yargs0) => {
+  .command('show [config]', 'Show Binaris account configuration', (yargs0) => {
     yargs0
       .positional('config', {
         describe: 'What to show',
