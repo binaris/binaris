@@ -15,9 +15,12 @@ interface FunctionResponse {
   body: Buffer | string;
 }
 
-declare class BinarisHTTPResponse {
+declare class BinarisHTTPResponse implements FunctionResponse {
   userResponse: Partial<FunctionResponse>;
   constructor(userResponse: Partial<FunctionResponse>);
+  statusCode: number;
+  headers: Record<string, string | undefined>;
+  body: Buffer | string;
 }
 
 declare type FunctionContext = {
