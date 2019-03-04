@@ -131,10 +131,10 @@
       out: "1066"
     - in: BINARIS_API_KEY=17890505 bn show apiKey
       out: "17890505"
-    - in: BINARIS_ACCOUNT_ID=1066 BINARIS_API_KEY=17890505 bn show
+    - in: BINARIS_ACCOUNT_ID=1066 BINARIS_API_KEY=17890505 bn show --all
       out: |-
-          accountId: 1066
-          apiKey: 17890505
+          1066
+          17890505
 
 - test: Test create (good-path)
   steps:
