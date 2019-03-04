@@ -15,7 +15,7 @@
           EOL
     -   in: bn deploy returnPy3Input
     -   in: curl -s ${BASE_ARGS} "${TEST_FUNCTION}"
-        out: '{"input": {}, "inputType": "dict"}'
+        out: '{inputType": "dict", "input": {}}'
     -   in: curl -s --data '{"' ${BASE_ARGS} "${TEST_FUNCTION}"
         out: '{"input": null, "inputType": "NoneType"}'
     -   in: curl -s --data '{}' ${BASE_ARGS} "${TEST_FUNCTION}"
