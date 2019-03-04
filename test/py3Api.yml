@@ -1,0 +1,182 @@
+- test: Test Py3 input
+  cleanup:
+    -   bn remove returnPy3Input
+  steps:
+    -   in: export BASE_ARGS="-H X-Binaris-Api-Key:${BINARIS_API_KEY}"
+    -   in: export TEST_FUNCTION="https://${BINARIS_INVOKE_ENDPOINT}/v2/run/${BINARIS_ACCOUNT_ID}/returnPy3Input"
+    -   in: bn create python3 returnPy3Input
+    -   in: |-
+          cat > function.py << EOL
+          def handler(input, ctx):
+            return { 
+              'inputType': type(input).__name__,
+              'input': input,
+            }
+          EOL
+    -   in: bn deploy returnPy3Input
+    -   in: curl -s ${BASE_ARGS} "${TEST_FUNCTION}"
+        out: '{"input": {}, "inputType": "dict"}'
+    -   in: curl -s --data '{"' ${BASE_ARGS} "${TEST_FUNCTION}"
+        out: '{"input": null, "inputType": "NoneType"}'
+    -   in: curl -s --data '{}' ${BASE_ARGS} "${TEST_FUNCTION}"
+        out: '{"input": {}, "inputType": "dict"}'
+    -   in: curl -s --data '{"foo":"bar","yet":123}' ${BASE_ARGS} "${TEST_FUNCTION}"
+        out: '{"input": {"foo": "bar", "yet": 123}, "inputType": "dict"}'
+    -   in: curl -s --data '["foo","bar"]' ${BASE_ARGS} "${TEST_FUNCTION}"
+        out: '{"input": ["foo", "bar"], "inputType": "list"}'
+
+- test: Test Py3 method 
+  cleanup:
+    -   bn remove returnPy3Method
+  steps:
+    -   in: export BASE_ARGS="-H X-Binaris-Api-Key:${BINARIS_API_KEY}"
+    -   in: export TEST_FUNCTION="https://${BINARIS_INVOKE_ENDPOINT}/v2/run/${BINARIS_ACCOUNT_ID}/returnPy3Method"
+    -   in: bn create python3 returnPy3Method
+    -   in: |-
+          cat > function.py << EOL
+          def handler(body, ctx):
+            return ctx.request.method
+          EOL
+    -   in: bn deploy returnPy3Method
+    -   in: curl -s -X GET ${BASE_ARGS} "${TEST_FUNCTION}"
+        out: '"GET"'
+    -   in: curl -s -X POST ${BASE_ARGS} "${TEST_FUNCTION}"
+        out: '"POST"'
+    -   in: curl -s -X PUT ${BASE_ARGS} "${TEST_FUNCTION}"
+        out: '"PUT"'
+    -   in: curl -s -X DELETE ${BASE_ARGS} "${TEST_FUNCTION}"
+        out: '"DELETE"'
+    -   in: curl -s -X OPTIONS ${BASE_ARGS} "${TEST_FUNCTION}"
+        out: '"OPTIONS"'
+    -   in: curl -s -X PATCH ${BASE_ARGS} "${TEST_FUNCTION}"
+        out: '"PATCH"'
+
+- test: Test Py3 data input
+  cleanup:
+    -   bn remove returnPy3ReqBody
+  steps:
+    -   in: export BASE_ARGS="-H X-Binaris-Api-Key:${BINARIS_API_KEY}"
+    -   in: export TEST_FUNCTION="https://${BINARIS_INVOKE_ENDPOINT}/v2/run/${BINARIS_ACCOUNT_ID}/returnPy3ReqBody"
+    -   in: bn create python3 returnPy3ReqBody
+    -   in: |-
+          cat > function.py << EOL
+          def handler(input, ctx):
+            return ctx.request.body
+          EOL
+    -   in: bn deploy returnPy3ReqBody
+    -   in: curl -s ${BASE_ARGS} "${TEST_FUNCTION}"
+        out: ''
+    -   in: curl -s --data '{' ${BASE_ARGS} "${TEST_FUNCTION}"
+        out: '"{"'
+    -   in: curl -s --data '{}' ${BASE_ARGS} "${TEST_FUNCTION}"
+        out: '"{}"'
+    -   in: curl -s --data ' ' ${BASE_ARGS} "${TEST_FUNCTION}"
+        out: '" "'
+    -   in: curl -s --data-urlencode ' ' ${BASE_ARGS} "${TEST_FUNCTION}"
+        out: '"%20"'
+    -   in: echo | curl -s --data-binary @- ${BASE_ARGS} "${TEST_FUNCTION}"
+        out: '"\n"'
+
+- test: Test Py3 headers input
+  cleanup:
+    -   bn remove returnPy3ReqTestHeader
+  steps:
+    -   in: export BASE_ARGS="-H X-Binaris-Api-Key:${BINARIS_API_KEY}"
+    -   in: export TEST_FUNCTION="https://${BINARIS_INVOKE_ENDPOINT}/v2/run/${BINARIS_ACCOUNT_ID}/returnPy3ReqTestHeader"
+    -   in: bn create python3 returnPy3ReqTestHeader
+    -   in: |-
+          cat > function.py << EOL
+          def handler(input, ctx):
+            return ctx.request.headers["Test"]
+          EOL
+    -   in: bn deploy returnPy3ReqTestHeader
+    -   in: curl -s ${BASE_ARGS} "${TEST_FUNCTION}"
+        out: ''
+    -   in: 'curl -s -H "Test;" ${BASE_ARGS} "${TEST_FUNCTION}"'
+        out: '""'
+    -   in: 'curl -s -H "Test: foo" ${BASE_ARGS} "${TEST_FUNCTION}"'
+        out: '"foo"'
+    -   in: 'curl -s -H "Test: 123" ${BASE_ARGS} "${TEST_FUNCTION}"'
+        out: '"123"'
+    -   in: 'curl -s -H "Test: foo" -H "Test: bar" ${BASE_ARGS} "${TEST_FUNCTION}"'
+        out: '"foo,bar"'
+
+- test: Test Py3 query input
+  cleanup:
+    -   bn remove returnPy3ReqQuery
+  steps:
+    -   in: export BASE_ARGS="-H X-Binaris-Api-Key:${BINARIS_API_KEY}"
+    -   in: export TEST_FUNCTION="https://${BINARIS_INVOKE_ENDPOINT}/v2/run/${BINARIS_ACCOUNT_ID}/returnPy3ReqQuery"
+    -   in: bn create python3 returnPy3ReqQuery
+    -   in: |-
+          cat > function.py << EOL
+          def handler(input, ctx):
+            return ctx.request.query
+          EOL
+    -   in: bn deploy returnPy3ReqQuery
+    -   in: curl -s ${BASE_ARGS} "${TEST_FUNCTION}"
+        out: '{}'
+    -   in: curl -s ${BASE_ARGS} "${TEST_FUNCTION}?foo=123"
+        out: '{"foo": "123"}'
+    -   in: curl -s ${BASE_ARGS} "${TEST_FUNCTION}?foo=123&bar=this"
+        out: '{"foo": "123", "bar": "this"}'
+    -   in: curl -s ${BASE_ARGS} "${TEST_FUNCTION}?foo="
+        out: '{"foo": ""}'
+    -   in: curl -s ${BASE_ARGS} "${TEST_FUNCTION}/some/where?foo=123"
+        out: '{"foo": "123"}'
+    -   in: curl -s ${BASE_ARGS} "${TEST_FUNCTION}/some/where/?foo=123&bar=this"
+        out: '{"foo": "123", "bar": "this"}'
+    -   in: curl -s ${BASE_ARGS} "${TEST_FUNCTION}?foo="
+        out: '{"foo": ""}'
+
+- test: Test Py3 path input
+  cleanup:
+    -   bn remove returnPy3ReqPath
+  steps:
+    -   in: export BASE_ARGS="-H X-Binaris-Api-Key:${BINARIS_API_KEY}"
+    -   in: export TEST_FUNCTION="https://${BINARIS_INVOKE_ENDPOINT}/v2/run/${BINARIS_ACCOUNT_ID}/returnPy3ReqPath"
+    -   in: bn create python3 returnPy3ReqPath
+    -   in: |-
+          cat > function.py << EOL
+          def handler(input, ctx):
+            return ctx.request.path
+          EOL
+    -   in: bn deploy returnPy3ReqPath
+    -   in: curl -s ${BASE_ARGS} "${TEST_FUNCTION}"
+        out: 'null'
+    -   in: curl -s ${BASE_ARGS} "${TEST_FUNCTION}/////"
+        out: '"/"'
+    -   in: curl -s ${BASE_ARGS} "${TEST_FUNCTION}/foo"
+        out: '"/foo"'
+    -   in: curl -s ${BASE_ARGS} "${TEST_FUNCTION}/foo?qs"
+        out: '"/foo"'
+    -   in: curl -s ${BASE_ARGS} "${TEST_FUNCTION}/foo/"
+        out: '"/foo/"'
+    -   in: curl -s ${BASE_ARGS} "${TEST_FUNCTION}/foo/?qs=1"
+        out: '"/foo/"'
+    -   in: curl -s ${BASE_ARGS} "${TEST_FUNCTION}/foo///"
+        out: '"/foo/"'
+    -   in: curl -s ${BASE_ARGS} "${TEST_FUNCTION}/foo/bar"
+        out: '"/foo/bar"'
+    -   in: curl -s ${BASE_ARGS} "${TEST_FUNCTION}/foo/bar/"
+        out: '"/foo/bar/"'
+
+- test: Test Py3 custom response
+  cleanup:
+    -   bn remove customPy3Response
+  steps:
+    -   in: bn create python3 customPy3Response
+    -   in: |-
+          cat > function.py << EOL
+          def handler(input, ctx):
+            headers = dict(foo = str(123), bar = 'vaz', but = '')
+            return ctx.HTTPResponse(231, headers, 'no quotes')
+          EOL
+    -   in: bn deploy customPy3Response
+    -   in: curl -H X-Binaris-Api-Key:${BINARIS_API_KEY} --silent --include "https://${BINARIS_INVOKE_ENDPOINT}/v2/run/${BINARIS_ACCOUNT_ID}/customPy3Response" | grep -e Foo -e Bar -e But -e HTTP -e quotes
+        out: |-
+             HTTP/1.1 231 Unknown
+             Bar: vaz
+             But: 
+             Foo: 123
+             no quotes
