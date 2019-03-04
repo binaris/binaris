@@ -21,7 +21,7 @@
     -   in: curl -s --data '{}' ${BASE_ARGS} "${TEST_FUNCTION}"
         out: '{"input": {}, "inputType": "dict"}'
     -   in: curl -s --data '{"foo":"bar","yet":123}' ${BASE_ARGS} "${TEST_FUNCTION}"
-        out: '{"input": {"foo": "bar", "yet": 123}, "inputType": "dict"}'
+        out: '{"input": {"yet": 123, "foo": "bar"}, "inputType": "dict"}'
     -   in: curl -s --data '["foo","bar"]' ${BASE_ARGS} "${TEST_FUNCTION}"
         out: '{"input": ["foo", "bar"], "inputType": "list"}'
 
@@ -111,6 +111,8 @@
     -   in: |-
           cat > function.py << EOL
           def handler(input, ctx):
+            for key in ctx.request.query:
+              ctx.request.query[key] = ctx.request.query[key].decode('utf-8')
             return ctx.request.query
           EOL
     -   in: bn deploy returnPy3ReqQuery
