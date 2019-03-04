@@ -321,8 +321,18 @@ Usage: $0 <command> [options]` // eslint-disable-line comma-dangle
       .positional('config', {
         describe: 'What to show',
         choices: ['accountId', 'apiKey'],
+      })
+      .option('all', {
+        alias: 'a',
+        describe: 'Show it all ',
+        type: 'boolean',
       });
-  }, argv => handleCommand(argv, showHandler))
+  }, async (argv) => {
+    if (!argv.all && !argv.config) {
+      msgAndExit('"bn show" requires positional arguments or the "--all" flag', true);
+    }
+    await handleCommand(argv, showHandler);
+  })
   .command('login', 'Login to your Binaris account using an API key and account id', (yargs0) => {
     yargs0
       .usage('Usage: $0 login')
