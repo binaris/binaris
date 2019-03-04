@@ -65,7 +65,7 @@ test.afterEach.always(async (t) => {
  * `test` entry separately.
  */
 const testFileNames = ['./test/spec.yml', './test/cases.yml',
-  './test/jsApi.yml', './test/py2Api.yml'];
+  './test/jsApi.yml', './test/py2Api.yml', './test/py3Api.yml'];
 const testFiles = testFileNames.map(file => yaml.safeLoad(fs.readFileSync(file, 'utf8')));
 const testPlan = [].concat(...testFiles);
 
