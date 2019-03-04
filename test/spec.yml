@@ -499,6 +499,40 @@
         out: |-
             Removed function *
 
+- test: "exclusive execution model: deploy invoke multiple times"
+  steps:
+    -   in: bn create node8 exclusiveFunc -e exclusive
+    -   in: |-
+            cat > function.js << EOL
+            function msleep(ms) {
+              return new Promise((resolve) => {
+                  setTimeout(resolve, ms);
+              });
+            }
+            let duringFlight = false;
+            exports.handler = async () => {
+              if (duringFlight) {
+                return true;
+              } else {
+                duringFlight = true;
+                await msleep(10000);
+                duringFlight = false;
+                return false;
+              }
+            }
+            EOL
+    -   in: bn deploy exclusiveFunc
+        out: |-
+            Deployed function exclusiveFunc
+            Invoke with one of:
+              "bn invoke exclusiveFunc"
+              "curl -H X-Binaris-Api-Key:* https://*"
+    # we do 3 simultaneous invokations be cause testing minbolts=2
+    -   in: "(for i in `seq 1 3`; do bn invoke exclusiveFunc & done; wait) | grep -v true"
+    -   in: bn remove exclusiveFunc
+        out: |-
+            Removed function *
+
 - test: Test login (bad-path)
   steps:
     -   in: unset BINARIS_API_KEY
