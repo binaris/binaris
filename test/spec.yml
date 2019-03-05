@@ -1215,3 +1215,35 @@
     -   in: bn create node8 alreadyExists
         exit: 1
         err: "/home/dockeruser/test/binaris.yml already exists"
+
+- test: create configuration options (good-path)
+  steps:
+    -  in: bn create node8 testConfOpts --config.executionModel=exclusive --config.env.PATH --config.env.FOO=bar
+    -  in: |-
+           cat <<EOF >>/home/dockeruser/test/expected.yml
+           functions:
+             testConfOpts:
+               file: function.js
+               entrypoint: handler
+               executionModel: exclusive
+               runtime: node8
+               env:
+                 PATH: null
+                 FOO: bar
+           EOF
+    -  in: diff binaris.yml expected.yml
+
+- test: invalid create configuration options (bad-path)
+  steps:
+    -  in: bn create node8 testBadConfOpts --config=bad
+       exit: 1
+       err: "Non object create configuration options: bad"
+    -  in: bn create node8 testBadConfOpts --config
+       exit: 1
+       err: "Non object create configuration options: true"
+    -  in: bn create node8 testBadConfOpts --config=bad --config.foo=bar
+       exit: 1
+       err: "Non object create configuration options: bad"
+    -  in: bn create node8 testBadConfOpts --config --config.foo=bar
+       exit: 1
+       err: "Non object create configuration options: true"

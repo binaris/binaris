@@ -67,6 +67,9 @@ Usage: $0 <command> [options]` // eslint-disable-line comma-dangle
         describe: 'Function name',
         type: 'string',
       })
+      .option('config', {
+        describe: 'Function configuration',
+      })
       .option('executionModel', {
         alias: 'e',
         choices: executionModels,
@@ -78,8 +81,34 @@ Usage: $0 <command> [options]` // eslint-disable-line comma-dangle
         describe: 'Use directory dir. "create" will create this directory if needed.',
         type: 'string',
       })
-      .strict();
+      .strict()
+      .example(
+` // Create a function from python3 template
+  bn create python3 ninja
+
+  // Create a function from node8 template with concurrent execution model
+  bn create node8 pirate --config.executionModel=concurrent
+
+  // Create a function from python2 template with exclusive execution model and FOO env
+  bn create python2 hello --config.executionModel=exclusive --config.env.FOO=bar
+`);
   }, async (argv) => {
+    // validating here and not in coerce to keep output consistent
+    if (argv.config !== undefined) {
+      const configType = typeof argv.config;
+      if (configType !== 'object' || Array.isArray(argv.config)) {
+        msgAndExit(`Non object create configuration options: ${argv.config}`, true);
+      }
+      // transform boolean true  for --config.env.VAR to work properly
+      if (argv.config.env && typeof argv.config.env === 'object') {
+        for (const v in argv.config.env) {
+          if (argv.config.env[v] === true) {
+            // eslint-disable-next-line no-param-reassign
+            argv.config.env[v] = null;
+          }
+        }
+      }
+    }
     await handleCommand(argv, createHandler);
   })
   .command('deploy <function> [options]', 'Deploys a function to the cloud', (yargs0) => {
