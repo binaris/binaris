@@ -179,6 +179,93 @@
             "bn invoke public_drymeat"
             "curl https://*"
 
+- test: Test deploy with TTL (number)
+  steps:
+    -   in: bn create node8 ttltest
+        out: |-
+            Created function * in /home/dockeruser/test
+              (use "bn deploy ttltest" to deploy the function)
+    -   in: |-
+            cat <<EOF >/home/dockeruser/test/binaris.yml
+            functions:
+              ttltest:
+                file: function.js
+                entrypoint: handler
+                runtime: node8
+                ttl: 5
+            EOF
+    -   in: bn deploy ttltest
+        out: |-
+            Deployed function ttltest
+            Invoke with one of:
+              "bn invoke ttltest"
+              "curl -H X-Binaris-Api-Key:* https://*"
+    -   in: bn invoke ttltest
+        out: |-
+            "Hello World!"
+    -   in: sleep 10
+    -   in: bn invoke ttltest
+        err: |-
+            RequestId: *
+            Sorry, your function is not ready yet.
+            Please try again.
+            If this keeps happening, please contact support@binaris.com with the request ID.
+        exit: 1
+
+- test: Test deploy with TTL (string)
+  steps:
+    -   in: bn create node8 ttltest2
+        out: |-
+            Created function * in /home/dockeruser/test
+              (use "bn deploy ttltest2" to deploy the function)
+    -   in: |-
+            cat <<EOF >/home/dockeruser/test/binaris.yml
+            functions:
+              ttltest2:
+                file: function.js
+                entrypoint: handler
+                runtime: node8
+                ttl: 5000ms
+            EOF
+    -   in: bn deploy ttltest2
+        out: |-
+            Deployed function ttltest2
+            Invoke with one of:
+              "bn invoke ttltest2"
+              "curl -H X-Binaris-Api-Key:* https://*"
+    -   in: bn invoke ttltest2
+        out: |-
+            "Hello World!"
+    -   in: sleep 10
+    -   in: bn invoke ttltest2
+        err: |-
+            RequestId: *
+            Sorry, your function is not ready yet.
+            Please try again.
+            If this keeps happening, please contact support@binaris.com with the request ID.
+        exit: 1
+
+- test: Test deploy with invalid TTL string (bad-path)
+  steps:
+    -   in: bn create node8 badttltest
+        out: |-
+            Created function * in /home/dockeruser/test
+              (use "bn deploy badttltest" to deploy the function)
+    -   in: |-
+            cat <<EOF >/home/dockeruser/test/binaris.yml
+            functions:
+              badttltest:
+                file: function.js
+                entrypoint: handler
+                runtime: node8
+                ttl: invalidttlstring
+            EOF
+    -   in: bn deploy badttltest
+        exit: 1
+        err: |-
+            RequestId: *
+            Invalid request parameters (see errors field)
+
 - test: Test feedback (good-path)
   setup:
     - export FEEDBACK_EMAIL=test@binaris.com
