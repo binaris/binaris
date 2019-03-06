@@ -1247,3 +1247,6 @@
     -  in: bn create node8 testBadConfOpts --config --config.foo=bar
        exit: 1
        err: "Non object create configuration options: true"
+    -  in: bn create node8 testArrayOpts --config=aaa --config=bbb
+       exit: 1
+       err: "Non object create configuration options: aaa,bbb"
