@@ -86,11 +86,14 @@ Usage: $0 <command> [options]` // eslint-disable-line comma-dangle
 ` // Create a function from python3 template
   bn create python3 ninja
 
-  // Create a function from node8 template with concurrent execution model
-  bn create node8 pirate --config.executionModel=concurrent
+  // Create a function from node8 template with exclusive execution model
+  bn create node8 pirate --config.executionModel=exclusive
 
-  // Create a function from python2 template with exclusive execution model and FOO env
-  bn create python2 hello --config.executionModel=exclusive --config.env.FOO=bar
+  // Create a function from python2 template with concurrent execution model, and FOO env
+  bn create python2 hello --config.executionModel=concurrent --config.env.FOO=bar
+
+  // Create a function from python3 template with deploy time BAR env
+  bn create python2 hello --config.env.BAR
 `);
   }, async (argv) => {
     // validating here and not in coerce to keep output consistent
