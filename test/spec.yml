@@ -101,7 +101,7 @@
         [201*-*-*T*:*:*Z] Function invocation took * us
     - in: bn list --json
       out: |-
-        *[*{"name":"rand*","lastDeployed":"[20*-*-*T*:*:*Z]"}*]*
+        *[*{"name":"rand*","lastDeployed":"20*-*-*T*:*:*Z"}*]*
 
 - test: Test login (good-path)
   cleanup:
@@ -314,7 +314,7 @@
              listtest2                *201*-*-*T*:*:*Z*
     -   in: bn list --json
         out: |-
-            *[*{"name":"listtest1","lastDeployed":"[20*-*-*T*:*:*Z]"}*,*{"name":"listtest2","lastDeployed":"[20*-*-*T*:*:*Z]"}*]*
+            *[*{"name":"listtest1","lastDeployed":"20*-*-*T*:*:*Z"}*,*{"name":"listtest2","lastDeployed":"20*-*-*T*:*:*Z"}*]*
 
 - test: Test invoke (good-path)
   setup:
