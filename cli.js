@@ -318,13 +318,14 @@ Usage: $0 <command> [options]` // eslint-disable-line comma-dangle
   })
   .command('show [config]', 'Show Binaris account configuration', (yargs0) => {
     yargs0
+      .usage('Usage: $0 show --all | <config>')
       .positional('config', {
         describe: 'What to show',
         choices: ['accountId', 'apiKey'],
       })
       .option('all', {
         alias: 'a',
-        describe: 'Show it all ',
+        describe: 'Show it all',
         type: 'boolean',
       });
   }, async (argv) => {
