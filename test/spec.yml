@@ -152,8 +152,8 @@
       out: "17890505"
     - in: bn show --all
       out: |-
-          apiKey: 1066
-          accountId: 17890505
+          apiKey: 17890505
+          accountId: 1066
 
 - test: Test create (good-path)
   steps:
