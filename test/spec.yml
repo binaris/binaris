@@ -141,19 +141,14 @@
 
 - test: Test show
   steps:
-    -   in: |-
-            cat <<EOF >/home/dockeruser/.binaris.yml
-            apiKey: 17890505
-            accountId: 1066
-            EOF
-    - in: bn show accountId
+    - in: BINARIS_ACCOUNT_ID=1066 bn show accountId
       out: "1066"
-    - in: bn show apiKey
+    - in: BINARIS_API_KEY=17890505 bn show apiKey
       out: "17890505"
-    - in: bn show --all
+    - in: BINARIS_ACCOUNT_ID=1066 BINARIS_API_KEY=17890505 bn show --all
       out: |-
-          apiKey: 17890505
-          accountId: 1066
+          1066
+          17890505
 
 - test: Test create (good-path)
   steps:
