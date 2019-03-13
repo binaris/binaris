@@ -21,6 +21,7 @@
     "inquirer": "^3.3.0",
     "js-yaml": "^3.11.0",
     "loadtest": "^3.0.3",
+    "lodash.bind": "^4.2.1",
     "lodash.get": "^4.4.2",
     "lodash.partial": "^4.2.1",
     "lodash.sortby": "^4.7.0",
