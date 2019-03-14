@@ -111,11 +111,11 @@
     - in: sleep 5
     - in: bn logs $FUNC_NAME
       out: |-
-        [201*-*-*T*:*:*Z] Function * deployed (version digest: *)
-        [201*-*-*T*:*:*Z] Function invocation took * us
+        [20#-#-#T#:#:#.#Z] Function * deployed (version digest: *)
+        [20#-#-#T#:#:#.#Z] Function invocation took * us
     - in: bn list --json
       out: |-
-        *[*{"name":"rand*","lastDeployed":"[20*-*-*T*:*:*Z]"}*]*
+        *[*{"name":"rand*","lastDeployed":"20#-#-#T#:#:#.#Z"}*]*
 
 - test: Test login (good-path)
   cleanup:
@@ -197,6 +197,93 @@
             "bn invoke public_drymeat"
             "curl https://*"
 
+- test: Test deploy with TTL (number)
+  steps:
+    -   in: bn create node8 ttltest
+        out: |-
+            Created function * in /home/dockeruser/test
+              (use "bn deploy ttltest" to deploy the function)
+    -   in: |-
+            cat <<EOF >/home/dockeruser/test/binaris.yml
+            functions:
+              ttltest:
+                file: function.js
+                entrypoint: handler
+                runtime: node8
+                ttl: 5
+            EOF
+    -   in: bn deploy ttltest
+        out: |-
+            Deployed function ttltest
+            Invoke with one of:
+              "bn invoke ttltest"
+              "curl -H X-Binaris-Api-Key:* https://*"
+    -   in: bn invoke ttltest
+        out: |-
+            "Hello World!"
+    -   in: sleep 10
+    -   in: bn invoke ttltest
+        err: |-
+            RequestId: *
+            Sorry, your function is not ready yet.
+            Please try again.
+            If this keeps happening, please contact support@binaris.com with the request ID.
+        exit: 1
+
+- test: Test deploy with TTL (string)
+  steps:
+    -   in: bn create node8 ttltest2
+        out: |-
+            Created function * in /home/dockeruser/test
+              (use "bn deploy ttltest2" to deploy the function)
+    -   in: |-
+            cat <<EOF >/home/dockeruser/test/binaris.yml
+            functions:
+              ttltest2:
+                file: function.js
+                entrypoint: handler
+                runtime: node8
+                ttl: 5000ms
+            EOF
+    -   in: bn deploy ttltest2
+        out: |-
+            Deployed function ttltest2
+            Invoke with one of:
+              "bn invoke ttltest2"
+              "curl -H X-Binaris-Api-Key:* https://*"
+    -   in: bn invoke ttltest2
+        out: |-
+            "Hello World!"
+    -   in: sleep 10
+    -   in: bn invoke ttltest2
+        err: |-
+            RequestId: *
+            Sorry, your function is not ready yet.
+            Please try again.
+            If this keeps happening, please contact support@binaris.com with the request ID.
+        exit: 1
+
+- test: Test deploy with invalid TTL string (bad-path)
+  steps:
+    -   in: bn create node8 badttltest
+        out: |-
+            Created function * in /home/dockeruser/test
+              (use "bn deploy badttltest" to deploy the function)
+    -   in: |-
+            cat <<EOF >/home/dockeruser/test/binaris.yml
+            functions:
+              badttltest:
+                file: function.js
+                entrypoint: handler
+                runtime: node8
+                ttl: invalidttlstring
+            EOF
+    -   in: bn deploy badttltest
+        exit: 1
+        err: |-
+            RequestId: *
+            Invalid request parameters (see errors field)
+
 - test: Test feedback (good-path)
   setup:
     - export FEEDBACK_EMAIL=test@binaris.com
@@ -241,11 +328,11 @@
     -   in: bn list
         out: |-
              FUNCTION                 *LAST DEPLOYED*
-             listtest1                *201*-*-*T*:*:*Z*
-             listtest2                *201*-*-*T*:*:*Z*
+             listtest1                *20#-#-#T#:#:#.#Z*
+             listtest2                *20#-#-#T#:#:#.#Z*
     -   in: bn list --json
         out: |-
-            *[*{"name":"listtest1","lastDeployed":"[20*-*-*T*:*:*Z]"}*,*{"name":"listtest2","lastDeployed":"[20*-*-*T*:*:*Z]"}*]*
+            *[*{"name":"listtest1","lastDeployed":"20#-#-#T#:#:#.#Z"}*,*{"name":"listtest2","lastDeployed":"20#-#-#T#:#:#.#Z"}*]*
 
 - test: Test invoke (good-path)
   setup:
@@ -324,8 +411,8 @@
     -   in: sleep 5
     -   in: bn logs $FUNC_NAME
         out: |-
-          [201*-*-*T*:*:*Z] Hello World!
-          [201*-*-*T*:*:*Z] Function invocation took * us
+          [20#-#-#T#:#:#.#Z] Hello World!
+          [20#-#-#T#:#:#.#Z] Function invocation took * us
     -   in: |-
           bn invoke $FUNC_NAME -d '{"name": "again"}'
         out: |-
@@ -333,10 +420,10 @@
     -   in: sleep 8
     -   in: bn logs $FUNC_NAME
         out: |-
-          [201*-*-*T*:*:*Z] Hello World!
-          [201*-*-*T*:*:*Z] Function invocation took * us
-          [201*-*-*T*:*:*Z] Hello again!
-          [201*-*-*T*:*:*Z] Function invocation took * us
+          [20#-#-#T#:#:#.#Z] Hello World!
+          [20#-#-#T#:#:#.#Z] Function invocation took * us
+          [20#-#-#T#:#:#.#Z] Hello again!
+          [20#-#-#T#:#:#.#Z] Function invocation took * us
     -   in: sleep 15
     -   in: |-
           bn invoke $FUNC_NAME -d '{"name": "for the last time"}'
@@ -345,15 +432,15 @@
     -   in: sleep 8
     -   in: bn logs $FUNC_NAME --since 10s
         out: |-
-          [201*-*-*T*:*:*Z] Hello for the last time!
-          [201*-*-*T*:*:*Z] Function invocation took * us
+          [20#-#-#T#:#:#.#Z] Hello for the last time!
+          [20#-#-#T#:#:#.#Z] Function invocation took * us
     -   in: cd /home/
     -   in: bn logs $FUNC_NAME --since 40sec
         out: |-
-          [201*-*-*T*:*:*Z] Hello again!
-          [201*-*-*T*:*:*Z] Function invocation took * us
-          [201*-*-*T*:*:*Z] Hello for the last time!
-          [201*-*-*T*:*:*Z] Function invocation took * us
+          [20#-#-#T#:#:#.#Z] Hello again!
+          [20#-#-#T#:#:#.#Z] Function invocation took * us
+          [20#-#-#T#:#:#.#Z] Hello for the last time!
+          [20#-#-#T#:#:#.#Z] Function invocation took * us
 
 - test: 'Test {PY_VERSION} E2E (good-path)'
   foreach:
@@ -387,8 +474,8 @@
     -   in: sleep 5
     -   in: bn logs $FUNC_NAME
         out: |-
-          [201*-*-*T*:*:*Z] Hello Binaris!
-          [201*-*-*T*:*:*Z] Function invocation took * us
+          [20#-#-#T#:#:#.#Z] Hello Binaris!
+          [20#-#-#T#:#:#.#Z] Function invocation took * us
 
 - test: Test deploy invoke remove cycle commands (good-path)
   steps:
@@ -413,9 +500,9 @@
     -   in: sleep 5
     -   in: bn logs gulliblezebra
         out: |-
-          *[201*-*-*T*:*:*Z] Function gulliblezebra deployed (version digest:*)*
-          *[201*-*-*T*:*:*Z] Hello World!*
-          *[201*-*-*T*:*:*Z] Function gulliblezebra removed.*
+          *[20#-#-#T#:#:#.#Z] Function gulliblezebra deployed (version digest:*)*
+          *[20#-#-#T#:#:#.#Z] Hello World!*
+          *[20#-#-#T#:#:#.#Z] Function gulliblezebra removed.*
 
 - test: "envs: deploy invoke remove with secrets"
   steps:
