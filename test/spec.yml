@@ -139,7 +139,7 @@
             "bn invoke momentousgiants"
             "curl -H X-Binaris-Api-Key:* https://*"
 
-- test: Test show
+- test: Test show (good-path)
   steps:
     - in: BINARIS_ACCOUNT_ID=1066 bn show accountId
       out: "1066"
@@ -149,6 +149,23 @@
       out: |-
           apiKey: 17890505
           accountId: 1066
+
+- test: Test show with unknown option (bad-path)
+  steps:
+    - in: bn show accountId --json
+      err: |-
+          Usage: bn show --all | <config>
+
+          Positionals:
+            config  What to show  [choices: "accountId", "apiKey"]
+
+          Options:
+            --version   Show version number  [boolean]
+            --help, -h  Show help  [boolean]
+            --all, -a   Show it all  [boolean]
+
+          Unknown argument: json
+      exit: 1
 
 - test: Test create (good-path)
   steps:
