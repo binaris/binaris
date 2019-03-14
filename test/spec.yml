@@ -867,6 +867,7 @@
         out: |-
             Created function * in /home/dockeruser/test
               (use "bn deploy doomedtofailjava8" to deploy the function)
+            Please be aware, support for java8 is currently experimental
     -   in: |-
             sed -i.bak '6s/.*/        throw new java.lang.Error("this is very bad");/' src/main/java/ExampleFunction.java
     -   in: gradle jar
