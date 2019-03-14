@@ -327,7 +327,8 @@ Usage: $0 <command> [options]` // eslint-disable-line comma-dangle
         alias: 'a',
         describe: 'Show it all',
         type: 'boolean',
-      });
+      })
+      .strict();
   }, async (argv) => {
     if (!argv.all && !argv.config) {
       msgAndExit('"bn show" requires positional arguments or the "--all" flag', true);
