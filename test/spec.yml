@@ -97,11 +97,11 @@
     - in: sleep 5
     - in: bn logs $FUNC_NAME
       out: |-
-        [201*-*-*T*:*:*Z] Function * deployed (version digest: *)
-        [201*-*-*T*:*:*Z] Function invocation took * us
+        [20#-#-#T#:#:#.#Z] Function * deployed (version digest: *)
+        [20#-#-#T#:#:#.#Z] Function invocation took * us
     - in: bn list --json
       out: |-
-        *[*{"name":"rand*","lastDeployed":"20*-*-*T*:*:*Z"}*]*
+        *[*{"name":"rand*","lastDeployed":"20#-#-#T#:#:#.#Z"}*]*
 
 - test: Test login (good-path)
   cleanup:
@@ -310,11 +310,11 @@
     -   in: bn list
         out: |-
              FUNCTION                 *LAST DEPLOYED*
-             listtest1                *201*-*-*T*:*:*Z*
-             listtest2                *201*-*-*T*:*:*Z*
+             listtest1                *20#-#-#T#:#:#.#Z*
+             listtest2                *20#-#-#T#:#:#.#Z*
     -   in: bn list --json
         out: |-
-            *[*{"name":"listtest1","lastDeployed":"20*-*-*T*:*:*Z"}*,*{"name":"listtest2","lastDeployed":"20*-*-*T*:*:*Z"}*]*
+            *[*{"name":"listtest1","lastDeployed":"20#-#-#T#:#:#.#Z"}*,*{"name":"listtest2","lastDeployed":"20#-#-#T#:#:#.#Z"}*]*
 
 - test: Test invoke (good-path)
   setup:
@@ -393,8 +393,8 @@
     -   in: sleep 5
     -   in: bn logs $FUNC_NAME
         out: |-
-          [201*-*-*T*:*:*Z] Hello World!
-          [201*-*-*T*:*:*Z] Function invocation took * us
+          [20#-#-#T#:#:#.#Z] Hello World!
+          [20#-#-#T#:#:#.#Z] Function invocation took * us
     -   in: |-
           bn invoke $FUNC_NAME -d '{"name": "again"}'
         out: |-
@@ -402,10 +402,10 @@
     -   in: sleep 8
     -   in: bn logs $FUNC_NAME
         out: |-
-          [201*-*-*T*:*:*Z] Hello World!
-          [201*-*-*T*:*:*Z] Function invocation took * us
-          [201*-*-*T*:*:*Z] Hello again!
-          [201*-*-*T*:*:*Z] Function invocation took * us
+          [20#-#-#T#:#:#.#Z] Hello World!
+          [20#-#-#T#:#:#.#Z] Function invocation took * us
+          [20#-#-#T#:#:#.#Z] Hello again!
+          [20#-#-#T#:#:#.#Z] Function invocation took * us
     -   in: sleep 15
     -   in: |-
           bn invoke $FUNC_NAME -d '{"name": "for the last time"}'
@@ -414,15 +414,15 @@
     -   in: sleep 8
     -   in: bn logs $FUNC_NAME --since 10s
         out: |-
-          [201*-*-*T*:*:*Z] Hello for the last time!
-          [201*-*-*T*:*:*Z] Function invocation took * us
+          [20#-#-#T#:#:#.#Z] Hello for the last time!
+          [20#-#-#T#:#:#.#Z] Function invocation took * us
     -   in: cd /home/
     -   in: bn logs $FUNC_NAME --since 40sec
         out: |-
-          [201*-*-*T*:*:*Z] Hello again!
-          [201*-*-*T*:*:*Z] Function invocation took * us
-          [201*-*-*T*:*:*Z] Hello for the last time!
-          [201*-*-*T*:*:*Z] Function invocation took * us
+          [20#-#-#T#:#:#.#Z] Hello again!
+          [20#-#-#T#:#:#.#Z] Function invocation took * us
+          [20#-#-#T#:#:#.#Z] Hello for the last time!
+          [20#-#-#T#:#:#.#Z] Function invocation took * us
 
 - test: 'Test {PY_VERSION} E2E (good-path)'
   foreach:
@@ -456,8 +456,8 @@
     -   in: sleep 5
     -   in: bn logs $FUNC_NAME
         out: |-
-          [201*-*-*T*:*:*Z] Hello Binaris!
-          [201*-*-*T*:*:*Z] Function invocation took * us
+          [20#-#-#T#:#:#.#Z] Hello Binaris!
+          [20#-#-#T#:#:#.#Z] Function invocation took * us
 
 - test: Test deploy invoke remove cycle commands (good-path)
   steps:
@@ -482,9 +482,9 @@
     -   in: sleep 5
     -   in: bn logs gulliblezebra
         out: |-
-          *[201*-*-*T*:*:*Z] Function gulliblezebra deployed (version digest:*)*
-          *[201*-*-*T*:*:*Z] Hello World!*
-          *[201*-*-*T*:*:*Z] Function gulliblezebra removed.*
+          *[20#-#-#T#:#:#.#Z] Function gulliblezebra deployed (version digest:*)*
+          *[20#-#-#T#:#:#.#Z] Hello World!*
+          *[20#-#-#T#:#:#.#Z] Function gulliblezebra removed.*
 
 - test: "envs: deploy invoke remove with secrets"
   steps:
