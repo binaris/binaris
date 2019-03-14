@@ -1,6 +1,6 @@
 {
   "name": "binaris",
-  "version": "6.6.2",
+  "version": "6.6.3",
   "description": "Binaris SDK & CLI",
   "main": "index.js",
   "bin": {
