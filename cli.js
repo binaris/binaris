@@ -30,11 +30,6 @@ const handleCommand = async function handleCommand(options, specificHandler) {
   if (realm) {
     forceRealm(realm);
   }
-  const cmdSeq = options._;
-  // `_` is the array holding all commands given to yargs
-  if (cmdSeq.length > 1) {
-    msgAndExit(`Invalid subcommand ${cmdSeq[1]} for command ${cmdSeq[0]}`, true);
-  }
 
   await specificHandler(options);
   process.exit(0);
