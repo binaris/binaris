@@ -34,7 +34,7 @@
     -   in: |-
           cat > function.py << EOL
           def handler(input, ctx):
-            return ctx.request.body
+            return ctx.request.body.decode('utf-8')
           EOL
     -   in: bn deploy returnPy3ReqBody
     -   in: curl -s ${BASE_ARGS} "${TEST_FUNCTION}"
