@@ -166,7 +166,10 @@ Usage: $0 <command> [options]` // eslint-disable-line comma-dangle
   .command('list [options]', 'List all deployed functions', (yargs0) => {
     yargs0
       .usage('Usage: $0 list [options]')
-      .option('json', { describe: 'Output as JSON' })
+      .option('json', {
+        describe: 'Output as JSON',
+        type: 'boolean',
+      })
       .strict();
   }, async (argv) => {
     await handleCommand(argv, listHandler);
@@ -339,7 +342,10 @@ Usage: $0 <command> [options]` // eslint-disable-line comma-dangle
         describe: 'Output statistics until given ISO timestamp (non-inclusive)',
         type: 'string',
       })
-      .option('json', { describe: 'Output as JSON' })
+      .option('json', {
+        describe: 'Output as JSON',
+        type: 'boolean',
+      })
       .strict()
       .example(
 `  // Retrieve all usage statistics of the account
