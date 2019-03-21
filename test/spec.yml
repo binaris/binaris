@@ -36,7 +36,7 @@
               Options:
                 --version   Show version number  [boolean]
                 --help, -h  Show help  [boolean]
-                --json      Output as JSON*
+                --json      Output as JSON  [boolean]
 
 - test: Test show help output
   steps:
@@ -1102,7 +1102,7 @@
           --help, -h   Show help  [boolean]
           --since, -s  Output statistics after given ISO timestamp (inclusive)  [string]
           --until, -u  Output statistics until given ISO timestamp (non-inclusive)  [string]
-          --json       Output as JSON
+          --json       Output as JSON  [boolean]
 
         Examples:
             // Retrieve all usage statistics of the account
