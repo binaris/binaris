@@ -8,7 +8,8 @@ const { parseTimeString } = require('./lib/timeUtil');
 const {
   deployHandler, createHandler, feedbackHandler, invokeHandler,
   listHandler, logsHandler, loginHandler, removeHandler, perfHandler,
-  showHandler, statsHandler,
+  showHandler, statsHandler, triggerListHandler, triggerUpsertHandler,
+  triggerRemoveHandler,
 } = require('./lib');
 const { forceRealm } = require('./sdk');
 
@@ -170,6 +171,66 @@ Usage: $0 <command> [options]` // eslint-disable-line comma-dangle
   }, async (argv) => {
     await handleCommand(argv, listHandler);
   })
+  .command('trigger', 'Manages triggers', yargs0 => yargs0
+      .demandCommand()
+      .command('setup', 'Creates a new trigger or updates an existing one', (yargs1) => {
+        yargs1
+          .usage('Usage: $0 trigger setup <trigger name> [options]')
+          .positional('trigger name', {
+            describe: 'Trigger name',
+            type: 'string',
+          })
+          .option('source-uri', {
+            demandOption: true,
+            describe: 'Redis stream URI',
+            type: 'string',
+          })
+          .option('target', {
+            demandOption: true,
+            describe: 'Function to run for each item in the stream',
+            type: 'string',
+          })
+          .option('error-handler', {
+            describe: 'Function to run when an error occurs',
+            type: 'string',
+          })
+          .demandCommand(1)
+          .strict()
+          .example(
+`  // Creates trigger 'my-trigger' that will invoke 'my-func' for every entry in 'my-stream'
+  bn trigger setup my-trigger --source-uri "redis://:redispass@redis.foo.com#my-stream" --target my-func
+
+  // Redis stream URI structure:
+  PROTOCOL   ://[:PASSWORD@]HOST       [:PORT][/DB]#STREAM_NAME
+  redis[+tls]://[:secret  @]example.com[:6379][/0] #numbers`,
+          );
+      }, async (argv) => {
+        await handleCommand(argv, triggerUpsertHandler);
+      })
+      .command('remove', 'Remove an existing trigger', (yargs1) => {
+        yargs1
+          .usage('Usage: $0 trigger remove <trigger> [options]')
+          .positional('trigger', {
+            describe: 'Trigger name',
+            type: 'string',
+          })
+          .demandCommand(1)
+          .strict();
+      }, async (argv) => {
+        await handleCommand(argv, triggerRemoveHandler);
+      })
+      .command('list', 'Lists all existing triggers', (yargs1) => {
+        yargs1
+          .usage('Usage: $0 trigger list [options]')
+          .option('json', {
+            describe: 'Output as JSON',
+            type: 'boolean',
+          })
+          .strict();
+      }, async (argv) => {
+        await handleCommand(argv, triggerListHandler);
+      })
+      .strict())
   .command('perf <function> [options]', 'Measure invocation latency (experimental)', (yargs0) => {
     yargs0
       .usage('Usage: $0 perf <function> [options]')
@@ -355,7 +416,7 @@ Usage: $0 <command> [options]` // eslint-disable-line comma-dangle
     await handleCommand(argv, feedbackHandler);
   })
   // .strict()
-  .demand(1, 'Please provide at least 1 valid command')
+  .demandCommand(1, 'Please provide at least 1 valid command')
   .help('help')
   .epilog(`Tip:
   You can export BINARIS_LOG_LEVEL=[silly|debug|verbose] to view debug logs`)
