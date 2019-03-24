@@ -227,7 +227,7 @@
                 file: function.js
                 entrypoint: handler
                 runtime: node8
-                ttl: 5
+                ttl: 10
             EOF
     -   in: bn deploy ttltest
         out: |-
@@ -238,7 +238,7 @@
     -   in: bn invoke ttltest
         out: |-
             "Hello World!"
-    -   in: sleep 10
+    -   in: sleep 20
     -   in: bn invoke ttltest
         err: |-
             RequestId: *
@@ -260,7 +260,7 @@
                 file: function.js
                 entrypoint: handler
                 runtime: node8
-                ttl: 5000ms
+                ttl: 10000ms
             EOF
     -   in: bn deploy ttltest2
         out: |-
@@ -271,7 +271,7 @@
     -   in: bn invoke ttltest2
         out: |-
             "Hello World!"
-    -   in: sleep 10
+    -   in: sleep 20
     -   in: bn invoke ttltest2
         err: |-
             RequestId: *
