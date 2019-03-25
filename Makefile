@@ -17,7 +17,8 @@ define cli_envs
 	-e BINARIS_ACCOUNT_ID      \
 	-e BINARIS_INVOKE_ENDPOINT \
 	-e BINARIS_DEPLOY_ENDPOINT \
-	-e BINARIS_LOG_ENDPOINT
+	-e BINARIS_LOG_ENDPOINT    \
+	-e REDIS_PASS
 endef
 
 BRANCH := $(shell if [[ ! -z $${BRANCH_NAME+x} ]]; then echo $${BRANCH_NAME}; else git rev-parse --abbrev-ref HEAD 2>/dev/null || echo UNKNOWN; fi)
