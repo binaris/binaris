@@ -39,7 +39,7 @@
     "yargs": "^11.0.0"
   },
   "devDependencies": {
-    "ava": "^1.0.0-rc.1",
+    "ava": "^1.4.0",
     "dockerode": "^2.5.5",
     "eslint": "^3.14.1",
     "eslint-config-airbnb-base": "^11.0.1",
