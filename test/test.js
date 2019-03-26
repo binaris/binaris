@@ -120,14 +120,14 @@ function createTest(rawSubTest) {
       // eslint-disable-next-line no-await-in-loop
       const cmdOut = await t.context.ct.streamIn(step.in);
       if (step.out) {
-        const stripStdout = stripText(cmdOut.stdout);
-        t.true(matchText(step.out, stripStdout));
+        const stripCmdOut = { ...cmdOut, stdout: stripText(cmdOut.stdout) };
+        t.assert(matchText(step.out, stripCmdOut.stdout));
       }
       if (step.err) {
-        const stripStderr = stripText(cmdOut.stderr);
-        t.true(matchText(step.err, stripStderr));
+        const stripCmdStderr = { ...cmdOut, stderr: stripText(cmdOut.stderr) };
+        t.assert(matchText(step.err, stripCmdStderr.stderr));
       }
-      t.true(cmdOut.exitCode === (step.exit || 0), step.err);
+      t.assert(cmdOut.exitCode === (step.exit || 0), cmdOut.stderr);
     }
   });
 }
