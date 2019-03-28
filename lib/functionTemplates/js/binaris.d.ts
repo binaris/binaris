@@ -1,31 +1,33 @@
 /// <reference types="node" />
-interface BinarisHTTPRequest {
-  env: Record<string, string | undefined>;
-  query: Record<string, string | string[] | undefined>;
+export interface HTTPRequest {
+  env: Record<string, string>;
+  query: Record<string, string | string[]>;
   body: Buffer;
   path: string;
   method: string;
   requestId: string;
-  headers: Record<string, string | string[] | undefined>;
+  headers: Record<string, string | string[]>;
 }
 
-interface FunctionResponse {
+export interface FunctionResponse {
   statusCode: number;
   headers: Record<string, string | undefined>;
   body: Buffer | string;
 }
 
-declare class BinarisHTTPResponse implements FunctionResponse {
+export interface HTTPResponse {
   userResponse: Partial<FunctionResponse>;
-  constructor(userResponse: Partial<FunctionResponse>);
-  statusCode: number;
-  headers: Record<string, string | undefined>;
-  body: Buffer | string;
+  new(userResponse: Partial<FunctionResponse>);
 }
 
-declare type FunctionContext = {
-  request: BinarisHTTPRequest;
-  HTTPResponse: typeof BinarisHTTPResponse;
-};
+export interface HandlerContext {
+  source: string;
+  request: HTTPRequest;
+  HTTPResponse: HTTPResponse;
+  errorHandlerResponse: {
+    RETRY: { action: 'RETRY' };
+    DROP: { action: 'DROP' };
+  };
+}
 
-export declare type BinarisFunction = (body: unknown, context: FunctionContext) => Promise<any>
+export type Handler = (body: unknown, context: HandlerContext) => Promise<any>;
