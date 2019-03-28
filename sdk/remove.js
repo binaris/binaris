@@ -12,7 +12,7 @@ const { getValidatedBody } = require('./handleError');
  */
 const remove = async function remove(accountId, funcName, apiKey) {
   const options = {
-    url: getConfTagUrl(accountId, funcName, apiKey, 'latest'),
+    url: getConfTagUrl(accountId, funcName, 'latest'),
     headers: {
       'X-Binaris-Api-Key': apiKey,
     },

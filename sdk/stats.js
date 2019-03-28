@@ -14,7 +14,7 @@ const { getStatsUrl } = require('./url');
  */
 const stats = async function stats(accountId, apiKey, since, until) { // eslint-disable-line consistent-return,max-len
   const statsOptions = {
-    url: getStatsUrl(accountId, apiKey),
+    url: getStatsUrl(accountId),
     headers: {
       'X-Binaris-Api-Key': apiKey,
     },

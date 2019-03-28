@@ -3,59 +3,31 @@
 const urljoin = require('urljoin');
 const { getDeployEndpoint, getInvokeEndpoint, getLogEndpoint } = require('./config');
 
-const getInvokeUrl = function getInvokeUrl(accountId, funcName, apiKey) {
-  // TODO: remove this when we phase out V1 URLs, this is here to not break current customers' usage
-  if (!accountId) {
-    return urljoin(`https://${getInvokeEndpoint()}`, 'v1', 'run', apiKey, funcName);
-  }
+const getInvokeUrl = function getInvokeUrl(accountId, funcName) {
   return urljoin(`https://${getInvokeEndpoint()}`, 'v2', 'run', accountId, funcName);
 };
 
-const getLogsUrl = function getLogsUrl(accountId, funcName, apiKey) {
-  // TODO: remove this when we phase out V1 URLs, this is here to not break current customers' usage
-  if (!accountId) {
-    return urljoin(`https://${getLogEndpoint()}`, 'v1', 'logs', `${apiKey}-${funcName}`);
-  }
+const getLogsUrl = function getLogsUrl(accountId, funcName) {
   return urljoin(`https://${getLogEndpoint()}`, 'v2', 'logs', accountId, funcName);
 };
 
 const getCodeUploadUrl = function getCodeUploadUrl(accountId) {
-  // TODO: remove this when we phase out V1 URLs, this is here to not break current customers' usage
-  if (!accountId) {
-    return urljoin(`https://${getDeployEndpoint()}`, 'v2', 'code');
-  }
   return urljoin(`https://${getDeployEndpoint()}`, 'v3', 'code', accountId);
 };
 
-const getConfUploadUrl = function getConfUploadUrl(accountId, funcName, apiKey) {
-  // TODO: remove this when we phase out V1 URLs, this is here to not break current customers' usage
-  if (!accountId) {
-    return urljoin(`https://${getDeployEndpoint()}`, 'v2', 'conf', apiKey, funcName);
-  }
+const getConfUploadUrl = function getConfUploadUrl(accountId, funcName) {
   return urljoin(`https://${getDeployEndpoint()}`, 'v3', 'conf', accountId, funcName);
 };
 
-const getConfTagUrl = function getConfTagUploadUrl(accountId, funcName, apiKey, tag) {
-  // TODO: remove this when we phase out V1 URLs, this is here to not break current customers' usage
-  if (!accountId) {
-    return urljoin(`https://${getDeployEndpoint()}`, 'v2', 'tag', apiKey, funcName, tag);
-  }
+const getConfTagUrl = function getConfTagUploadUrl(accountId, funcName, tag) {
   return urljoin(`https://${getDeployEndpoint()}`, 'v3', 'tag', accountId, funcName, tag);
 };
 
-const getListUrl = function getListUrl(accountId, apiKey) {
-  // TODO: remove this when we phase out V1 URLs, this is here to not break current customers' usage
-  if (!accountId) {
-    return urljoin(`https://${getDeployEndpoint()}`, 'v2', 'functions', apiKey);
-  }
+const getListUrl = function getListUrl(accountId) {
   return urljoin(`https://${getDeployEndpoint()}`, 'v3', 'functions', accountId);
 };
 
-const getStatsUrl = function getStatsUrl(accountId, apiKey) {
-  // TODO: remove this when we phase out V1 URLs, this is here to not break current customers' usage
-  if (!accountId) {
-    return urljoin(`https://${getDeployEndpoint()}`, 'v2', 'metrics', apiKey);
-  }
+const getStatsUrl = function getStatsUrl(accountId) {
   return urljoin(`https://${getDeployEndpoint()}`, 'v3', 'metrics', accountId);
 };
 

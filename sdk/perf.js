@@ -22,7 +22,7 @@ const perf = async function perf(
 ) {
   const baseHeaders = apiKey ? { 'X-Binaris-Api-Key': apiKey } : {};
   const options = {
-    url: getInvokeUrl(accountId, funcName, apiKey),
+    url: getInvokeUrl(accountId, funcName),
     headers: {
       ...baseHeaders,
       'Content-Type': 'application/json',
