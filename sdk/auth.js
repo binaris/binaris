@@ -28,7 +28,7 @@ const verifyAPIKey = async function verifyAPIKey(apiKey) {
       accountId,
     };
   } catch (accountErr) {
-    logger.debug('Failed to authenticate via account', { error: inspect(accountErr) });
+    logger.debug('Failed to authenticate', { error: inspect(accountErr) });
     return {
       error: accountErr,
       accountId: undefined,
