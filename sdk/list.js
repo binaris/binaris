@@ -5,7 +5,7 @@ const { getValidatedBody } = require('./handleError');
 
 const list = async function list(accountId, apiKey) {
   const listOptions = {
-    url: getListUrl(accountId, apiKey),
+    url: getListUrl(accountId),
     headers: {
       'X-Binaris-Api-Key': apiKey,
     },

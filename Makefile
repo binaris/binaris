@@ -11,7 +11,6 @@ DOCKER_IMAGE := binaris/binaris
 version := $(shell cat package.json | jq -r ".version")
 
 define cli_envs
-	-e BINARIS_TEMPORARY_API_KEY_FOR_TESTING_OLD_ENDPOINTS       \
 	-e BINARIS_LOG_LEVEL       \
 	-e tag                     \
 	-e BINARIS_API_KEY         \

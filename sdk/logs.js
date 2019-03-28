@@ -27,7 +27,7 @@ async function orError(func) {
 const logs = async function logs(accountId, funcName, apiKey, follow, startAfter, token) { // eslint-disable-line consistent-return,max-len
   const options = {
     forever: true,
-    url: getLogsUrl(accountId, funcName, apiKey),
+    url: getLogsUrl(accountId, funcName),
     headers: {
       'X-Binaris-Api-Key': apiKey,
     },

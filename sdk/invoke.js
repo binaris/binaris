@@ -19,7 +19,7 @@ const logger = require('../lib/logger');
 const invoke = async function invoke(accountId, funcName, apiKey, funcData) {
   const baseHeaders = apiKey ? { 'X-Binaris-Api-Key': apiKey } : {};
   const options = {
-    url: getInvokeUrl(accountId, funcName, apiKey),
+    url: getInvokeUrl(accountId, funcName),
     headers: {
       ...baseHeaders,
       'Content-Type': 'application/json',

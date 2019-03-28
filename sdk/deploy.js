@@ -83,7 +83,7 @@ const deployConf = async function deployConf(accountId, funcName, apiKey, funcCo
     }
   }
   const confDeployOptions = {
-    url: getConfUploadUrl(accountId, funcName, apiKey),
+    url: getConfUploadUrl(accountId, funcName),
     headers: {
       'X-Binaris-Api-Key': apiKey,
     },
@@ -92,7 +92,7 @@ const deployConf = async function deployConf(accountId, funcName, apiKey, funcCo
 
   const { digest } = await getValidatedBody(confDeployOptions);
   const tagDeployOptions = {
-    url: getConfTagUrl(accountId, funcName, apiKey, 'latest'),
+    url: getConfTagUrl(accountId, funcName, 'latest'),
     headers: {
       'X-Binaris-Api-Key': apiKey,
     },

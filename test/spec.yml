@@ -84,39 +84,6 @@
                   bn logs foo --since 13hours
                   bn logs foo --since 9s*
 
-- test: Test old endpoints
-  setup:
-    - export FUNC_NAME=rand$(cat /dev/urandom | tr -dc 'a-z0-9' | fold -w 32 | head -n 1)
-    - bn create node8 $FUNC_NAME
-    - unset BINARIS_API_KEY
-    - unset BINARIS_ACCOUNT_ID
-  cleanup:
-    - bn remove $FUNC_NAME
-  steps:
-    - in: echo "$BINARIS_TEMPORARY_API_KEY_FOR_TESTING_OLD_ENDPOINTS" | bn login
-      out: |-
-          Please enter your Binaris API key to deploy and invoke functions.
-          If you don't have a key, head over to https://binaris.com to request one
-          *? API Key: *
-          *Authentication Succeeded*
-            (use "bn create node8 hello" to create a Node.js template function in your CWD)
-    - in: bn deploy $FUNC_NAME
-      out: |-
-        Deployed function *
-        Invoke with one of:
-          "bn invoke *"
-          "curl https://*"
-    - in: bn invoke $FUNC_NAME
-      out: '"Hello World!"'
-    - in: sleep 5
-    - in: bn logs $FUNC_NAME
-      out: |-
-        [20#-#-#T#:#:#.#Z] Function * deployed (version digest: *)
-        [20#-#-#T#:#:#.#Z] Function invocation took * us
-    - in: bn list --json
-      out: |-
-        *[*{"name":"rand*","lastDeployed":"20#-#-#T#:#:#.#Z"}*]*
-
 - test: Test login (good-path)
   cleanup:
     - bn remove momentousgiants
@@ -668,13 +635,6 @@
     -   in: unset BINARIS_API_KEY
     -   in: echo 9239239 | BINARIS_DEPLOY_ENDPOINT=fake.api.binaris.invalid. bn login
         err: "Error: getaddrinfo ENOTFOUND fake.api.binaris.invalid. fake.api.binaris.invalid.:443"
-        exit: 1
-
-- test: Test login backcompat endpoint error (bad-path)
-  steps:
-    -   in: unset BINARIS_API_KEY
-    -   in: echo 9239239 | BINARIS_INVOKE_ENDPOINT=fake.run.binaris.invalid. bn login
-        err: "Error: getaddrinfo ENOTFOUND fake.run.binaris.invalid. fake.run.binaris.invalid.:443"
         exit: 1
 
 - test: Test feedback empty message (bad-path)
