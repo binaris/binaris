@@ -297,8 +297,8 @@
     -   in: bn list
         out: |-
              FUNCTION                 *LAST DEPLOYED*
-             listtest1                *20#-#-#T#:#:#.#Z*
-             listtest2                *20#-#-#T#:#:#.#Z*
+             listtestA%               *20#-#-#T#:#:#.#Z*
+             listtestB%               *20#-#-#T#:#:#.#Z*
     -   in: bn list --json
         out: |-
             *[*{"name":"listtestA%","lastDeployed":"20#-#-#T#:#:#.#Z"}*,*{"name":"listtestB%","lastDeployed":"20#-#-#T#:#:#.#Z"}*]*
