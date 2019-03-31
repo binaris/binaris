@@ -91,7 +91,7 @@
   cleanup:
     - bn remove $FUNC_NAME
   steps:
-    -   in: bn create node8 $FUNC_NAME
+    -   in: bn create  --config.ttl '2 hours' node8 $FUNC_NAME
         out: |-
             Created function % in /home/dockeruser/test
               (use "bn deploy %" to deploy the function)
@@ -151,7 +151,7 @@
 - test: Test deploy (good-path)
   setup:
     - export FUNC_NAME=deploy$RANDOM$RANDOM
-    - bn create node8 $FUNC_NAME
+    - bn create --config.ttl '2 hours' node8 $FUNC_NAME
   cleanup:
     - bn remove $FUNC_NAME
   steps:
@@ -165,7 +165,7 @@
 - test: Test public deploy (good-path)
   setup:
     - export FUNC_NAME=public_deploy$RANDOM$RANDOM
-    - bn create node8 $FUNC_NAME
+    - bn create --config.ttl '2 hours' node8 $FUNC_NAME
   cleanup:
     - bn remove $FUNC_NAME
   steps:
@@ -179,23 +179,9 @@
 - test: Test deploy with TTL (number)
   setup:
     - export FUNC_NAME=ttl_numeric$RANDOM$RANDOM
-    - bn create node8 $FUNC_NAME
+    - bn create --config.ttl 10 node8 $FUNC_NAME
+    - bn deploy $FUNC_NAME
   steps:
-    -   in: |-
-            cat <<EOF >/home/dockeruser/test/binaris.yml
-            functions:
-              $FUNC_NAME:
-                file: function.js
-                entrypoint: handler
-                runtime: node8
-                ttl: 10
-            EOF
-    -   in: bn deploy $FUNC_NAME
-        out: |-
-            Deployed function %
-            Invoke with one of:
-              "bn invoke %"
-              "curl -H X-Binaris-Api-Key:% https://%"
     -   in: bn invoke $FUNC_NAME
         out: |-
             "Hello World!"
@@ -211,23 +197,9 @@
 - test: Test deploy with TTL (string)
   setup:
     - export FUNC_NAME=ttl_string$RANDOM$RANDOM
-    - bn create node8 $FUNC_NAME
+    - bn create --config.ttl '10000ms' node8 $FUNC_NAME
+    - bn deploy $FUNC_NAME
   steps:
-    -   in: |-
-            cat <<EOF >/home/dockeruser/test/binaris.yml
-            functions:
-              $FUNC_NAME:
-                file: function.js
-                entrypoint: handler
-                runtime: node8
-                ttl: 10000ms
-            EOF
-    -   in: bn deploy $FUNC_NAME
-        out: |-
-            Deployed function %
-            Invoke with one of:
-              "bn invoke %"
-              "curl -H X-Binaris-Api-Key:% https://%"
     -   in: bn invoke $FUNC_NAME
         out: |-
             "Hello World!"
@@ -242,19 +214,9 @@
 
 - test: Test deploy with invalid TTL string (bad-path)
   setup:
-    - export FUNC_NAME=ttl_bad$RANDOM$RANDOM
-    - bn create node8 $FUNC_NAME
+    - bn create --config.ttl 'invalidttlstring' node8 functionwithinvalidttl
   steps:
-    -   in: |-
-            cat <<EOF >/home/dockeruser/test/binaris.yml
-            functions:
-              $FUNC_NAME:
-                file: function.js
-                entrypoint: handler
-                runtime: node8
-                ttl: invalidttlstring
-            EOF
-    -   in: bn deploy $FUNC_NAME
+    -   in: bn deploy functionwithinvalidttl
         exit: 1
         err: |-
             RequestId: *
@@ -275,7 +237,7 @@
   cleanup:
     - bn remove $FUNC_NAME
   steps:
-    -   in: bn create java8 $FUNC_NAME
+    -   in: bn create --config.ttl '2 hours' java8 $FUNC_NAME
     -   in: gradle jar --no-daemon
     -   in: bn deploy $FUNC_NAME
     -   in: bn invoke $FUNC_NAME
@@ -286,9 +248,9 @@
   setup:
     - export FUNC_NAME=listtestA$RANDOM$RANDOM
     - export FUNC_NAME2=listtestB$RANDOM$RANDOM
-    - bn create node8 $FUNC_NAME -p 1
+    - bn create --config.ttl '2 hours' node8 $FUNC_NAME -p 1
     - bn deploy $FUNC_NAME -p 1
-    - bn create node8 $FUNC_NAME2 -p 2
+    - bn create --config.ttl '2 hours' node8 $FUNC_NAME2 -p 2
     - bn deploy $FUNC_NAME2 -p 2
   cleanup:
     - bn remove $FUNC_NAME
@@ -296,19 +258,19 @@
   steps:
     -   in: bn list
         out: |-
-             FUNCTION                 *LAST DEPLOYED*
-             listtestA%               *20#-#-#T#:#:#.#Z*
-             listtestB%               *20#-#-#T#:#:#.#Z*
+             FUNCTION*LAST DEPLOYED*
+             listtestA*20#-#-#T#:#:#.#Z*
+             listtestB*20#-#-#T#:#:#.#Z*
     -   in: bn list --json
         out: |-
-            *[*{"name":"listtestA%","lastDeployed":"20#-#-#T#:#:#.#Z"}*,*{"name":"listtestB%","lastDeployed":"20#-#-#T#:#:#.#Z"}*]*
+            *[*{"name":"listtestA%","lastDeployed":"20#-#-#T#:#:#.#Z","expiration":"20#-#-#T#:#:#.#Z"}*,*{"name":"listtestB%","lastDeployed":"20#-#-#T#:#:#.#Z","expiration":"20#-#-#T#:#:#.#Z"}*]*
 
 - test: Test invoke (good-path)
   setup:
     - export FUNC_NAME=invoke$RANDOM$RANDOM
     - |-
       echo '{"name": "unguessable"}' > invoke.json
-    - bn create node8 $FUNC_NAME
+    - bn create --config.ttl '2 hours' node8 $FUNC_NAME
     - bn deploy $FUNC_NAME
   cleanup:
     - bn remove $FUNC_NAME
@@ -328,7 +290,7 @@
 - test: Block access to internal network
   setup:
     - export FUNC_NAME=internalnets$RANDOM$RANDOM
-    - bn create node8 $FUNC_NAME
+    - bn create --config.ttl '2 hours' node8 $FUNC_NAME
     - npm i request-promise-native request
     - |-
       cat <<EOF >/home/dockeruser/test/function.js
@@ -357,7 +319,7 @@
 - test: Test logs (good-path)
   setup:
     - export FUNC_NAME=logs$(cat /dev/urandom | tr -dc 'a-z0-9' | fold -w 32 | head -n 1)
-    - bn create node8 $FUNC_NAME
+    - bn create --config.ttl '2 hours' node8 $FUNC_NAME
     - sed -i '5 a \  console.log(`Hello ${name}!`);' function.js
   cleanup:
     - bn remove $FUNC_NAME
@@ -412,7 +374,7 @@
     - PY_VERSION: python3
   setup:
     - export FUNC_NAME={PY_VERSION}$RANDOM$RANDOM
-    - 'bn create {PY_VERSION} $FUNC_NAME'
+    - bn create --config.ttl '2 hours' {PY_VERSION} $FUNC_NAME
     - |-
       cat > function.py <<EOF
       def handler(body, req):
@@ -443,7 +405,7 @@
 - test: Test deploy invoke remove cycle commands (good-path)
   setup:
     - export FUNC_NAME=cycle$RANDOM$RANDOM
-    - bn create node8 $FUNC_NAME
+    - bn create --config.ttl '2 hours' node8 $FUNC_NAME
   steps:
     -   in: |-
             echo 'exports.handler = () => { s = "Hello World!"; console.log(s); return s; };' >function.js
@@ -472,7 +434,7 @@
   cleanup:
     - bn remove $FUNC_NAME
   steps:
-    -   in: bn create node8 $FUNC_NAME
+    -   in: bn create --config.ttl '2 hours' node8 $FUNC_NAME
     -   in: |-
             cat <<EOF >/home/dockeruser/test/binaris.yml
             functions:
@@ -539,7 +501,7 @@
   cleanup:
     - bn remove $FUNC_NAME
   steps:
-    -   in: bn create node8 $FUNC_NAME -e concurrent
+    -   in: bn create --config.ttl '2 hours' node8 $FUNC_NAME -e concurrent
     -   in: |-
             cat > function.js << EOL
             function msleep(ms) {
@@ -574,7 +536,7 @@
   cleanup:
     - bn remove $FUNC_NAME
   steps:
-    -   in: bn create node8 $FUNC_NAME -e exclusive
+    -   in: bn create --config.ttl '2 hours' node8 $FUNC_NAME -e exclusive
     -   in: |-
             cat > function.js << EOL
             function msleep(ms) {
@@ -683,7 +645,7 @@
   cleanup:
     - bn remove $FUNC_NAME
   steps:
-    -   in: bn create node8 $FUNC_NAME -e exclusive
+    -   in: bn create --config.ttl '2 hours' node8 $FUNC_NAME -e exclusive
     -   in: |-
            cat > function.js << EOL
            exports.handler = async (body, req) => {
@@ -706,7 +668,7 @@
   cleanup:
     - bn remove $FUNC_NAME
   steps:
-    -   in: bn create node8 $FUNC_NAME
+    -   in: bn create --config.ttl '2 hours' node8 $FUNC_NAME
     -   in: |-
             sed -i.bak "5i\  throw new Error('some error');" function.js
     -   in: bn deploy $FUNC_NAME
@@ -725,7 +687,7 @@
   cleanup:
     - bn remove $FUNC_NAME
   steps:
-    -   in: bn create python2 $FUNC_NAME
+    -   in: bn create --config.ttl '2 hours' python2 $FUNC_NAME
     -   in: |-
             sed -i.bak "2i\    sdasda" function.py
     -   in: bn deploy $FUNC_NAME
@@ -744,7 +706,7 @@
   cleanup:
     - bn remove $FUNC_NAME
   steps:
-    -   in: bn create python3 $FUNC_NAME
+    -   in: bn create --config.ttl '2 hours' python3 $FUNC_NAME
     -   in: |-
             sed -i.bak "2i\    sdasda" function.py
     -   in: bn deploy $FUNC_NAME
@@ -763,7 +725,7 @@
   cleanup:
     - bn remove $FUNC_NAME
   steps:
-    -   in: bn create pypy2 $FUNC_NAME
+    -   in: bn create --config.ttl '2 hours' pypy2 $FUNC_NAME
     -   in: |-
             sed -i.bak "2i\    sdasda" function.py
     -   in: bn deploy $FUNC_NAME
@@ -782,7 +744,7 @@
   cleanup:
     - bn remove $FUNC_NAME
   steps:
-    -   in: bn create java8 $FUNC_NAME
+    -   in: bn create --config.ttl '2 hours' java8 $FUNC_NAME
     -   in: |-
             sed -i.bak '6s/.*/        throw new java.lang.Error("this is very bad");/' src/main/java/ExampleFunction.java
     -   in: gradle jar
@@ -808,7 +770,7 @@
   setup:
     - export FUNC_NAME=doomedtofailjava8_$RANDOM$RANDOM
   steps:
-    -   in: bn create node8 $FUNC_NAME
+    -   in: bn create --config.ttl '2 hours' node8 $FUNC_NAME
     -   in: bn remove $FUNC_NAME
         err: |-
             RequestId: %
@@ -871,7 +833,7 @@
 - test: Invocation stats
   setup:
     - export FUNC_NAME="invokestats$RANDOM$RANDOM"
-    - bn create node8 $FUNC_NAME
+    - bn create --config.ttl '2 hours' node8 $FUNC_NAME
     - bn deploy $FUNC_NAME
   cleanup:
     - bn remove $FUNC_NAME
@@ -980,7 +942,7 @@
 - test: Deploy of 200MB function succeeds
   setup:
     - export FUNC_NAME=largeData200MB$RANDOM$RANDOM
-    - bn create python2 $FUNC_NAME
+    - bn create --config.ttl '2 hours' python2 $FUNC_NAME
     - dd if=/dev/urandom bs=1048576 count=200 of=large.data
   cleanup:
     - bn remove $FUNC_NAME
@@ -993,7 +955,7 @@
 - test: Deploy of 300MB function fails with significant error message (bad-path)
   setup:
     - export FUNC_NAME=largeData300MB$RANDOM$RANDOM
-    - bn create python2 $FUNC_NAME
+    - bn create --config.ttl '2 hours' python2 $FUNC_NAME
     - dd if=/dev/urandom bs=1048576 count=300 of=very.large.data
   steps:
     - in: bn deploy $FUNC_NAME
@@ -1005,7 +967,7 @@
 - test: Test if imagemagick exists in runtime environment
   setup:
     - export FUNC_NAME=largeimagemagick$RANDOM$RANDOM
-    - bn create node8 $FUNC_NAME
+    - bn create --config.ttl '2 hours' node8 $FUNC_NAME
     - npm i shelljs
     - |-
       cat <<EOF >/home/dockeruser/test/function.js
@@ -1083,7 +1045,7 @@
   setup:
     - export LONG_NAME=binarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinaris$RANDOM$RANDOM
   steps:
-    -   in: bn create node8 $LONG_NAME
+    -   in: bn create --config.ttl '2 hours' node8 $LONG_NAME
     -   in: bn deploy $LONG_NAME
     -   in: bn invoke $LONG_NAME
         out: |-
@@ -1116,7 +1078,7 @@
 - test: Test perf 1 second (good-path)
   setup:
     - export FUNC_NAME=measure1sec$RANDOM$RANDOM
-    - bn create node8 $FUNC_NAME
+    - bn create --config.ttl '2 hours' node8 $FUNC_NAME
     - bn deploy $FUNC_NAME
   cleanup:
     - bn remove $FUNC_NAME
@@ -1147,7 +1109,7 @@
 - test: Test perf 100 invocations (good-path)
   setup:
     - export FUNC_NAME=measure100_$RANDOM$RANDOM
-    - bn create node8 $FUNC_NAME
+    - bn create --config.ttl '2 hours' node8 $FUNC_NAME
     - bn deploy $FUNC_NAME
   cleanup:
     - bn remove $FUNC_NAME
@@ -1291,7 +1253,7 @@
   setup:
     - export FUNC_NAME=trigger_new$RANDOM$RANDOM
     - export TRIGGER_NAME=trigger_new$RANDOM$RANDOM
-    - bn create node8 $FUNC_NAME
+    - bn create --config.ttl '2 hours' node8 $FUNC_NAME
     - bn deploy $FUNC_NAME
   cleanup:
     - bn trigger remove $TRIGGER_NAME
@@ -1304,7 +1266,7 @@
   setup:
     - export FUNC_NAME=trigger_update$RANDOM$RANDOM
     - export TRIGGER_NAME=trigger_update$RANDOM$RANDOM
-    - bn create node8 $FUNC_NAME
+    - bn create --config.ttl '2 hours' node8 $FUNC_NAME
     - bn deploy $FUNC_NAME
     - bn trigger setup $TRIGGER_NAME --source-uri "redis+tls://:${REDIS_PASS}@misc-redis.binaris.io#teststream" --target $FUNC_NAME
   cleanup:
@@ -1320,7 +1282,7 @@
     - export FUNC_NAME2=trigger_funcB$RANDOM$RANDOM
     - export TRIGGER_NAME=trigger_funcA$RANDOM$RANDOM
     - export TRIGGER_NAME2=trigger_funcB$RANDOM$RANDOM
-    - bn create node8 $FUNC_NAME
+    - bn create --config.ttl '2 hours' node8 $FUNC_NAME
     - bn deploy $FUNC_NAME
     - |-
         cat <<EOF >/home/dockeruser/test/binaris.yml
@@ -1351,7 +1313,7 @@
   setup:
     - export FUNC_NAME=trigger_bad_uri$RANDOM$RANDOM
     - export TRIGGER_NAME=trigger_bad_uri$RANDOM$RANDOM
-    - bn create node8 $FUNC_NAME
+    - bn create --config.ttl '2 hours' node8 $FUNC_NAME
     - bn deploy $FUNC_NAME
   cleanup:
     - bn remove $FUNC_NAME
@@ -1374,7 +1336,7 @@
   setup:
     - export FUNC_NAME=trigger_already_exists$RANDOM$RANDOM
     - export TRIGGER_NAME=trigger_already_exists$RANDOM$RANDOM
-    - bn create node8 $FUNC_NAME
+    - bn create --config.ttl '2 hours' node8 $FUNC_NAME
     - bn deploy $FUNC_NAME
     - bn trigger setup $TRIGGER_NAME --source-uri "redis+tls://:${REDIS_PASS}@misc-redis.binaris.io#teststream" --target $FUNC_NAME
   cleanup:
@@ -1392,7 +1354,7 @@
     - export FUNC_NAME=trigger_update_other_name$RANDOM$RANDOM
     - export TRIGGER_NAME=trigger_update_first_name$RANDOM$RANDOM
     - export TRIGGER_NAME2=trigger_update_other_name$RANDOM$RANDOM
-    - bn create node8 $FUNC_NAME
+    - bn create --config.ttl '2 hours' node8 $FUNC_NAME
     - bn deploy $FUNC_NAME
     - bn trigger setup $TRIGGER_NAME --source-uri "redis+tls://:${REDIS_PASS}@misc-redis.binaris.io#teststream" --target $FUNC_NAME
     - bn trigger setup $TRIGGER_NAME2 --source-uri "redis+tls://:${REDIS_PASS}@misc-redis.binaris.io#teststream2" --target $FUNC_NAME
@@ -1411,7 +1373,7 @@
   setup:
     - export FUNC_NAME=trigger_remove$RANDOM$RANDOM
     - export TRIGGER_NAME=trigger_remove$RANDOM$RANDOM
-    - bn create node8 $FUNC_NAME
+    - bn create --config.ttl '2 hours' node8 $FUNC_NAME
     - bn deploy $FUNC_NAME
     - bn trigger setup $TRIGGER_NAME --source-uri "redis+tls://:${REDIS_PASS}@misc-redis.binaris.io#teststream" --target $FUNC_NAME
   cleanup:
@@ -1434,7 +1396,7 @@
     - export FUNC_NAME=trigger_list$RANDOM$RANDOM
     - export TRIGGER_NAME=trigger_listA$RANDOM$RANDOM
     - export TRIGGER_NAME2=trigger_listB$RANDOM$RANDOM
-    - bn create node8 $FUNC_NAME
+    - bn create --config.ttl '2 hours' node8 $FUNC_NAME
     - bn deploy $FUNC_NAME
     - bn trigger setup $TRIGGER_NAME --source-uri "redis+tls://:${REDIS_PASS}@misc-redis.binaris.io#teststream" --target $FUNC_NAME
     - bn trigger setup $TRIGGER_NAME2 --source-uri "redis+tls://:${REDIS_PASS}@misc-redis.binaris.io#teststream2" --target $FUNC_NAME
@@ -1453,7 +1415,7 @@
   setup:
     - export FUNC_NAME=trigger_remove_attached$RANDOM$RANDOM
     - export TRIGGER_NAME=trigger_remove_attached$RANDOM$RANDOM
-    - bn create node8 $FUNC_NAME
+    - bn create --config.ttl '2 hours' node8 $FUNC_NAME
     - bn deploy $FUNC_NAME
     - bn trigger setup $TRIGGER_NAME --source-uri "redis+tls://:${REDIS_PASS}@misc-redis.binaris.io#teststream" --target $FUNC_NAME
   cleanup:
@@ -1471,7 +1433,7 @@
     - export FUNC_NAME=trigger_invoke$RANDOM$RANDOM
     - export TRIGGER_NAME=trigger_invoke$RANDOM$RANDOM
     - export STREAM_NAME=trigger_invoke$RANDOM$RANDOM
-    - bn create node8 $FUNC_NAME
+    - bn create --config.ttl '2 hours' node8 $FUNC_NAME
     - |-
         cat > function.js << EOL
         exports.handler = async (body, context) => {
