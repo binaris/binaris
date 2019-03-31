@@ -283,26 +283,17 @@
             *"Hello, world"*
 
 - test: Test list
-  serial: true
   setup:
-      - >
-          for i in {1..2};
-          do out="$(bn remove listtest$i 2>&1)";
-          echo "$out";
-          if ! echo "$out" | grep -e "No such function" -e "Removed function"; then false; fi
-          done;
+    - export FUNC_NAME=listtestA$RANDOM$RANDOM
+    - export FUNC_NAME2=listtestB$RANDOM$RANDOM
+    - bn create node8 $FUNC_NAME -p 1
+    - bn deploy $FUNC_NAME -p 1
+    - bn create node8 $FUNC_NAME2 -p 2
+    - bn deploy $FUNC_NAME2 -p 2
   cleanup:
-      - >
-          for i in {1..2};
-          do out="$(bn remove listtest$i 2>&1)";
-          echo "$out";
-          if ! echo "$out" | grep -e "No such function" -e "Removed function"; then false; fi
-          done;
+    - bn remove $FUNC_NAME
+    - bn remove $FUNC_NAME2
   steps:
-    -   in: bn create node8 listtest1 -p 1
-    -   in: bn deploy listtest1 -p 1
-    -   in: bn create node8 listtest2 -p 2
-    -   in: bn deploy listtest2 -p 2
     -   in: bn list
         out: |-
              FUNCTION                 *LAST DEPLOYED*
@@ -310,7 +301,7 @@
              listtest2                *20#-#-#T#:#:#.#Z*
     -   in: bn list --json
         out: |-
-            *[*{"name":"listtest1","lastDeployed":"20#-#-#T#:#:#.#Z"}*,*{"name":"listtest2","lastDeployed":"20#-#-#T#:#:#.#Z"}*]*
+            *[*{"name":"listtestA%","lastDeployed":"20#-#-#T#:#:#.#Z"}*,*{"name":"listtestB%","lastDeployed":"20#-#-#T#:#:#.#Z"}*]*
 
 - test: Test invoke (good-path)
   setup:
@@ -1090,7 +1081,7 @@
   cleanup:
     - bn remove $LONG_NAME
   setup:
-    - export LONG_NAME=binarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinaris1234
+    - export LONG_NAME=binarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinaris$RANDOM$RANDOM
   steps:
     -   in: bn create node8 $LONG_NAME
     -   in: bn deploy $LONG_NAME
