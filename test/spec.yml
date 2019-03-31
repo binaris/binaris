@@ -86,8 +86,6 @@
                   bn logs foo --since 9s*
 
 - test: Test login (good-path)
-  setup:
-    - export FUNC_NAME=login$RANDOM$RANDOM
   cleanup:
     - bn remove $FUNC_NAME
   steps:
@@ -150,7 +148,6 @@
 
 - test: Test deploy (good-path)
   setup:
-    - export FUNC_NAME=deploy$RANDOM$RANDOM
     - bn create --config.ttl '2 hours' node8 $FUNC_NAME
   cleanup:
     - bn remove $FUNC_NAME
@@ -164,7 +161,7 @@
 
 - test: Test public deploy (good-path)
   setup:
-    - export FUNC_NAME=public_deploy$RANDOM$RANDOM
+    - export FUNC_NAME=public_$FUNC_NAME
     - bn create --config.ttl '2 hours' node8 $FUNC_NAME
   cleanup:
     - bn remove $FUNC_NAME
@@ -178,7 +175,6 @@
 
 - test: Test deploy with TTL (number)
   setup:
-    - export FUNC_NAME=ttl_numeric$RANDOM$RANDOM
     - bn create --config.ttl 10 node8 $FUNC_NAME
     - bn deploy $FUNC_NAME
   steps:
@@ -196,7 +192,6 @@
 
 - test: Test deploy with TTL (string)
   setup:
-    - export FUNC_NAME=ttl_string$RANDOM$RANDOM
     - bn create --config.ttl '10000ms' node8 $FUNC_NAME
     - bn deploy $FUNC_NAME
   steps:
@@ -232,8 +227,6 @@
             Thank you!
 
 - test: Test Java
-  setup:
-    - export FUNC_NAME=starbucks$RANDOM$RANDOM
   cleanup:
     - bn remove $FUNC_NAME
   steps:
@@ -267,7 +260,6 @@
 
 - test: Test invoke (good-path)
   setup:
-    - export FUNC_NAME=invoke$RANDOM$RANDOM
     - |-
       echo '{"name": "unguessable"}' > invoke.json
     - bn create --config.ttl '2 hours' node8 $FUNC_NAME
@@ -289,7 +281,6 @@
 
 - test: Block access to internal network
   setup:
-    - export FUNC_NAME=internalnets$RANDOM$RANDOM
     - bn create --config.ttl '2 hours' node8 $FUNC_NAME
     - npm i request-promise-native request
     - |-
@@ -318,7 +309,6 @@
 
 - test: Test logs (good-path)
   setup:
-    - export FUNC_NAME=logs$(cat /dev/urandom | tr -dc 'a-z0-9' | fold -w 32 | head -n 1)
     - bn create --config.ttl '2 hours' node8 $FUNC_NAME
     - sed -i '7 a \  console.log(`Hello ${name}!`);' function.js
   cleanup:
@@ -373,7 +363,6 @@
     - PY_VERSION: pypy2
     - PY_VERSION: python3
   setup:
-    - export FUNC_NAME={PY_VERSION}$RANDOM$RANDOM
     - bn create --config.ttl '2 hours' {PY_VERSION} $FUNC_NAME
     - |-
       cat > function.py <<EOF
@@ -404,7 +393,6 @@
 
 - test: Test deploy invoke remove cycle commands (good-path)
   setup:
-    - export FUNC_NAME=cycle$RANDOM$RANDOM
     - bn create --config.ttl '2 hours' node8 $FUNC_NAME
   steps:
     -   in: |-
@@ -429,8 +417,6 @@
           *[20#-#-#T#:#:#.#Z] Function % removed.*
 
 - test: "envs: deploy invoke remove with secrets"
-  setup:
-    - export FUNC_NAME=secret$RANDOM$RANDOM
   cleanup:
     - bn remove $FUNC_NAME
   steps:
@@ -496,8 +482,6 @@
         err: "Empty string env 'EMPTY' in binaris.yml is not supported"
 
 - test: "concurrent execution model: deploy invoke multiple times"
-  setup:
-    - export FUNC_NAME=concurrent$RANDOM$RANDOM
   cleanup:
     - bn remove $FUNC_NAME
   steps:
@@ -531,8 +515,6 @@
     -   in: "(for i in `seq 1 3`; do bn invoke $FUNC_NAME & done) | grep true"
 
 - test: "exclusive execution model: deploy invoke multiple times"
-  setup:
-    - export FUNC_NAME=exclusive$RANDOM$RANDOM
   cleanup:
     - bn remove $FUNC_NAME
   steps:
@@ -640,8 +622,6 @@
         exit: 1
 
 - test: Test user code timeout (bad-path)
-  setup:
-    - export FUNC_NAME=timeoutforsure$RANDOM$RANDOM
   cleanup:
     - bn remove $FUNC_NAME
   steps:
@@ -663,8 +643,6 @@
         exit: 1
 
 - test: Test bad user node8 code (bad-path)
-  setup:
-    - export FUNC_NAME=doomedtofailnode8_$RANDOM$RANDOM
   cleanup:
     - bn remove $FUNC_NAME
   steps:
@@ -682,8 +660,6 @@
         exit: 1
 
 - test: Test bad user python2 code (bad-path)
-  setup:
-    - export FUNC_NAME=doomedtofailpy2_$RANDOM$RANDOM
   cleanup:
     - bn remove $FUNC_NAME
   steps:
@@ -701,8 +677,6 @@
         exit: 1
 
 - test: Test bad user python3 code (bad-path)
-  setup:
-    - export FUNC_NAME=doomedtofailpy3_$RANDOM$RANDOM
   cleanup:
     - bn remove $FUNC_NAME
   steps:
@@ -720,8 +694,6 @@
         exit: 1
 
 - test: Test bad user pypy2 code (bad-path)
-  setup:
-    - export FUNC_NAME=doomedtofailpypy2_$RANDOM$RANDOM
   cleanup:
     - bn remove $FUNC_NAME
   steps:
@@ -739,8 +711,6 @@
         exit: 1
 
 - test: Test bad user java8 code (bad-path)
-  setup:
-    - export FUNC_NAME=doomedtofailjava8_$RANDOM$RANDOM
   cleanup:
     - bn remove $FUNC_NAME
   steps:
@@ -767,8 +737,6 @@
         exit: 1
 
 - test: Test remove (bad-path)
-  setup:
-    - export FUNC_NAME=doomedtofailjava8_$RANDOM$RANDOM
   steps:
     -   in: bn create --config.ttl '2 hours' node8 $FUNC_NAME
     -   in: bn remove $FUNC_NAME
@@ -832,7 +800,6 @@
 
 - test: Invocation stats
   setup:
-    - export FUNC_NAME="invokestats$RANDOM$RANDOM"
     - bn create --config.ttl '2 hours' node8 $FUNC_NAME
     - bn deploy $FUNC_NAME
   cleanup:
@@ -941,7 +908,6 @@
 
 - test: Deploy of 200MB function succeeds
   setup:
-    - export FUNC_NAME=largeData200MB$RANDOM$RANDOM
     - bn create --config.ttl '2 hours' python2 $FUNC_NAME
     - dd if=/dev/urandom bs=1048576 count=200 of=large.data
   cleanup:
@@ -954,7 +920,6 @@
 
 - test: Deploy of 300MB function fails with significant error message (bad-path)
   setup:
-    - export FUNC_NAME=largeData300MB$RANDOM$RANDOM
     - bn create --config.ttl '2 hours' python2 $FUNC_NAME
     - dd if=/dev/urandom bs=1048576 count=300 of=very.large.data
   steps:
@@ -966,7 +931,6 @@
 
 - test: Test if imagemagick exists in runtime environment
   setup:
-    - export FUNC_NAME=largeimagemagick$RANDOM$RANDOM
     - bn create --config.ttl '2 hours' node8 $FUNC_NAME
     - npm i shelljs
     - |-
@@ -1077,7 +1041,6 @@
 
 - test: Test perf 1 second (good-path)
   setup:
-    - export FUNC_NAME=measure1sec$RANDOM$RANDOM
     - bn create --config.ttl '2 hours' node8 $FUNC_NAME
     - bn deploy $FUNC_NAME
   cleanup:
@@ -1108,7 +1071,6 @@
 
 - test: Test perf 100 invocations (good-path)
   setup:
-    - export FUNC_NAME=measure100_$RANDOM$RANDOM
     - bn create --config.ttl '2 hours' node8 $FUNC_NAME
     - bn deploy $FUNC_NAME
   cleanup:
@@ -1251,8 +1213,7 @@
 
 - test: Test new trigger (good-path)
   setup:
-    - export FUNC_NAME=trigger_new$RANDOM$RANDOM
-    - export TRIGGER_NAME=trigger_new$RANDOM$RANDOM
+    - export TRIGGER_NAME=${FUNC_NAME}trigger
     - bn create --config.ttl '2 hours' node8 $FUNC_NAME
     - bn deploy $FUNC_NAME
   cleanup:
@@ -1264,7 +1225,6 @@
 
 - test: Test update trigger (good-path)
   setup:
-    - export FUNC_NAME=trigger_update$RANDOM$RANDOM
     - export TRIGGER_NAME=trigger_update$RANDOM$RANDOM
     - bn create --config.ttl '2 hours' node8 $FUNC_NAME
     - bn deploy $FUNC_NAME
@@ -1278,10 +1238,9 @@
 
 - test: Test 2 new triggers, same source, different target (good-path)
   setup:
-    - export FUNC_NAME=trigger_funcA$RANDOM$RANDOM
-    - export FUNC_NAME2=trigger_funcB$RANDOM$RANDOM
-    - export TRIGGER_NAME=trigger_funcA$RANDOM$RANDOM
-    - export TRIGGER_NAME2=trigger_funcB$RANDOM$RANDOM
+    - export FUNC_NAME2=${FUNC_NAME}2
+    - export TRIGGER_NAME=${FUNC_NAME}trigger
+    - export TRIGGER_NAME2=${FUNC_NAME}trigger2
     - bn create --config.ttl '2 hours' node8 $FUNC_NAME
     - bn deploy $FUNC_NAME
     - |-
@@ -1292,11 +1251,13 @@
             entrypoint: handler
             executionModel: concurrent
             runtime: node8
+            ttl: 2 hours
           $FUNC_NAME2:
             file: function.js
             entrypoint: handler
             executionModel: concurrent
             runtime: node8
+            ttl: 2 hours
         EOF
     - bn deploy $FUNC_NAME2
     - bn trigger setup $TRIGGER_NAME --source-uri "redis+tls://:${REDIS_PASS}@misc-redis.binaris.io#teststream" --target $FUNC_NAME
@@ -1311,8 +1272,7 @@
 
 - test: Test new trigger with bad source uri (bad-path)
   setup:
-    - export FUNC_NAME=trigger_bad_uri$RANDOM$RANDOM
-    - export TRIGGER_NAME=trigger_bad_uri$RANDOM$RANDOM
+    - export TRIGGER_NAME=${FUNC_NAME}trigger
     - bn create --config.ttl '2 hours' node8 $FUNC_NAME
     - bn deploy $FUNC_NAME
   cleanup:
@@ -1334,8 +1294,7 @@
 
 - test: Test new trigger when it already exists with different name (bad-path)
   setup:
-    - export FUNC_NAME=trigger_already_exists$RANDOM$RANDOM
-    - export TRIGGER_NAME=trigger_already_exists$RANDOM$RANDOM
+    - export TRIGGER_NAME=${FUNC_NAME}trigger
     - bn create --config.ttl '2 hours' node8 $FUNC_NAME
     - bn deploy $FUNC_NAME
     - bn trigger setup $TRIGGER_NAME --source-uri "redis+tls://:${REDIS_PASS}@misc-redis.binaris.io#teststream" --target $FUNC_NAME
@@ -1351,9 +1310,8 @@
 
 - test: Test update trigger when it already exists with different name (bad-path)
   setup:
-    - export FUNC_NAME=trigger_update_other_name$RANDOM$RANDOM
-    - export TRIGGER_NAME=trigger_update_first_name$RANDOM$RANDOM
-    - export TRIGGER_NAME2=trigger_update_other_name$RANDOM$RANDOM
+    - export TRIGGER_NAME=${FUNC_NAME}trigger
+    - export TRIGGER_NAME2=${FUNC_NAME}trigger2
     - bn create --config.ttl '2 hours' node8 $FUNC_NAME
     - bn deploy $FUNC_NAME
     - bn trigger setup $TRIGGER_NAME --source-uri "redis+tls://:${REDIS_PASS}@misc-redis.binaris.io#teststream" --target $FUNC_NAME
@@ -1371,8 +1329,7 @@
 
 - test: Test remove trigger (good-path)
   setup:
-    - export FUNC_NAME=trigger_remove$RANDOM$RANDOM
-    - export TRIGGER_NAME=trigger_remove$RANDOM$RANDOM
+    - export TRIGGER_NAME=${FUNC_NAME}trigger
     - bn create --config.ttl '2 hours' node8 $FUNC_NAME
     - bn deploy $FUNC_NAME
     - bn trigger setup $TRIGGER_NAME --source-uri "redis+tls://:${REDIS_PASS}@misc-redis.binaris.io#teststream" --target $FUNC_NAME
@@ -1393,9 +1350,8 @@
 - test: Test list triggers
   serial: true
   setup:
-    - export FUNC_NAME=trigger_list$RANDOM$RANDOM
-    - export TRIGGER_NAME=trigger_listA$RANDOM$RANDOM
-    - export TRIGGER_NAME2=trigger_listB$RANDOM$RANDOM
+    - export TRIGGER_NAME=${FUNC_NAME}trigger
+    - export TRIGGER_NAME2=${FUNC_NAME}trigger2
     - bn create --config.ttl '2 hours' node8 $FUNC_NAME
     - bn deploy $FUNC_NAME
     - bn trigger setup $TRIGGER_NAME --source-uri "redis+tls://:${REDIS_PASS}@misc-redis.binaris.io#teststream" --target $FUNC_NAME
@@ -1413,8 +1369,7 @@
 
 - test: Test remove function with attached trigger (bad-path)
   setup:
-    - export FUNC_NAME=trigger_remove_attached$RANDOM$RANDOM
-    - export TRIGGER_NAME=trigger_remove_attached$RANDOM$RANDOM
+    - export TRIGGER_NAME=${FUNC_NAME}trigger
     - bn create --config.ttl '2 hours' node8 $FUNC_NAME
     - bn deploy $FUNC_NAME
     - bn trigger setup $TRIGGER_NAME --source-uri "redis+tls://:${REDIS_PASS}@misc-redis.binaris.io#teststream" --target $FUNC_NAME
@@ -1430,8 +1385,7 @@
 
 - test: Test trigger is invoked from redis stream
   setup:
-    - export FUNC_NAME=trigger_invoke$RANDOM$RANDOM
-    - export TRIGGER_NAME=trigger_invoke$RANDOM$RANDOM
+    - export TRIGGER_NAME=${FUNC_NAME}trigger
     - export STREAM_NAME=trigger_invoke$RANDOM$RANDOM
     - bn create --config.ttl '2 hours' node8 $FUNC_NAME
     - |-

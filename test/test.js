@@ -22,6 +22,12 @@ const propagatedEnvVars = [
   'REDIS_PASS',
 ];
 
+function random() {
+  return Math.floor(Math.random() * 10000);
+}
+
+const TEST_RUN_NUM = random();
+
 const commonBashOpts = 'set -o pipefail;';
 
 let imageName = 'binaris/binaris';
@@ -98,6 +104,8 @@ function createTest(rawSubTest) {
     const activeEnvs = propagatedEnvVars.filter(envKey =>
       process.env[envKey] !== undefined).map(envKey =>
       `${envKey}=${process.env[envKey]}`);
+    const testIndicator = `${rawSubTest.test.replace(/[ ():,-]/g, '').substr(0, 30)}${TEST_RUN_NUM}_${random()}`;
+    activeEnvs.push(`FUNC_NAME=${testIndicator}`);
     await t.context.ct.startContainer(activeEnvs);
     if (rawSubTest.setup) {
       for (const setupStep of rawSubTest.setup) {
