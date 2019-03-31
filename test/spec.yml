@@ -86,13 +86,15 @@
                   bn logs foo --since 9s*
 
 - test: Test login (good-path)
+  setup:
+    - export FUNC_NAME=login$RANDOM$RANDOM
   cleanup:
-    - bn remove momentousgiants
+    - bn remove $FUNC_NAME
   steps:
-    -   in: bn create node8 momentousgiants
+    -   in: bn create node8 $FUNC_NAME
         out: |-
-            Created function * in /home/dockeruser/test
-              (use "bn deploy momentousgiants" to deploy the function)
+            Created function % in /home/dockeruser/test
+              (use "bn deploy %" to deploy the function)
     -   in: echo $BINARIS_API_KEY | bn login
         out: |-
             Please enter your Binaris API key to deploy and invoke functions.
@@ -100,12 +102,12 @@
             *? API Key: *
             *Authentication Succeeded*
               (use "bn create node8 hello" to create a Node.js template function in your CWD)
-    -   in: bn deploy momentousgiants
+    -   in: bn deploy $FUNC_NAME
         out: |-
-          Deployed function momentousgiants
+          Deployed function %
           Invoke with one of:
-            "bn invoke momentousgiants"
-            "curl -H X-Binaris-Api-Key:* https://*"
+            "bn invoke %"
+            "curl -H X-Binaris-Api-Key:% https://%"
 
 - test: Test show (good-path)
   steps:
@@ -137,110 +139,100 @@
 
 - test: Test create (good-path)
   steps:
-    -   in: bn create node8 snowmanolympics
+    -   in: bn create node8 create_snowmanolympics
         out: |-
-            Created function * in /home/dockeruser/test
-              (use "bn deploy *" to deploy the function)
-    -   in: bn create node8 purplecannon -p /home/dockeruser/test/purplecannon
+            Created function create_snowmanolympics in /home/dockeruser/test
+              (use "bn deploy %" to deploy the function)
+    -   in: bn create node8 create_purplecannon -p /home/dockeruser/test/purplecannon
         out: |-
-            Created function purplecannon in /home/dockeruser/test/purplecannon
-              (use "bn deploy -p /home/dockeruser/test/purplecannon purplecannon" to deploy the function)
+            Created function create_purplecannon in /home/dockeruser/test/purplecannon
+              (use "bn deploy -p /home/dockeruser/test/purplecannon create_purplecannon" to deploy the function)
 
 - test: Test deploy (good-path)
+  setup:
+    - export FUNC_NAME=deploy$RANDOM$RANDOM
+    - bn create node8 $FUNC_NAME
   cleanup:
-    - bn remove drybeef
+    - bn remove $FUNC_NAME
   steps:
-    -   in: bn create node8 drybeef
+    -   in: bn deploy $FUNC_NAME
         out: |-
-            Created function * in /home/dockeruser/test
-              (use "bn deploy drybeef" to deploy the function)
-    -   in: bn deploy drybeef
-        out: |-
-          Deployed function drybeef
+          Deployed function %
           Invoke with one of:
-            "bn invoke drybeef"
-            "curl -H X-Binaris-Api-Key:* https://*"
-    -   in: bn deploy drybeef
-        out: |-
-          Deployed function drybeef
-          Invoke with one of:
-            "bn invoke drybeef"
-            "curl -H X-Binaris-Api-Key:* https://*"
+            "bn invoke %"
+            "curl -H X-Binaris-Api-Key:% https://%"
 
 - test: Test public deploy (good-path)
+  setup:
+    - export FUNC_NAME=public_deploy$RANDOM$RANDOM
+    - bn create node8 $FUNC_NAME
   cleanup:
-    - bn remove public_drymeat
+    - bn remove $FUNC_NAME
   steps:
-    -   in: bn create node8 public_drymeat
+    -   in: bn deploy $FUNC_NAME
         out: |-
-            Created function * in /home/dockeruser/test
-              (use "bn deploy public_drymeat" to deploy the function)
-    -   in: bn deploy public_drymeat
-        out: |-
-          Deployed function public_drymeat
+          Deployed function %
           Invoke with one of:
-            "bn invoke public_drymeat"
-            "curl https://*"
+            "bn invoke %"
+            "curl https://%"
 
 - test: Test deploy with TTL (number)
+  setup:
+    - export FUNC_NAME=ttl_numeric$RANDOM$RANDOM
+    - bn create node8 $FUNC_NAME
   steps:
-    -   in: bn create node8 ttltest
-        out: |-
-            Created function * in /home/dockeruser/test
-              (use "bn deploy ttltest" to deploy the function)
     -   in: |-
             cat <<EOF >/home/dockeruser/test/binaris.yml
             functions:
-              ttltest:
+              $FUNC_NAME:
                 file: function.js
                 entrypoint: handler
                 runtime: node8
                 ttl: 10
             EOF
-    -   in: bn deploy ttltest
+    -   in: bn deploy $FUNC_NAME
         out: |-
-            Deployed function ttltest
+            Deployed function %
             Invoke with one of:
-              "bn invoke ttltest"
-              "curl -H X-Binaris-Api-Key:* https://*"
-    -   in: bn invoke ttltest
+              "bn invoke %"
+              "curl -H X-Binaris-Api-Key:% https://%"
+    -   in: bn invoke $FUNC_NAME
         out: |-
             "Hello World!"
     -   in: sleep 20
-    -   in: bn invoke ttltest
+    -   in: bn invoke $FUNC_NAME
         err: |-
-            RequestId: *
+            RequestId: %
             Sorry, your function is not ready yet.
             Please try again.
             If this keeps happening, please contact support@binaris.com with the request ID.
         exit: 1
 
 - test: Test deploy with TTL (string)
+  setup:
+    - export FUNC_NAME=ttl_string$RANDOM$RANDOM
+    - bn create node8 $FUNC_NAME
   steps:
-    -   in: bn create node8 ttltest2
-        out: |-
-            Created function * in /home/dockeruser/test
-              (use "bn deploy ttltest2" to deploy the function)
     -   in: |-
             cat <<EOF >/home/dockeruser/test/binaris.yml
             functions:
-              ttltest2:
+              $FUNC_NAME:
                 file: function.js
                 entrypoint: handler
                 runtime: node8
                 ttl: 10000ms
             EOF
-    -   in: bn deploy ttltest2
+    -   in: bn deploy $FUNC_NAME
         out: |-
-            Deployed function ttltest2
+            Deployed function %
             Invoke with one of:
-              "bn invoke ttltest2"
-              "curl -H X-Binaris-Api-Key:* https://*"
-    -   in: bn invoke ttltest2
+              "bn invoke %"
+              "curl -H X-Binaris-Api-Key:% https://%"
+    -   in: bn invoke $FUNC_NAME
         out: |-
             "Hello World!"
     -   in: sleep 20
-    -   in: bn invoke ttltest2
+    -   in: bn invoke $FUNC_NAME
         err: |-
             RequestId: *
             Sorry, your function is not ready yet.
@@ -249,21 +241,20 @@
         exit: 1
 
 - test: Test deploy with invalid TTL string (bad-path)
+  setup:
+    - export FUNC_NAME=ttl_bad$RANDOM$RANDOM
+    - bn create node8 $FUNC_NAME
   steps:
-    -   in: bn create node8 badttltest
-        out: |-
-            Created function * in /home/dockeruser/test
-              (use "bn deploy badttltest" to deploy the function)
     -   in: |-
             cat <<EOF >/home/dockeruser/test/binaris.yml
             functions:
-              badttltest:
+              $FUNC_NAME:
                 file: function.js
                 entrypoint: handler
                 runtime: node8
                 ttl: invalidttlstring
             EOF
-    -   in: bn deploy badttltest
+    -   in: bn deploy $FUNC_NAME
         exit: 1
         err: |-
             RequestId: *
@@ -279,13 +270,15 @@
             Thank you!
 
 - test: Test Java
+  setup:
+    - export FUNC_NAME=starbucks$RANDOM$RANDOM
   cleanup:
-    - bn remove ventimacchiato
+    - bn remove $FUNC_NAME
   steps:
-    -   in: bn create java8 ventimacchiato
+    -   in: bn create java8 $FUNC_NAME
     -   in: gradle jar --no-daemon
-    -   in: bn deploy ventimacchiato
-    -   in: bn invoke ventimacchiato
+    -   in: bn deploy $FUNC_NAME
+    -   in: bn invoke $FUNC_NAME
         out: |-
             *"Hello, world"*
 
@@ -321,64 +314,58 @@
 
 - test: Test invoke (good-path)
   setup:
+    - export FUNC_NAME=invoke$RANDOM$RANDOM
     - |-
       echo '{"name": "unguessable"}' > invoke.json
+    - bn create node8 $FUNC_NAME
+    - bn deploy $FUNC_NAME
   cleanup:
-    - bn remove extrasmallaunt
+    - bn remove $FUNC_NAME
   steps:
-    -   in: bn create node8 extrasmallaunt
-        out: |-
-            Created function * in /home/dockeruser/test
-              (use "bn deploy extrasmallaunt" to deploy the function)
-    -   in: bn deploy extrasmallaunt
-        out: |-
-            Deployed function extrasmallaunt
-            Invoke with one of:
-              "bn invoke extrasmallaunt"
-              "curl -H X-Binaris-Api-Key:* https://*"
     -   in: cd /home/
-    -   in: bn invoke extrasmallaunt
+    -   in: bn invoke $FUNC_NAME
         out: |-
             "Hello World!"
     -   in: |-
-            bn invoke extrasmallaunt -d '{"name": "unguessable"}'
+            bn invoke $FUNC_NAME -d '{"name": "unguessable"}'
         out: |-
             "Hello unguessable!"
-    -   in: bn invoke extrasmallaunt -j ./dockeruser/test/invoke.json
+    -   in: bn invoke $FUNC_NAME -j ./dockeruser/test/invoke.json
         out: |-
             "Hello unguessable!"
 
 - test: Block access to internal network
   setup:
-      - bn create node8 internalnets
-      - npm i request-promise-native request
-      - |-
-        cat <<EOF >/home/dockeruser/test/function.js
+    - export FUNC_NAME=internalnets$RANDOM$RANDOM
+    - bn create node8 $FUNC_NAME
+    - npm i request-promise-native request
+    - |-
+      cat <<EOF >/home/dockeruser/test/function.js
 
-        exports.handler = async() => {
-            const rp = require('request-promise-native');
-            for (host of ['169.254.169.254', '172.17.0.1', '172.16.0.1']) {
-                try {
-                    await rp.get('http://' + host);
-                    throw new Error('should not be returned');
-                } catch (err) {
-                    if (err.message.indexOf('ECONNREFUSED ' + host) === -1) {
-                        throw err;
-                    }
-                }
+      exports.handler = async() => {
+        const rp = require('request-promise-native');
+        for (host of ['169.254.169.254', '172.17.0.1', '172.16.0.1']) {
+          try {
+            await rp.get('http://' + host);
+            throw new Error('should not be returned');
+          } catch (err) {
+            if (err.message.indexOf('ECONNREFUSED ' + host) === -1) {
+              throw err;
             }
-            return true;
-        };
-        EOF
-      - bn deploy internalnets
+          }
+        }
+        return true;
+      };
+      EOF
+    - bn deploy $FUNC_NAME
   cleanup:
-      - bn remove internalnets
+    - bn remove $FUNC_NAME
   steps:
-      - in: bn invoke internalnets
+    - in: bn invoke $FUNC_NAME
 
 - test: Test logs (good-path)
   setup:
-    - export FUNC_NAME=rand$(cat /dev/urandom | tr -dc 'a-z0-9' | fold -w 32 | head -n 1)
+    - export FUNC_NAME=logs$(cat /dev/urandom | tr -dc 'a-z0-9' | fold -w 32 | head -n 1)
     - bn create node8 $FUNC_NAME
     - sed -i '5 a \  console.log(`Hello ${name}!`);' function.js
   cleanup:
@@ -386,10 +373,10 @@
   steps:
     -   in: bn deploy $FUNC_NAME
         out: |-
-            Deployed function *
+            Deployed function %
             Invoke with one of:
-              "bn invoke *"
-              "curl -H X-Binaris-Api-Key:* https://*"
+              "bn invoke %"
+              "curl -H X-Binaris-Api-Key:%* https://%"
     -   in: bn invoke $FUNC_NAME
         out: |-
             "Hello World!"
@@ -433,7 +420,7 @@
     - PY_VERSION: pypy2
     - PY_VERSION: python3
   setup:
-    - export FUNC_NAME={PY_VERSION}$(cat /dev/urandom | tr -dc 'a-z0-9' | fold -w 32 | head -n 1)
+    - export FUNC_NAME={PY_VERSION}$RANDOM$RANDOM
     - 'bn create {PY_VERSION} $FUNC_NAME'
     - |-
       cat > function.py <<EOF
@@ -448,10 +435,10 @@
   steps:
     -   in: bn deploy $FUNC_NAME
         out: |-
-            Deployed function *
+            Deployed function %
             Invoke with one of:
-              "bn invoke *"
-              "curl -H X-Binaris-Api-Key:* https://*"
+              "bn invoke %"
+              "curl -H X-Binaris-Api-Key:% https://%"
     -   in: |-
           bn invoke $FUNC_NAME -d '{"name": "Binaris"}'
         out: |-
@@ -463,39 +450,42 @@
           [20#-#-#T#:#:#.#Z] Function invocation took * us
 
 - test: Test deploy invoke remove cycle commands (good-path)
+  setup:
+    - export FUNC_NAME=cycle$RANDOM$RANDOM
+    - bn create node8 $FUNC_NAME
   steps:
-    -   in: bn create node8 gulliblezebra
-        out: |-
-            Created function * in /home/dockeruser/test
-              (use "bn deploy gulliblezebra" to deploy the function)
     -   in: |-
             echo 'exports.handler = () => { s = "Hello World!"; console.log(s); return s; };' >function.js
-    -   in: bn deploy gulliblezebra
+    -   in: bn deploy $FUNC_NAME
         out: |-
-            Deployed function gulliblezebra
+            Deployed function cycle#
             Invoke with one of:
-              "bn invoke gulliblezebra"
-              "curl -H X-Binaris-Api-Key:* https://*"
-    -   in: bn invoke gulliblezebra
+              "bn invoke cycle#"
+              "curl -H X-Binaris-Api-Key:% https://%cycle%"
+    -   in: bn invoke $FUNC_NAME
         out: |-
             "Hello World!"
-    -   in: bn remove gulliblezebra
+    -   in: bn remove $FUNC_NAME
         out: |-
-            Removed function *
+            Removed function %
     -   in: sleep 5
-    -   in: bn logs gulliblezebra
+    -   in: bn logs $FUNC_NAME
         out: |-
-          *[20#-#-#T#:#:#.#Z] Function gulliblezebra deployed (version digest:*)*
+          *[20#-#-#T#:#:#.#Z] Function % deployed (version digest:%)*
           *[20#-#-#T#:#:#.#Z] Hello World!*
-          *[20#-#-#T#:#:#.#Z] Function gulliblezebra removed.*
+          *[20#-#-#T#:#:#.#Z] Function % removed.*
 
 - test: "envs: deploy invoke remove with secrets"
+  setup:
+    - export FUNC_NAME=secret$RANDOM$RANDOM
+  cleanup:
+    - bn remove $FUNC_NAME
   steps:
-    -   in: bn create node8 secretsanta
+    -   in: bn create node8 $FUNC_NAME
     -   in: |-
             cat <<EOF >/home/dockeruser/test/binaris.yml
             functions:
-              secretsanta:
+              $FUNC_NAME:
                 file: function.js
                 entrypoint: handler
                 runtime: node8
@@ -508,18 +498,15 @@
             cat <<EOF >/home/dockeruser/test/function.js
             exports.handler = () => [process.env.FORWARD_ME, process.env.DEFINED_HERE, process.env.BN_FUNCTION];
             EOF
-    -   in: FORWARD_ME=please bn deploy secretsanta
+    -   in: FORWARD_ME=please bn deploy $FUNC_NAME
         out: |-
-            Deployed function secretsanta
+            Deployed function secret#
             Invoke with one of:
-              "bn invoke secretsanta"
-              "curl -H X-Binaris-Api-Key:* https://*"
-    -   in: bn invoke secretsanta
+              "bn invoke secret#"
+              "curl -H X-Binaris-Api-Key:% https://%secret%"
+    -   in: bn invoke $FUNC_NAME
         out: |-
-            *["please","value","*secretsanta"]*
-    -   in: bn remove secretsanta
-        out: |-
-            Removed function *
+            *["please","value","%secret%"]*
 
 - test: "envs: fail to deploy if non-string in env"
   steps:
@@ -556,8 +543,12 @@
         err: "Empty string env 'EMPTY' in binaris.yml is not supported"
 
 - test: "concurrent execution model: deploy invoke multiple times"
+  setup:
+    - export FUNC_NAME=concurrent$RANDOM$RANDOM
+  cleanup:
+    - bn remove $FUNC_NAME
   steps:
-    -   in: bn create node8 concurrentFunc -e concurrent
+    -   in: bn create node8 $FUNC_NAME -e concurrent
     -   in: |-
             cat > function.js << EOL
             function msleep(ms) {
@@ -577,21 +568,22 @@
               }
             }
             EOL
-    -   in: bn deploy concurrentFunc
+    -   in: bn deploy $FUNC_NAME
         out: |-
-            Deployed function concurrentFunc
+            Deployed function %
             Invoke with one of:
-              "bn invoke concurrentFunc"
-              "curl -H X-Binaris-Api-Key:* https://*"
-    # we do 3 simultaneous invokations be cause testing minbolts=2
-    -   in: "(for i in `seq 1 3`; do bn invoke concurrentFunc & done) | grep true"
-    -   in: bn remove concurrentFunc
-        out: |-
-            Removed function *
+              "bn invoke %"
+              "curl -H X-Binaris-Api-Key:% https://%"
+    # 3 simultaneous invocations because testing has minBolts=2
+    -   in: "(for i in `seq 1 3`; do bn invoke $FUNC_NAME & done) | grep true"
 
 - test: "exclusive execution model: deploy invoke multiple times"
+  setup:
+    - export FUNC_NAME=exclusive$RANDOM$RANDOM
+  cleanup:
+    - bn remove $FUNC_NAME
   steps:
-    -   in: bn create node8 exclusiveFunc -e exclusive
+    -   in: bn create node8 $FUNC_NAME -e exclusive
     -   in: |-
             cat > function.js << EOL
             function msleep(ms) {
@@ -611,17 +603,14 @@
               }
             }
             EOL
-    -   in: bn deploy exclusiveFunc
+    -   in: bn deploy $FUNC_NAME
         out: |-
-            Deployed function exclusiveFunc
+            Deployed function %
             Invoke with one of:
-              "bn invoke exclusiveFunc"
-              "curl -H X-Binaris-Api-Key:* https://*"
-    # we do 3 simultaneous invokations be cause testing minbolts=2
-    -   in: "(for i in `seq 1 3`; do bn invoke exclusiveFunc & done; wait) | grep -v true"
-    -   in: bn remove exclusiveFunc
-        out: |-
-            Removed function *
+              "bn invoke %"
+              "curl -H X-Binaris-Api-Key:% https://%"
+    # 3 simultaneous invocations because testing has minBolts=2
+    -   in: "(for i in `seq 1 3`; do bn invoke $FUNC_NAME & done; wait) | grep -v true"
 
 - test: Test login (bad-path)
   steps:
@@ -632,7 +621,6 @@
 
 - test: Test login endpoint error (bad-path)
   steps:
-
     -   in: unset BINARIS_API_KEY
     -   in: echo 9239239 | BINARIS_DEPLOY_ENDPOINT=fake.api.binaris.invalid. bn login
         err: "Error: getaddrinfo ENOTFOUND fake.api.binaris.invalid. fake.api.binaris.invalid.:443"
@@ -683,11 +671,11 @@
 
 - test: Test invoke (bad-path)
   steps:
-    -   in: bn create node8 quarrelsometest -p /home/dockeruser/test/alloftheoptions
-    -   in: bn invoke quarrelsometest -j myFile.json -d data
+    -   in: bn create node8 invoke_bad -p /home/dockeruser/test/alloftheoptions
+    -   in: bn invoke invoke_bad -j myFile.json -d data
         err: Invoke flags --json(-j) and --data(-d) are mutually exclusive
         exit: 1
-    -   in: bn invoke quarrelsometest -j myFile.json
+    -   in: bn invoke invoke_bad -j myFile.json
         err: "ENOENT: no such file or directory, open 'myFile.json'"
         exit: 1
     -   in: bn invoke nosuchfunction
@@ -699,10 +687,12 @@
         exit: 1
 
 - test: Test user code timeout (bad-path)
+  setup:
+    - export FUNC_NAME=timeoutforsure$RANDOM$RANDOM
   cleanup:
-    - bn remove timeoutforsure
+    - bn remove $FUNC_NAME
   steps:
-    -   in: bn create node8 timeoutforsure
+    -   in: bn create node8 $FUNC_NAME -e exclusive
     -   in: |-
            cat > function.js << EOL
            exports.handler = async (body, req) => {
@@ -710,8 +700,8 @@
              await msleep(100000);
            };
            EOL
-    -   in: bn deploy timeoutforsure
-    -   in: bn invoke timeoutforsure
+    -   in: bn deploy $FUNC_NAME
+    -   in: bn invoke $FUNC_NAME
         err: |-
             RequestId: *
             Something went wrong, and it's not your fault.
@@ -720,48 +710,35 @@
         exit: 1
 
 - test: Test bad user node8 code (bad-path)
+  setup:
+    - export FUNC_NAME=doomedtofailnode8_$RANDOM$RANDOM
   cleanup:
-    - bn remove doomedtofailnode8
+    - bn remove $FUNC_NAME
   steps:
-    -   in: bn create node8 doomedtofailnode8
-        out: |-
-            Created function * in /home/dockeruser/test
-              (use "bn deploy doomedtofailnode8" to deploy the function)
+    -   in: bn create node8 $FUNC_NAME
     -   in: |-
             sed -i.bak "5i\  throw new Error('some error');" function.js
-    -   in: bn deploy doomedtofailnode8
-        out: |-
-            Deployed function doomedtofailnode8
-            Invoke with one of:
-              "bn invoke doomedtofailnode8"
-              "curl -H X-Binaris-Api-Key:* https://*"
-    -   in: bn invoke doomedtofailnode8
+    -   in: bn deploy $FUNC_NAME
+    -   in: bn invoke $FUNC_NAME
         err: |-
             some error
             Error: some error
                 at Bolt.exports.handler [as userEntryPoint] (/code/function.js:5:9)
                 at *
                 at <anonymous>
-
         exit: 1
 
 - test: Test bad user python2 code (bad-path)
+  setup:
+    - export FUNC_NAME=doomedtofailpy2_$RANDOM$RANDOM
   cleanup:
-    - bn remove doomedtofailpy2
+    - bn remove $FUNC_NAME
   steps:
-    -   in: bn create python2 doomedtofailpy2
-        out: |-
-            Created function * in /home/dockeruser/test
-              (use "bn deploy doomedtofailpy2" to deploy the function)
+    -   in: bn create python2 $FUNC_NAME
     -   in: |-
             sed -i.bak "2i\    sdasda" function.py
-    -   in: bn deploy doomedtofailpy2
-        out: |-
-            Deployed function doomedtofailpy2
-            Invoke with one of:
-              "bn invoke doomedtofailpy2"
-              "curl -H X-Binaris-Api-Key:* https://*"
-    -   in: bn invoke doomedtofailpy2
+    -   in: bn deploy $FUNC_NAME
+    -   in: bn invoke $FUNC_NAME
         err: |-
             global name 'sdasda' is not defined
               File "/opt/binaris/py2/main.py", line *, in run_handler
@@ -771,22 +748,16 @@
         exit: 1
 
 - test: Test bad user python3 code (bad-path)
+  setup:
+    - export FUNC_NAME=doomedtofailpy3_$RANDOM$RANDOM
   cleanup:
-    - bn remove doomedtofailpy3
+    - bn remove $FUNC_NAME
   steps:
-    -   in: bn create python3 doomedtofailpy3
-        out: |-
-            Created function * in /home/dockeruser/test
-              (use "bn deploy doomedtofailpy3" to deploy the function)
+    -   in: bn create python3 $FUNC_NAME
     -   in: |-
             sed -i.bak "2i\    sdasda" function.py
-    -   in: bn deploy doomedtofailpy3
-        out: |-
-            Deployed function doomedtofailpy3
-            Invoke with one of:
-              "bn invoke doomedtofailpy3"
-              "curl -H X-Binaris-Api-Key:* https://*"
-    -   in: bn invoke doomedtofailpy3
+    -   in: bn deploy $FUNC_NAME
+    -   in: bn invoke $FUNC_NAME
         err: |-
             name 'sdasda' is not defined
               File "/opt/binaris/py3/main.py", line *, in run_handler
@@ -796,22 +767,16 @@
         exit: 1
 
 - test: Test bad user pypy2 code (bad-path)
+  setup:
+    - export FUNC_NAME=doomedtofailpypy2_$RANDOM$RANDOM
   cleanup:
-    - bn remove doomedtofailpypy2
+    - bn remove $FUNC_NAME
   steps:
-    -   in: bn create pypy2 doomedtofailpypy2
-        out: |-
-            Created function * in /home/dockeruser/test
-              (use "bn deploy doomedtofailpypy2" to deploy the function)
+    -   in: bn create pypy2 $FUNC_NAME
     -   in: |-
             sed -i.bak "2i\    sdasda" function.py
-    -   in: bn deploy doomedtofailpypy2
-        out: |-
-            Deployed function doomedtofailpypy2
-            Invoke with one of:
-              "bn invoke doomedtofailpypy2"
-              "curl -H X-Binaris-Api-Key:* https://*"
-    -   in: bn invoke doomedtofailpypy2
+    -   in: bn deploy $FUNC_NAME
+    -   in: bn invoke $FUNC_NAME
         err: |-
             global name 'sdasda' is not defined
               File "/opt/binaris/py2/main.py", line *, in run_handler
@@ -821,24 +786,17 @@
         exit: 1
 
 - test: Test bad user java8 code (bad-path)
+  setup:
+    - export FUNC_NAME=doomedtofailjava8_$RANDOM$RANDOM
   cleanup:
-    - bn remove doomedtofailjava8
+    - bn remove $FUNC_NAME
   steps:
-    -   in: bn create java8 doomedtofailjava8
-        out: |-
-            Created function * in /home/dockeruser/test
-              (use "bn deploy doomedtofailjava8" to deploy the function)
-            java8 support is experimental
+    -   in: bn create java8 $FUNC_NAME
     -   in: |-
             sed -i.bak '6s/.*/        throw new java.lang.Error("this is very bad");/' src/main/java/ExampleFunction.java
     -   in: gradle jar
-    -   in: bn deploy doomedtofailjava8
-        out: |-
-            Deployed function doomedtofailjava8
-            Invoke with one of:
-              "bn invoke doomedtofailjava8"
-              "curl -H X-Binaris-Api-Key:* https://*"
-    -   in: bn invoke doomedtofailjava8
+    -   in: bn deploy $FUNC_NAME
+    -   in: bn invoke $FUNC_NAME
         err: |-
             RequestId: *
             <html>
@@ -856,19 +814,21 @@
         exit: 1
 
 - test: Test remove (bad-path)
+  setup:
+    - export FUNC_NAME=doomedtofailjava8_$RANDOM$RANDOM
   steps:
-    -   in: bn create node8 dispensabledrop
-    -   in: bn remove dispensabledrop
+    -   in: bn create node8 $FUNC_NAME
+    -   in: bn remove $FUNC_NAME
         err: |-
-            RequestId: *
+            RequestId: %
             Error: No such function
         exit: 1
-    -   in: bn deploy dispensabledrop
-    -   in: bn remove dispensabledrop
-        out: "*Removed function dispensabledrop*"
-    -   in: bn remove dispensabledrop
+    -   in: bn deploy $FUNC_NAME
+    -   in: bn remove $FUNC_NAME
+        out: "*Removed function %*"
+    -   in: bn remove $FUNC_NAME
         err: |-
-            RequestId: *
+            RequestId: %
             Error: No such function
         exit: 1
     -   in: bn remove
@@ -929,9 +889,9 @@
     - in: sleep 100 # Enough time to get minute-aggregated stats
     - in: bn stats --since "3m"
       out: |-
-        FUNCTION* METRIC* VALUE* SINCE* UNTIL*
-        invokestats* function_duration_us* #* #-#-#T#:#:#.#Z* #-#-#T#:#:#.#Z*
-        invokestats* function_invocations* #* #-#-#T#:#:#.#Z* #-#-#T#:#:#.#Z*
+        FUNCTION% METRIC% VALUE% SINCE% UNTIL*
+        invokestats% function_duration_us% #* #-#-#T#:#:#.#Z* #-#-#T#:#:#.#Z*
+        invokestats% function_invocations% #* #-#-#T#:#:#.#Z* #-#-#T#:#:#.#Z*
     - in: bn stats --since "3m" --json
       out: '{*"metrics":[*'
 
@@ -1028,40 +988,49 @@
 
 - test: Deploy of 200MB function succeeds
   setup:
-    - bn create python2 largeData200MB
+    - export FUNC_NAME=largeData200MB$RANDOM$RANDOM
+    - bn create python2 $FUNC_NAME
     - dd if=/dev/urandom bs=1048576 count=200 of=large.data
   cleanup:
-    - bn remove largeData200MB
+    - bn remove $FUNC_NAME
   steps:
-    - in: bn deploy largeData200MB
-      out: |-
-          Deployed function *
-          Invoke with one of:
-            "bn invoke *"
-            "curl -H X-Binaris-Api-Key:* https://*"
-    - in: bn invoke largeData200MB
+    - in: bn deploy $FUNC_NAME
+    - in: bn invoke $FUNC_NAME
       out: |-
           "Hello World!"
 
+- test: Deploy of 300MB function fails with significant error message (bad-path)
+  setup:
+    - export FUNC_NAME=largeData300MB$RANDOM$RANDOM
+    - bn create python2 $FUNC_NAME
+    - dd if=/dev/urandom bs=1048576 count=300 of=very.large.data
+  steps:
+    - in: bn deploy $FUNC_NAME
+      err: |-
+        RequestId: %
+        Error: Payload too large
+      exit: 1
+
 - test: Test if imagemagick exists in runtime environment
   setup:
-      - bn create node8 imagemagick
-      - npm i shelljs
-      - |-
-        cat <<EOF >/home/dockeruser/test/function.js
+    - export FUNC_NAME=largeimagemagick$RANDOM$RANDOM
+    - bn create node8 $FUNC_NAME
+    - npm i shelljs
+    - |-
+      cat <<EOF >/home/dockeruser/test/function.js
 
-        const shell = require('shelljs');
-        exports.handler = async() => {
-          return shell.exec('convert --version');
-        };
-        EOF
-      - bn deploy imagemagick
+      const shell = require('shelljs');
+      exports.handler = async() => {
+      return shell.exec('convert --version');
+      };
+      EOF
+    - bn deploy $FUNC_NAME
   cleanup:
-      - bn remove imagemagick
+      - bn remove $FUNC_NAME
   steps:
-      - in: bn invoke imagemagick
+      - in: bn invoke $FUNC_NAME
         out: |-
-            "Version: ImageMagick *
+            "Version: ImageMagick %
 
 - test: Test invalid option to command (bad-path)
   steps:
@@ -1116,16 +1085,6 @@
 
             // Retrieve all statistics of a certain month
             bn stats --since 2018-03-01T00:00:00Z --until 2018-04-01T00:00:00Z
-- test: Deploy of 300MB function fails with significant error message
-  setup:
-    - bn create python2 largeData300MB
-    - dd if=/dev/urandom bs=1048576 count=300 of=very.large.data
-  steps:
-    - in: bn deploy largeData300MB
-      err: |-
-        RequestId: *
-        Error: Payload too large
-      exit: 1
 
 - test: Test deploy of long name (good-path)
   cleanup:
@@ -1165,44 +1124,46 @@
 
 - test: Test perf 1 second (good-path)
   setup:
-    - bn create node8 measure1sec
-    - bn deploy measure1sec
+    - export FUNC_NAME=measure1sec$RANDOM$RANDOM
+    - bn create node8 $FUNC_NAME
+    - bn deploy $FUNC_NAME
   cleanup:
-    - bn remove measure1sec
+    - bn remove $FUNC_NAME
   steps:
-    -   in: bn perf -t 1 measure1sec
+    -   in: bn perf -t 1 $FUNC_NAME
         out: |-
-            Running performance test on function measure1sec.
+            Running performance test on function measure1sec#.
             Executing 5000 invocations with 1 "thread" up to 1 second.
             Stand by for results...
 
             Perf summary
             ============
-            Total time  * s*
-            Invocations *
-            Errors      *
-            Rate        * rps*
+            Total time  % s*
+            Invocations %
+            Errors      %
+            Rate        % rps*
 
             Latencies
             =========
-            Mean * ms*
-            Min  * ms*
-            Max  * ms*
-            50%  * ms*
-            90%  * ms*
-            95%  * ms*
-            99%  * ms*
+            Mean % ms*
+            Min  % ms*
+            Max  % ms*
+            50%  % ms*
+            90%  % ms*
+            95%  % ms*
+            99%  % ms*
 
 - test: Test perf 100 invocations (good-path)
   setup:
-    - bn create node8 measure100
-    - bn deploy measure100
+    - export FUNC_NAME=measure100_$RANDOM$RANDOM
+    - bn create node8 $FUNC_NAME
+    - bn deploy $FUNC_NAME
   cleanup:
-    - bn remove measure100
+    - bn remove $FUNC_NAME
   steps:
-    -   in: bn perf -n 100 measure100
+    -   in: bn perf -n 100 $FUNC_NAME
         out: |-
-            Running performance test on function measure100.
+            Running performance test on function measure100_#.
             Executing 100 invocations with 1 "thread".
             Stand by for results...
 
@@ -1337,8 +1298,8 @@
 
 - test: Test new trigger (good-path)
   setup:
-    - export FUNC_NAME=rand$RANDOM$RANDOM
-    - export TRIGGER_NAME=rand$RANDOM$RANDOM
+    - export FUNC_NAME=trigger_new$RANDOM$RANDOM
+    - export TRIGGER_NAME=trigger_new$RANDOM$RANDOM
     - bn create node8 $FUNC_NAME
     - bn deploy $FUNC_NAME
   cleanup:
@@ -1350,8 +1311,8 @@
 
 - test: Test update trigger (good-path)
   setup:
-    - export FUNC_NAME=rand$RANDOM$RANDOM
-    - export TRIGGER_NAME=rand$RANDOM$RANDOM
+    - export FUNC_NAME=trigger_update$RANDOM$RANDOM
+    - export TRIGGER_NAME=trigger_update$RANDOM$RANDOM
     - bn create node8 $FUNC_NAME
     - bn deploy $FUNC_NAME
     - bn trigger setup $TRIGGER_NAME --source-uri "redis+tls://:${REDIS_PASS}@misc-redis.binaris.io#teststream" --target $FUNC_NAME
@@ -1364,10 +1325,10 @@
 
 - test: Test 2 new triggers, same source, different target (good-path)
   setup:
-    - export FUNC_NAME=rand$RANDOM$RANDOM
-    - export FUNC_NAME2=rand$RANDOM$RANDOM
-    - export TRIGGER_NAME=rand$RANDOM$RANDOM
-    - export TRIGGER_NAME2=rand$RANDOM$RANDOM
+    - export FUNC_NAME=trigger_funcA$RANDOM$RANDOM
+    - export FUNC_NAME2=trigger_funcB$RANDOM$RANDOM
+    - export TRIGGER_NAME=trigger_funcA$RANDOM$RANDOM
+    - export TRIGGER_NAME2=trigger_funcB$RANDOM$RANDOM
     - bn create node8 $FUNC_NAME
     - bn deploy $FUNC_NAME
     - |-
@@ -1397,8 +1358,8 @@
 
 - test: Test new trigger with bad source uri (bad-path)
   setup:
-    - export FUNC_NAME=rand$RANDOM$RANDOM
-    - export TRIGGER_NAME=rand$RANDOM$RANDOM
+    - export FUNC_NAME=trigger_bad_uri$RANDOM$RANDOM
+    - export TRIGGER_NAME=trigger_bad_uri$RANDOM$RANDOM
     - bn create node8 $FUNC_NAME
     - bn deploy $FUNC_NAME
   cleanup:
@@ -1420,8 +1381,8 @@
 
 - test: Test new trigger when it already exists with different name (bad-path)
   setup:
-    - export FUNC_NAME=rand$RANDOM$RANDOM
-    - export TRIGGER_NAME=rand$RANDOM$RANDOM
+    - export FUNC_NAME=trigger_already_exists$RANDOM$RANDOM
+    - export TRIGGER_NAME=trigger_already_exists$RANDOM$RANDOM
     - bn create node8 $FUNC_NAME
     - bn deploy $FUNC_NAME
     - bn trigger setup $TRIGGER_NAME --source-uri "redis+tls://:${REDIS_PASS}@misc-redis.binaris.io#teststream" --target $FUNC_NAME
@@ -1429,7 +1390,7 @@
     - bn trigger remove $TRIGGER_NAME
     - bn remove $FUNC_NAME
   steps:
-    - in: bn trigger setup testduplicatetriggerthatwillnotbecreated --source-uri "redis+tls://:${REDIS_PASS}@misc-redis.binaris.io#teststream" --target $FUNC_NAME
+    - in: bn trigger setup testduplicatetriggerthatwillnotbecreated$RANDOM$RANDOM --source-uri "redis+tls://:${REDIS_PASS}@misc-redis.binaris.io#teststream" --target $FUNC_NAME
       exit: 1
       err: |-
         RequestId: *
@@ -1437,9 +1398,9 @@
 
 - test: Test update trigger when it already exists with different name (bad-path)
   setup:
-    - export FUNC_NAME=rand$RANDOM$RANDOM
-    - export TRIGGER_NAME=rand$RANDOM$RANDOM
-    - export TRIGGER_NAME2=rand$RANDOM$RANDOM
+    - export FUNC_NAME=trigger_update_other_name$RANDOM$RANDOM
+    - export TRIGGER_NAME=trigger_update_first_name$RANDOM$RANDOM
+    - export TRIGGER_NAME2=trigger_update_other_name$RANDOM$RANDOM
     - bn create node8 $FUNC_NAME
     - bn deploy $FUNC_NAME
     - bn trigger setup $TRIGGER_NAME --source-uri "redis+tls://:${REDIS_PASS}@misc-redis.binaris.io#teststream" --target $FUNC_NAME
@@ -1457,8 +1418,8 @@
 
 - test: Test remove trigger (good-path)
   setup:
-    - export FUNC_NAME=rand$RANDOM$RANDOM
-    - export TRIGGER_NAME=rand$RANDOM$RANDOM
+    - export FUNC_NAME=trigger_remove$RANDOM$RANDOM
+    - export TRIGGER_NAME=trigger_remove$RANDOM$RANDOM
     - bn create node8 $FUNC_NAME
     - bn deploy $FUNC_NAME
     - bn trigger setup $TRIGGER_NAME --source-uri "redis+tls://:${REDIS_PASS}@misc-redis.binaris.io#teststream" --target $FUNC_NAME
@@ -1479,9 +1440,9 @@
 - test: Test list triggers
   serial: true
   setup:
-    - export FUNC_NAME=rand$RANDOM$RANDOM
-    - export TRIGGER_NAME=rand$RANDOM$RANDOM
-    - export TRIGGER_NAME2=rand$RANDOM$RANDOM
+    - export FUNC_NAME=trigger_list$RANDOM$RANDOM
+    - export TRIGGER_NAME=trigger_listA$RANDOM$RANDOM
+    - export TRIGGER_NAME2=trigger_listB$RANDOM$RANDOM
     - bn create node8 $FUNC_NAME
     - bn deploy $FUNC_NAME
     - bn trigger setup $TRIGGER_NAME --source-uri "redis+tls://:${REDIS_PASS}@misc-redis.binaris.io#teststream" --target $FUNC_NAME
@@ -1493,14 +1454,14 @@
   steps:
     - in: bn trigger list
       out: |-
-        TRIGGER*SOURCE*TARGET*LAST UPDATE*
-        rand*redis+tls://:XXX@misc-redis.binaris.io*teststream*rand*20#-#-#T#:#:#.#Z
-        rand*redis+tls://:XXX@misc-redis.binaris.io*teststream*rand*20#-#-#T#:#:#.#Z
+        TRIGGER%SOURCE%TARGET%LAST UPDATE*
+        trigger_list%redis+tls://:XXX@misc-redis.binaris.io%teststream%trigger_list%20#-#-#T#:#:#.#Z
+        trigger_list%redis+tls://:XXX@misc-redis.binaris.io%teststream%trigger_list%20#-#-#T#:#:#.#Z
 
 - test: Test remove function with attached trigger (bad-path)
   setup:
-    - export FUNC_NAME=rand$RANDOM$RANDOM
-    - export TRIGGER_NAME=rand$RANDOM$RANDOM
+    - export FUNC_NAME=trigger_remove_attached$RANDOM$RANDOM
+    - export TRIGGER_NAME=trigger_remove_attached$RANDOM$RANDOM
     - bn create node8 $FUNC_NAME
     - bn deploy $FUNC_NAME
     - bn trigger setup $TRIGGER_NAME --source-uri "redis+tls://:${REDIS_PASS}@misc-redis.binaris.io#teststream" --target $FUNC_NAME
@@ -1516,9 +1477,9 @@
 
 - test: Test trigger is invoked from redis stream
   setup:
-    - export FUNC_NAME=rand$RANDOM$RANDOM
-    - export TRIGGER_NAME=rand$RANDOM$RANDOM
-    - export STREAM_NAME=rand$RANDOM$RANDOM
+    - export FUNC_NAME=trigger_invoke$RANDOM$RANDOM
+    - export TRIGGER_NAME=trigger_invoke$RANDOM$RANDOM
+    - export STREAM_NAME=trigger_invoke$RANDOM$RANDOM
     - bn create node8 $FUNC_NAME
     - |-
         cat > function.js << EOL
@@ -1541,6 +1502,6 @@
     - in: sleep 5
     - in: bn logs $FUNC_NAME
       out: |-
-        [20#-#-#T#:#:#.#Z] Function * deployed (version digest: *)
+        [20#-#-#T#:#:#.#Z] Function trigger_invoke# deployed (version digest: %)
         [20#-#-#T#:#:#.#Z] redis-stream
-        [20#-#-#T#:#:#.#Z] Function invocation took * us
+        [20#-#-#T#:#:#.#Z] Function invocation took % us
