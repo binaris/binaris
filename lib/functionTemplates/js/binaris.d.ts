@@ -1,26 +1,25 @@
 /// <reference types="node" />
 export interface HTTPRequest {
-  env: Record<string, string>;
-  query: Record<string, string | string[]>;
+  env: Record<string, string | undefined>;
+  query: Record<string, string | string[] | undefined>;
   body: Buffer;
   path: string;
   method: string;
   requestId: string;
-  headers: Record<string, string | string[]>;
+  headers: Record<string, string | string[] | undefined>;
 }
 
-export interface FunctionResponse {
-  statusCode: number;
-  headers: Record<string, string | undefined>;
-  body: Buffer | string;
+export interface HTTPResponseParams {
+  statusCode?: number;
+  headers?: Record<string, string | undefined>;
+  body?: Buffer | string;
 }
 
 export interface HTTPResponse {
-  userResponse: Partial<FunctionResponse>;
-  new(userResponse: Partial<FunctionResponse>);
+  new(response: HTTPResponseParams);
 }
 
-export interface HandlerContext {
+export interface Context {
   source: string;
   request: HTTPRequest;
   HTTPResponse: HTTPResponse;
@@ -30,4 +29,4 @@ export interface HandlerContext {
   };
 }
 
-export type Handler = (body: unknown, context: HandlerContext) => Promise<any>;
+export type Handler = (body: unknown, context: Context) => Promise<any>;
