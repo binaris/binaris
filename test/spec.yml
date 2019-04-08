@@ -159,7 +159,7 @@
               const name = context.request.query.name || body.name || 'World';
               return `Hello ${name}!`;
             };
-    -   in: bn create python custom_entry_python -p /home/dockeruser/test/custom_entry_python --config.entrypoint 'customEntry'
+    -   in: bn create python2 custom_entry_python -p /home/dockeruser/test/custom_entry_python --config.entrypoint 'customEntry'
     -   in: cat /home/dockeruser/test/custom_entry_python/function.py
         out: |-
             def customEntry(body, req):
