@@ -147,6 +147,25 @@
         out: |-
             Created function create_purplecannon in /home/dockeruser/test/purplecannon
               (use "bn deploy -p /home/dockeruser/test/purplecannon create_purplecannon" to deploy the function)
+    -   in: bn create node8 custom_entry_node -p /home/dockeruser/test/custom_entry_node --config.entrypoint 'customEntry'
+    -   in: cat /home/dockeruser/test/custom_entry_node/function.js
+        out: |-
+            'use strict'
+            
+            /**
+             * @type { import("./binaris").Handler }
+             */
+            exports.customEntry = async (body, context) => {
+              const name = context.request.query.name || body.name || 'World';
+              return `Hello ${name}!`;
+            };
+    -   in: bn create python custom_entry_python -p /home/dockeruser/test/custom_entry_python --config.entrypoint 'customEntry'
+    -   in: cat /home/dockeruser/test/custom_entry_python/function.py
+        out: |-
+            def customEntry(body, req):
+                name = req.query.get('name') or body.get('name') or 'World'
+                return 'Hello {}!'.format(name)
+
 
 - test: Test deploy (good-path)
   setup:
