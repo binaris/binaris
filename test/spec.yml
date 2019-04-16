@@ -162,8 +162,8 @@
     -   in: bn create python2 custom_entry_python -p /home/dockeruser/test/custom_entry_python --config.entrypoint 'customEntry'
     -   in: cat /home/dockeruser/test/custom_entry_python/function.py
         out: |-
-            def customEntry(body, req):
-                name = req.query.get('name') or body.get('name') or 'World'
+            def customEntry(body, context):
+                name = context.request.query.get('name') or body.get('name') or 'World'
                 return 'Hello {}!'.format(name)
 
 
