@@ -26,6 +26,7 @@ const invoke = async function invoke(accountId, funcName, apiKey, funcData) {
     },
     body: funcData,
     resolveWithFullResponse: true,
+    family: 4,
   };
   logger.debug('Invoking function', options);
   try {
