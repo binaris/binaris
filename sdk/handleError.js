@@ -55,6 +55,7 @@ async function loggedRequest(options, type = 'post') {
       ...(options.headers || {}),
       'X-Binaris-Client-Version': version,
     },
+    family: 4
   });
   logger.debug('raw response', inspect(response, { depth: null }));
   return response;
