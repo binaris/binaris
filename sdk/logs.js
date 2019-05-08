@@ -51,7 +51,10 @@ const logs = async function logs(accountId, funcName, apiKey, follow, startAfter
       };
     });
 
-    if (ok) return ok;
+    if (ok) {
+      await msleep(75);
+      return ok;
+    }
     const backoffSec = backoffSecs.shift();
     if (backoffSec === undefined) throw notOk;
     msleep(backoffSec * 1000);
