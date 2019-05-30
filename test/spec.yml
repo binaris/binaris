@@ -231,19 +231,6 @@
         out: |-
             Thank you!
 
-- test: Test Java
-  setup:
-    - export FUNC_NAME=starbucks$RANDOM$RANDOM
-  cleanup:
-    - bn remove $FUNC_NAME
-  steps:
-    -   in: bn create --config.ttl '2 hours' java8 $FUNC_NAME
-    -   in: gradle jar --no-daemon
-    -   in: bn deploy $FUNC_NAME
-    -   in: bn invoke $FUNC_NAME
-        out: |-
-            *"Hello, world"*
-
 - test: Test list
   setup:
     - export FUNC_NAME=listtestA$RANDOM$RANDOM
