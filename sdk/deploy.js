@@ -25,6 +25,7 @@ const deployCode = async function deployCode(accountId, apiKey, tarPath) {
       'X-Binaris-Api-Key': apiKey,
       'X-Binaris-Client-Version': version,
     },
+    family: 4,
     json: true,
   };
   // use raw request here(as opposed to rp) because the
