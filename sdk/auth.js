@@ -20,6 +20,7 @@ const verifyAPIKey = async function verifyAPIKey(apiKey) {
       headers: {
         'X-Binaris-Api-Key': apiKey,
       },
+      family: 4,
       json: true,
     });
 
