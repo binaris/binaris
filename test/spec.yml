@@ -725,37 +725,9 @@
                 sdasda
         exit: 1
 
-- test: Test bad user java8 code (bad-path)
-  setup:
-    - export FUNC_NAME=doomedtofailjava8_$RANDOM$RANDOM
-  cleanup:
-    - bn remove $FUNC_NAME
-  steps:
-    -   in: bn create --config.ttl '2 hours' java8 $FUNC_NAME
-    -   in: |-
-            sed -i.bak '6s/.*/        throw new java.lang.Error("this is very bad");/' src/main/java/ExampleFunction.java
-    -   in: gradle jar
-    -   in: bn deploy $FUNC_NAME
-    -   in: bn invoke $FUNC_NAME
-        err: |-
-            RequestId: *
-            <html>
-            <head>
-            <meta http-equiv="Content-Type" content="text/html;charset=ISO-8859-1"/>
-            <title>Error 500 </title>
-            </head>
-            <body>
-            <h2>HTTP ERROR: 500</h2>
-            <p>Problem accessing /v1/run. Reason:
-            <pre>    class java.lang.Error</pre></p>
-            <hr /><a href="http://eclipse.org/jetty">Powered by Jetty:// 9.3.z-SNAPSHOT</a><hr/>
-            </body>
-            </html>
-        exit: 1
-
 - test: Test remove (bad-path)
   setup:
-    - export FUNC_NAME=doomedtofailjava8_$RANDOM$RANDOM
+    - export FUNC_NAME=notdeployeddeployed_$RANDOM$RANDOM
   steps:
     -   in: bn create --config.ttl '2 hours' node8 $FUNC_NAME
     -   in: bn remove $FUNC_NAME
