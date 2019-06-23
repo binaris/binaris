@@ -19,7 +19,6 @@ const propagatedEnvVars = [
   'BINARIS_DEPLOY_ENDPOINT',
   'BINARIS_INVOKE_ENDPOINT',
   'BINARIS_LOG_ENDPOINT',
-  'REDIS_PASS',
 ];
 
 const commonBashOpts = 'set -o pipefail;';
