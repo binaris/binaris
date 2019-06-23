@@ -31,14 +31,6 @@ const getStatsUrl = function getStatsUrl(accountId) {
   return urljoin(`https://${getDeployEndpoint()}`, 'v3', 'metrics', accountId);
 };
 
-function getTriggersListUrl() {
-  return urljoin(`https://${getDeployEndpoint()}`, 'v3', 'triggers');
-}
-
-function getSpecificTriggerUrl(triggerName) {
-  return urljoin(`https://${getDeployEndpoint()}`, 'v3', 'triggers', triggerName);
-}
-
 module.exports = {
   getCodeUploadUrl,
   getConfUploadUrl,
@@ -47,6 +39,4 @@ module.exports = {
   getLogsUrl,
   getListUrl,
   getStatsUrl,
-  getTriggersListUrl,
-  getSpecificTriggerUrl,
 };

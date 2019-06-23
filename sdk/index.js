@@ -10,7 +10,6 @@ const logs = require('./logs');
 const remove = require('./remove');
 const perf = require('./perf');
 const stats = require('./stats');
-const triggers = require('./triggers');
 const { forceRealm } = require('./config');
 
 module.exports = {
@@ -23,6 +22,5 @@ module.exports = {
   perf,
   remove,
   stats,
-  triggers,
   forceRealm,
 };
