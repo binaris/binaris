@@ -46,7 +46,7 @@ const pathOption = ['path', {
 }];
 
 yargs
-  .usage(
+  .usage( // eslint-disable-next-line indent
 `Binaris command line interface
 
 Usage: $0 <command> [options]` // eslint-disable-line comma-dangle
@@ -77,7 +77,7 @@ Usage: $0 <command> [options]` // eslint-disable-line comma-dangle
         type: 'string',
       })
       .strict()
-      .example(
+      .example( // eslint-disable-next-line indent
 ` // Create a function from python3 template
   bn create python3 ninja
 
@@ -150,7 +150,7 @@ Usage: $0 <command> [options]` // eslint-disable-line comma-dangle
         type: 'string',
       })
       .strict()
-      .example(
+      .example( // eslint-disable-next-line indent
 `  // invoke a function
   bn invoke foo
 
@@ -203,7 +203,7 @@ Usage: $0 <command> [options]` // eslint-disable-line comma-dangle
         type: 'number',
       })
       .strict()
-      .example(
+      .example( // eslint-disable-next-line indent
 ` // Run performance test on function foo (5000 invocations, serially)
   bn perf foo
 
@@ -240,7 +240,7 @@ Usage: $0 <command> [options]` // eslint-disable-line comma-dangle
         type: 'string',
       })
       .strict()
-      .example(
+      .example( // eslint-disable-next-line indent
 `  // retrieve all logs
   bn logs foo
 
@@ -286,7 +286,7 @@ Usage: $0 <command> [options]` // eslint-disable-line comma-dangle
         type: 'boolean',
       })
       .strict()
-      .example(
+      .example( // eslint-disable-next-line indent
 `  // Retrieve all usage statistics of the account
   bn stats
 

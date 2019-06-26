@@ -40,7 +40,7 @@ const logs = async function logs(accountId, funcName, apiKey, follow, startAfter
 
   const backoffSecs = [1, 2, 4];
   // eslint-disable-next-line no-constant-condition
-  while (true) {  // exits inside loop.
+  while (true) { // exits inside loop.
     // eslint-disable-next-line no-await-in-loop
     const [ok, notOk] = await orError(async () => {
       const { body, headers } =

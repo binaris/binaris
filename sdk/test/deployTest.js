@@ -90,7 +90,7 @@ test.serial('Test deploy with bad key (bad-path)', async (t) => { // eslint-disa
   await withEndpoint(deployEndpoint, async () => {
     await t.throwsAsync(deploy(testAccountId, testFuncName, someBadKey,
       testFuncConf, t.context.fakeTarFileName),
-      'Error: Invalid API key');
+    'Error: Invalid API key');
   });
 });
 
@@ -100,7 +100,7 @@ test.serial('Test deploy with no backend (bad-path)', async (t) => {
   await withEndpoint('invalidbinaris.endpoint.invalid.', async () => {
     await t.throwsAsync(deploy(testAccountId, testFuncName, testApiKey,
       testFuncConf, t.context.fakeTarFileName),
-      'Error: getaddrinfo ENOTFOUND invalidbinaris.endpoint.invalid. invalidbinaris.endpoint.invalid.:443');
+    'Error: getaddrinfo ENOTFOUND invalidbinaris.endpoint.invalid. invalidbinaris.endpoint.invalid.:443');
   });
 });
 

@@ -80,14 +80,14 @@ const createRegTest = function createRegTest(expected) {
   const STAR_ESCAPE = 'ESCAPESEQUENCESPACE';
   const PERCENT_ESCAPE = 'ESCAPESEQUENCEPERCENT';
   const protectedEscapes = expected
-        .replace(/#/g, DIGIT_ESCAPE)
-        .replace(/\*/g, STAR_ESCAPE)
-        .replace(/%/g, PERCENT_ESCAPE);
+    .replace(/#/g, DIGIT_ESCAPE)
+    .replace(/\*/g, STAR_ESCAPE)
+    .replace(/%/g, PERCENT_ESCAPE);
   const protectedRegexps = regEsc(protectedEscapes);
   const regex = protectedRegexps
-        .replace(new RegExp(DIGIT_ESCAPE, 'g'), '\\d+')
-        .replace(new RegExp(STAR_ESCAPE, 'g'), '[\\s\\S]*?')
-        .replace(new RegExp(PERCENT_ESCAPE, 'g'), '.*?');
+    .replace(new RegExp(DIGIT_ESCAPE, 'g'), '\\d+')
+    .replace(new RegExp(STAR_ESCAPE, 'g'), '[\\s\\S]*?')
+    .replace(new RegExp(PERCENT_ESCAPE, 'g'), '.*?');
   return new RegExp(regex);
 };
 
