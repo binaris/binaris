@@ -6,7 +6,7 @@ const logger = require('./lib/logger');
 const { getRealm } = require('./lib/userConf');
 const { parseTimeString } = require('./lib/timeUtil');
 const {
-  deployHandler, createHandler, feedbackHandler, invokeHandler,
+  deployHandler, createHandler, invokeHandler,
   listHandler, logsHandler, loginHandler, removeHandler, perfHandler,
   showHandler, statsHandler,
 } = require('./lib');
@@ -342,23 +342,6 @@ Usage: $0 <command> [options]` // eslint-disable-line comma-dangle
       .strict();
   }, async () => {
     await loginHandler();
-  })
-  .command('feedback <email> <message>', 'Provide feedback on the Binaris product', (yargs0) => {
-    yargs0
-      .usage('Usage: $0 feedback <email> <message>')
-      .positional('email', {
-        describe: 'User email',
-        type: 'string',
-      })
-      .positional('message', {
-        describe: 'Feedback message',
-        type: 'string',
-      })
-      .example(
-        `  // Send feedback message to us with your email address
-          bn feedback "you@email.com" "Great Product!"`);
-  }, async (argv) => {
-    await handleCommand(argv, feedbackHandler);
   })
   // .strict()
   .demandCommand(1, 'Please provide at least 1 valid command')
