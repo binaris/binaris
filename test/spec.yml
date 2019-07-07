@@ -17,7 +17,6 @@
                 bn logs <function> [options]              Print the logs of a function
                 bn show [config]                          Show Binaris account configuration
                 bn login                                  Login to your Binaris account using an API key and account id
-                bn feedback <email> <message>             Provide feedback on the Binaris product
 
               Options:
                 --version   Show version number  [boolean]
@@ -239,15 +238,6 @@
         err: |-
             RequestId: *
             Invalid request parameters (see errors field)
-
-- test: Test feedback (good-path)
-  setup:
-    - export FEEDBACK_EMAIL=test@binaris.com
-    - export FEEDBACK_MESSAGE=ZL3FtCMyqeRQjP5GESTRbDRwMEjshHhjYAXHiMRZg3EOtutyWvEWcYJN7704ch3W
-  steps:
-    -   in: bn feedback "$FEEDBACK_EMAIL" "$FEEDBACK_MESSAGE"
-        out: |-
-            Thank you!
 
 - test: Test list
   setup:
@@ -582,22 +572,6 @@
     -   in: unset BINARIS_API_KEY
     -   in: echo 9239239 | BINARIS_DEPLOY_ENDPOINT=fake.api.binaris.invalid. bn login
         err: "Error: getaddrinfo ENOTFOUND fake.api.binaris.invalid. fake.api.binaris.invalid.:443"
-        exit: 1
-
-- test: Test feedback empty message (bad-path)
-  setup:
-    - export FEEDBACK_EMAIL=test@binaris.com
-  steps:
-    -   in: bn feedback "$FEEDBACK_EMAIL" ""
-        err: Not a valid message.
-        exit: 1
-
-- test: Test feedback empty email (bad-path)
-  setup:
-    - export FEEDBACK_MESSAGE=ZL3FtCMyqeRQjP5GESTRbDRwMEjshHhjYAXHiMRZg3EOtutyWvEWcYJN7704ch3W
-  steps:
-    -   in: bn feedback "" "$FEEDBACK_MESSAGE"
-        err: Not a valid email.
         exit: 1
 
 - test: Test create (bad-path)
