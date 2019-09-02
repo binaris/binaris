@@ -2,7 +2,7 @@
   cleanup:
     -   bn remove returnPy3Method
   steps:
-    -   in: export BASE_ARGS="-H X-Binaris-Api-Key:${BINARIS_API_KEY}"
+    -   in: export BASE_ARGS="-H X-Binaris-Api-Key:${BINARIS_API_KEY} -H Content-Type:application/json"
     -   in: export TEST_FUNCTION="https://${BINARIS_INVOKE_ENDPOINT}/v2/run/${BINARIS_ACCOUNT_ID}/returnPy3Method"
     -   in: bn create python3 returnPy3Method
     -   in: |-

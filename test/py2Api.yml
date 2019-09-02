@@ -2,7 +2,7 @@
   cleanup:
     -   bn remove returnPy2Input
   steps:
-    -   in: export BASE_ARGS="-H X-Binaris-Api-Key:${BINARIS_API_KEY}"
+    -   in: export BASE_ARGS="-H X-Binaris-Api-Key:${BINARIS_API_KEY} -H Content-Type:application/json"
     -   in: export TEST_FUNCTION="https://${BINARIS_INVOKE_ENDPOINT}/v2/run/${BINARIS_ACCOUNT_ID}/returnPy2Input"
     -   in: bn create python2 returnPy2Input
     -   in: |-
