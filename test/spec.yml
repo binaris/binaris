@@ -657,7 +657,6 @@
             Error: some error
                 at Bolt.exports.handler [as userEntryPoint] (/code/function.js:7:9)
                 at *
-                at <anonymous>
         exit: 1
 
 - test: Test bad user python2 code (bad-path)
