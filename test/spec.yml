@@ -636,7 +636,7 @@
     -   in: bn invoke $FUNC_NAME
         err: |-
             RequestId: *
-            Something went wrong, and it's not your fault.
+            Something went wrong, and it is not your fault.
             If this keeps happening, please contact support@reshuffle.com with the request ID.
             Apologies.
         exit: 1
