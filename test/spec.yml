@@ -1026,36 +1026,38 @@
         exit: 1
         err: "ENAMETOOLONG: name too long, open '/home/dockeruser/test/.binaris/binaris*1111.tgz'"
 
-- test: Test perf 1 second (good-path)
-  setup:
-    - export FUNC_NAME=measure1sec$RANDOM$RANDOM
-    - bn create --config.ttl '2 hours' node8 $FUNC_NAME
-    - bn deploy $FUNC_NAME
-  cleanup:
-    - bn remove $FUNC_NAME
-  steps:
-    -   in: bn perf -t 1 $FUNC_NAME
-        out: |-
-            Running performance test on function measure1sec#.
-            Executing 5000 invocations with 1 "thread" up to 1 second.
-            Stand by for results...
-
-            Perf summary
-            ============
-            Total time  % s*
-            Invocations %
-            Errors      %
-            Rate        % rps*
-
-            Latencies
-            =========
-            Mean % ms*
-            Min  % ms*
-            Max  % ms*
-            50%  % ms*
-            90%  % ms*
-            95%  % ms*
-            99%  % ms*
+# Disabled temporarily due to load and high false negative rate
+#
+# - test: Test perf 1 second (good-path)
+#   setup:
+#     - export FUNC_NAME=measure1sec$RANDOM$RANDOM
+#     - bn create --config.ttl '2 hours' node8 $FUNC_NAME
+#     - bn deploy $FUNC_NAME
+#   cleanup:
+#     - bn remove $FUNC_NAME
+#   steps:
+#     -   in: bn perf -t 1 $FUNC_NAME
+#         out: |-
+#             Running performance test on function measure1sec#.
+#             Executing 5000 invocations with 1 "thread" up to 1 second.
+#             Stand by for results...
+# 
+#             Perf summary
+#             ============
+#             Total time  % s*
+#             Invocations %
+#             Errors      %
+#             Rate        % rps*
+# 
+#             Latencies
+#             =========
+#             Mean % ms*
+#             Min  % ms*
+#             Max  % ms*
+#             50%  % ms*
+#             90%  % ms*
+#             95%  % ms*
+#             99%  % ms*
 
 - test: Test perf 100 invocations (good-path)
   setup:
