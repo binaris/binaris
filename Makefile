@@ -36,14 +36,14 @@ tag: require-tag
 		$(DOCKER) tag $(DOCKER_IMAGE):$(tag) $(DOCKER_IMAGE):$(BRANCH)
 
 .PHONY: lint
-lint: build
+lint:
 		$(DOCKER) run                                                 \
 			--rm                                                      \
 			$(DOCKER_IMAGE):$(tag)                                    \
 			bash -c "cd /home/dockeruser/binaris && npm run lint"
 
 .PHONY: test
-test: build
+test:
 		export tag=$(tag)
 		$(DOCKER) run                                     \
 			$(INTERACTIVE)                                \
