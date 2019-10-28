@@ -16,7 +16,7 @@ node {
     ]);
     try {
         ansiColor('xterm') {
-            def env = ["tag=${BUILD_TAG}", "NO_CACHE=${params.NO_CACHE}"]
+            def env = ["tag=${BUILD_TAG}", "NO_CACHE=${params.NO_CACHE}", "CI=true"]
             withEnv(env) {
                 stage('Build') {
                     echo 'Building docker image';

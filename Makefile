@@ -35,15 +35,20 @@ tag: require-tag
 		$(DOCKER) tag $(DOCKER_IMAGE):$(tag) binaris
 		$(DOCKER) tag $(DOCKER_IMAGE):$(tag) $(DOCKER_IMAGE):$(BRANCH)
 
-.PHONY: lint
-lint:
+.PHONY: just_lint lint
+just_lint:
 		$(DOCKER) run                                                 \
 			--rm                                                      \
 			$(DOCKER_IMAGE):$(tag)                                    \
 			bash -c "cd /home/dockeruser/binaris && npm run lint"
+ifeq ($(CI),true)
+lint: just_lint
+else
+lint: build just_lint
+endif
 
-.PHONY: test
-test:
+.PHONY: just_test test
+just_test:
 		export tag=$(tag)
 		$(DOCKER) run                                     \
 			$(INTERACTIVE)                                \
@@ -53,6 +58,11 @@ test:
 			-v /var/run/docker.sock:/var/run/docker.sock  \
 			$(cli_envs) $(DOCKER_IMAGE):$(tag)            \
 			bash -c 'cd /home/dockeruser/binaris && npm run test -- $(TEST_ARGS)'
+ifeq ($(CI),true)
+test: just_test
+else
+test: build just_test
+endif
 
 .PHONY: publish
 publish: require-npm-creds require-npm-tag
