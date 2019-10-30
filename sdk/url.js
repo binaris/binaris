@@ -27,10 +27,6 @@ const getListUrl = function getListUrl(accountId) {
   return urljoin(`https://${getDeployEndpoint()}`, 'v3', 'functions', accountId);
 };
 
-const getStatsUrl = function getStatsUrl(accountId) {
-  return urljoin(`https://${getDeployEndpoint()}`, 'v3', 'metrics', accountId);
-};
-
 module.exports = {
   getCodeUploadUrl,
   getConfUploadUrl,
@@ -38,5 +34,4 @@ module.exports = {
   getInvokeUrl,
   getLogsUrl,
   getListUrl,
-  getStatsUrl,
 };

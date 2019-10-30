@@ -8,7 +8,7 @@ const { parseTimeString } = require('./lib/timeUtil');
 const {
   deployHandler, createHandler, invokeHandler,
   listHandler, logsHandler, loginHandler, removeHandler, perfHandler,
-  showHandler, statsHandler,
+  showHandler,
 } = require('./lib');
 const { forceRealm } = require('./sdk');
 
@@ -267,55 +267,6 @@ Usage: $0 <command> [options]` // eslint-disable-line comma-dangle
       }
     }
     await handleCommand(argv, logsHandler);
-  })
-  .command('stats [options]', /* hidden: 'Print usage statistics' */ false, (yargs0) => {
-    yargs0
-      .usage('Usage: $0 stats [options]')
-      .option('since', {
-        alias: 's',
-        describe: 'Output statistics after given ISO timestamp (inclusive)',
-        type: 'string',
-      })
-      .option('until', {
-        alias: 'u',
-        describe: 'Output statistics until given ISO timestamp (non-inclusive)',
-        type: 'string',
-      })
-      .option('json', {
-        describe: 'Output as JSON',
-        type: 'boolean',
-      })
-      .strict()
-      .example( // eslint-disable-next-line indent
-`  // Retrieve all usage statistics of the account
-  bn stats
-
-  // Retrieve all statistics since the timestamp until now (~1 minute)
-  bn stats --since 2018-03-09T22:12:21.861Z
-
-  // Statistics over the last 24h
-  bn stats --since 1d
-
-  // Retrieve all statistics of a certain month
-  bn stats --since 2018-03-01T00:00:00Z --until 2018-04-01T00:00:00Z`);
-  }, async (argv) => {
-    if (argv.since) {
-      try {
-        // eslint-disable-next-line no-param-reassign
-        argv.since = parseTimeString(argv.since).toISOString();
-      } catch (err) {
-        msgAndExit(err.message);
-      }
-    }
-    if (argv.until) {
-      try {
-        // eslint-disable-next-line no-param-reassign
-        argv.until = parseTimeString(argv.until).toISOString();
-      } catch (err) {
-        msgAndExit(err.message);
-      }
-    }
-    await handleCommand(argv, statsHandler);
   })
   .command('show [config]', 'Show Binaris account configuration', (yargs0) => {
     yargs0
