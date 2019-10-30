@@ -781,35 +781,6 @@
         err: "EACCES: permission denied, mkdir '/home/dockeruser/test/foo/bar'"
         exit: 1
 
-- test: Invocation stats
-  setup:
-    - export FUNC_NAME="invokestats$RANDOM$RANDOM"
-    - bn create --config.ttl '2 hours' node8 $FUNC_NAME
-    - bn deploy $FUNC_NAME
-  cleanup:
-    - bn remove $FUNC_NAME
-  steps:
-    - in: bn invoke $FUNC_NAME
-    - in: sleep 180 # Enough time to get minute-aggregated stats
-    - in: bn stats --since "15m"
-      out: |-
-        FUNCTION% METRIC% VALUE% SINCE% UNTIL*
-        invokestats% function_duration_us% #* #-#-#T#:#:#.#Z* #-#-#T#:#:#.#Z*
-        invokestats% function_invocations% #* #-#-#T#:#:#.#Z* #-#-#T#:#:#.#Z*
-    - in: bn stats --since "15m" --json
-      out: '{*"metrics":[*'
-
-- test: Empty stats
-  steps:
-    - in: bn stats --until "1990-01-01T00:00:00Z"
-      out: No matching usage stats found
-
-- test: Bad input to stats
-  steps:
-    - in: bn stats --since 'not a valid time'
-      exit: 1
-      err: Invalid time format "not a valid time"
-
 # Disabled until the switch is made to yargs
 #
 # - test: Superfluous output(bad-path)
@@ -963,32 +934,6 @@
 
             Unknown argument: notarealarg
         exit: 1
-
-- test: Stats help
-  steps:
-    - in: bn stats --help
-      out: |-
-        Usage: bn stats [options]
-
-        Options:
-          --version    Show version number  [boolean]
-          --help, -h   Show help  [boolean]
-          --since, -s  Output statistics after given ISO timestamp (inclusive)  [string]
-          --until, -u  Output statistics until given ISO timestamp (non-inclusive)  [string]
-          --json       Output as JSON  [boolean]
-
-        Examples:
-            // Retrieve all usage statistics of the account
-            bn stats
-
-            // Retrieve all statistics since the timestamp until now (~1 minute)
-            bn stats --since 2018-03-09T22:12:21.861Z
-
-            // Statistics over the last 24h
-            bn stats --since 1d
-
-            // Retrieve all statistics of a certain month
-            bn stats --since 2018-03-01T00:00:00Z --until 2018-04-01T00:00:00Z
 
 - test: Test deploy of long name (good-path)
   cleanup:

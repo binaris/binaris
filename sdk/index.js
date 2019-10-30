@@ -8,7 +8,6 @@ const list = require('./list');
 const logs = require('./logs');
 const remove = require('./remove');
 const perf = require('./perf');
-const stats = require('./stats');
 const { forceRealm } = require('./config');
 
 module.exports = {
@@ -19,6 +18,5 @@ module.exports = {
   logs,
   perf,
   remove,
-  stats,
   forceRealm,
 };
