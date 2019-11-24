@@ -16,7 +16,7 @@ npm install -g binaris
 3. Generate a Binaris template function
 ```bash
 # generates simple NodeJS template function
-bn create node8 hellofunc
+bn create node12 hellofunc
 ```
 
 4. Deploy a function
@@ -78,7 +78,7 @@ For convenience, you can create an alias for this in bash:
 ```bash
 
 alias bn='docker run --rm -e BINARIS_API_KEY -v $(pwd):/src binaris/bn'
-bn create node8 hello
+bn create node12 hello
 bn deploy hello
 bn invoke hello
 
@@ -95,7 +95,7 @@ functions:
   hello:
     file: function.js
     entrypoint: handler
-    runtime: node8
+    runtime: node12
     env:
       SOME_API_KEY: XXXXXXXXXXX
 ```
@@ -107,7 +107,7 @@ functions:
   hello:
     file: function.js
     entrypoint: handler
-    runtime: node8
+    runtime: node12
     env:
       SOME_API_KEY:
 ```

@@ -81,8 +81,8 @@ Usage: $0 <command> [options]` // eslint-disable-line comma-dangle
 ` // Create a function from python3 template
   bn create python3 ninja
 
-  // Create a function from node8 template with exclusive execution model
-  bn create node8 pirate --config.executionModel=exclusive
+  // Create a function from node12 template with exclusive execution model
+  bn create node12 pirate --config.executionModel=exclusive
 
   // Create a function from python2 template with concurrent execution model, and FOO env
   bn create python2 hello --config.executionModel=concurrent --config.env.FOO=bar

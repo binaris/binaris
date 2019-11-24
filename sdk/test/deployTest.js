@@ -16,7 +16,7 @@ const testApiKey = generate(APIKeyLength);
 const testFuncConf = {
   file: 'function.js',
   entrypoint: 'handler',
-  runtime: 'node8',
+  runtime: 'node12',
   codeDigest: 'fakedigest',
 };
 

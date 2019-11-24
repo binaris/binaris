@@ -89,7 +89,7 @@
   cleanup:
     - bn remove $FUNC_NAME
   steps:
-    -   in: bn create  --config.ttl '2 hours' node8 $FUNC_NAME
+    -   in: bn create  --config.ttl '2 hours' node12 $FUNC_NAME
         out: |-
             Created function % in /home/dockeruser/test
               (use "bn deploy %" to deploy the function)
@@ -99,7 +99,7 @@
             If you don't have a key, head over to https://binaris.com to request one
             *? API Key: *
             *Authentication Succeeded*
-              (use "bn create node8 hello" to create a Node.js template function in your CWD)
+              (use "bn create node12 hello" to create a Node.js template function in your CWD)
     -   in: bn deploy $FUNC_NAME
         out: |-
           Deployed function %
@@ -137,19 +137,19 @@
 
 - test: Test create (good-path)
   steps:
-    -   in: bn create node8 create_snowmanolympics
+    -   in: bn create node12 create_snowmanolympics
         out: |-
             Created function create_snowmanolympics in /home/dockeruser/test
               (use "bn deploy %" to deploy the function)
-    -   in: bn create node8 create_purplecannon -p /home/dockeruser/test/purplecannon
+    -   in: bn create node12 create_purplecannon -p /home/dockeruser/test/purplecannon
         out: |-
             Created function create_purplecannon in /home/dockeruser/test/purplecannon
               (use "bn deploy -p /home/dockeruser/test/purplecannon create_purplecannon" to deploy the function)
-    -   in: bn create node8 custom_entry_node -p /home/dockeruser/test/custom_entry_node --config.entrypoint 'customEntry'
+    -   in: bn create node12 custom_entry_node -p /home/dockeruser/test/custom_entry_node --config.entrypoint 'customEntry'
     -   in: cat /home/dockeruser/test/custom_entry_node/function.js
         out: |-
             'use strict'
-            
+
             /**
              * @type { import("./binaris").Handler }
              */
@@ -168,7 +168,7 @@
 - test: Test deploy (good-path)
   setup:
     - export FUNC_NAME=deploy$RANDOM$RANDOM
-    - bn create --config.ttl '2 hours' node8 $FUNC_NAME
+    - bn create --config.ttl '2 hours' node12 $FUNC_NAME
   cleanup:
     - bn remove $FUNC_NAME
   steps:
@@ -182,7 +182,7 @@
 - test: Test public deploy (good-path)
   setup:
     - export FUNC_NAME=public_deploy$RANDOM$RANDOM
-    - bn create --config.ttl '2 hours' node8 $FUNC_NAME
+    - bn create --config.ttl '2 hours' node12 $FUNC_NAME
   cleanup:
     - bn remove $FUNC_NAME
   steps:
@@ -196,7 +196,7 @@
 - test: Test deploy with TTL (number)
   setup:
     - export FUNC_NAME=ttl_numeric$RANDOM$RANDOM
-    - bn create --config.ttl 10 node8 $FUNC_NAME
+    - bn create --config.ttl 10 node12 $FUNC_NAME
     - bn deploy $FUNC_NAME
   steps:
     -   in: bn invoke $FUNC_NAME
@@ -214,7 +214,7 @@
 - test: Test deploy with TTL (string)
   setup:
     - export FUNC_NAME=ttl_string$RANDOM$RANDOM
-    - bn create --config.ttl '10000ms' node8 $FUNC_NAME
+    - bn create --config.ttl '10000ms' node12 $FUNC_NAME
     - bn deploy $FUNC_NAME
   steps:
     -   in: bn invoke $FUNC_NAME
@@ -231,7 +231,7 @@
 
 - test: Test deploy with invalid TTL string (bad-path)
   setup:
-    - bn create --config.ttl 'invalidttlstring' node8 functionwithinvalidttl
+    - bn create --config.ttl 'invalidttlstring' node12 functionwithinvalidttl
   steps:
     -   in: bn deploy functionwithinvalidttl
         exit: 1
@@ -243,9 +243,9 @@
   setup:
     - export FUNC_NAME=listtestA$RANDOM$RANDOM
     - export FUNC_NAME2=listtestB$RANDOM$RANDOM
-    - bn create --config.ttl '2 hours' node8 $FUNC_NAME -p 1
+    - bn create --config.ttl '2 hours' node12 $FUNC_NAME -p 1
     - bn deploy $FUNC_NAME -p 1
-    - bn create --config.ttl '2 hours' node8 $FUNC_NAME2 -p 2
+    - bn create --config.ttl '2 hours' node12 $FUNC_NAME2 -p 2
     - bn deploy $FUNC_NAME2 -p 2
   cleanup:
     - bn remove $FUNC_NAME
@@ -265,7 +265,7 @@
     - export FUNC_NAME=invoke$RANDOM$RANDOM
     - |-
       echo '{"name": "unguessable"}' > invoke.json
-    - bn create --config.ttl '2 hours' node8 $FUNC_NAME
+    - bn create --config.ttl '2 hours' node12 $FUNC_NAME
     - bn deploy $FUNC_NAME
   cleanup:
     - bn remove $FUNC_NAME
@@ -285,7 +285,7 @@
 - test: Block access to internal network
   setup:
     - export FUNC_NAME=internalnets$RANDOM$RANDOM
-    - bn create --config.ttl '2 hours' node8 $FUNC_NAME
+    - bn create --config.ttl '2 hours' node12 $FUNC_NAME
     - npm i request-promise-native request
     - |-
       cat <<EOF >/home/dockeruser/test/function.js
@@ -314,7 +314,7 @@
 - test: Test logs (good-path)
   setup:
     - export FUNC_NAME=logs$(cat /dev/urandom | tr -dc 'a-z0-9' | fold -w 32 | head -n 1)
-    - bn create --config.ttl '2 hours' node8 $FUNC_NAME
+    - bn create --config.ttl '2 hours' node12 $FUNC_NAME
     - sed -i '7 a \  console.log(`Hello ${name}!`);' function.js
   cleanup:
     - bn remove $FUNC_NAME
@@ -400,7 +400,7 @@
 - test: Test deploy invoke remove cycle commands (good-path)
   setup:
     - export FUNC_NAME=cycle$RANDOM$RANDOM
-    - bn create --config.ttl '2 hours' node8 $FUNC_NAME
+    - bn create --config.ttl '2 hours' node12 $FUNC_NAME
   steps:
     -   in: |-
             echo 'exports.handler = () => { s = "Hello World!"; console.log(s); return s; };' >function.js
@@ -429,14 +429,14 @@
   cleanup:
     - bn remove $FUNC_NAME
   steps:
-    -   in: bn create --config.ttl '2 hours' node8 $FUNC_NAME
+    -   in: bn create --config.ttl '2 hours' node12 $FUNC_NAME
     -   in: |-
             cat <<EOF >/home/dockeruser/test/binaris.yml
             functions:
               $FUNC_NAME:
                 file: function.js
                 entrypoint: handler
-                runtime: node8
+                runtime: node12
                 env:
                     FORWARD_ME:
                     DEFINED_HERE: value
@@ -458,14 +458,14 @@
 
 - test: "envs: fail to deploy if non-string in env"
   steps:
-    -   in: bn create node8 invalidenv
+    -   in: bn create node12 invalidenv
     -   in: |-
             cat <<EOF >/home/dockeruser/test/binaris.yml
             functions:
               invalidenv:
                 file: function.js
                 entrypoint: handler
-                runtime: node8
+                runtime: node12
                 env:
                     A_NUMBER: 6.66
             EOF
@@ -475,14 +475,14 @@
 
 - test: "envs: fail to deploy if empty string in env"
   steps:
-    -   in: bn create node8 emptiness
+    -   in: bn create node12 emptiness
     -   in: |-
             cat <<EOF >/home/dockeruser/test/binaris.yml
             functions:
               emptiness:
                 file: function.js
                 entrypoint: handler
-                runtime: node8
+                runtime: node12
                 env:
                     EMPTY: ""
             EOF
@@ -496,7 +496,7 @@
   cleanup:
     - bn remove $FUNC_NAME
   steps:
-    -   in: bn create --config.ttl '2 hours' node8 $FUNC_NAME -e concurrent
+    -   in: bn create --config.ttl '2 hours' node12 $FUNC_NAME -e concurrent
     -   in: |-
             cat > function.js << EOL
             function msleep(ms) {
@@ -531,7 +531,7 @@
   cleanup:
     - bn remove $FUNC_NAME
   steps:
-    -   in: bn create --config.ttl '2 hours' node8 $FUNC_NAME -e exclusive
+    -   in: bn create --config.ttl '2 hours' node12 $FUNC_NAME -e exclusive
     -   in: |-
             cat > function.js << EOL
             function msleep(ms) {
@@ -576,22 +576,22 @@
 
 - test: Test create (bad-path)
   steps:
-    -   in: bn create node8 a*b*c*
+    -   in: bn create node12 a*b*c*
         err: "Invalid characters in function name 'a*b*c*'. Use only letters and digits"
         exit: 1
-    -   in: bn create node8 a_bשcd@e+
+    -   in: bn create node12 a_bשcd@e+
         err: "Invalid characters in function name 'a_bשcd@e+'. Use only letters and digits"
         exit: 1
-    -   in: bn create node8 a=b~c,d.
+    -   in: bn create node12 a=b~c,d.
         err: "Invalid characters in function name 'a=b~c,d.'. Use only letters and digits"
         exit: 1
-    -   in: bn create node8 a:b?c!d-
+    -   in: bn create node12 a:b?c!d-
         err: "Invalid characters in function name 'a:b?c!d-'. Use only letters and digits"
         exit: 1
     -   in: bn create
         err: "*Not enough non-option arguments: got 0, need at least 2"
         exit: 1
-    -   in: bn create node8
+    -   in: bn create node12
         err: "*Not enough non-option arguments: got 1, need at least 2"
         exit: 1
     -   in: bn create abcd
@@ -603,7 +603,7 @@
 
 - test: Test invoke (bad-path)
   steps:
-    -   in: bn create node8 invoke_bad -p /home/dockeruser/test/alloftheoptions
+    -   in: bn create node12 invoke_bad -p /home/dockeruser/test/alloftheoptions
     -   in: bn invoke invoke_bad -j myFile.json -d data
         err: Invoke flags --json(-j) and --data(-d) are mutually exclusive
         exit: 1
@@ -624,7 +624,7 @@
   cleanup:
     - bn remove $FUNC_NAME
   steps:
-    -   in: bn create --config.ttl '2 hours' node8 $FUNC_NAME -e exclusive
+    -   in: bn create --config.ttl '2 hours' node12 $FUNC_NAME -e exclusive
     -   in: |-
            cat > function.js << EOL
            exports.handler = async (body, req) => {
@@ -641,13 +641,13 @@
             Apologies.
         exit: 1
 
-- test: Test bad user node8 code (bad-path)
+- test: Test bad user node12 code (bad-path)
   setup:
-    - export FUNC_NAME=doomedtofailnode8_$RANDOM$RANDOM
+    - export FUNC_NAME=doomedtofailnode12_$RANDOM$RANDOM
   cleanup:
     - bn remove $FUNC_NAME
   steps:
-    -   in: bn create --config.ttl '2 hours' node8 $FUNC_NAME
+    -   in: bn create --config.ttl '2 hours' node12 $FUNC_NAME
     -   in: |-
             sed -i.bak "7i\  throw new Error('some error');" function.js
     -   in: bn deploy $FUNC_NAME
@@ -721,7 +721,7 @@
   setup:
     - export FUNC_NAME=notdeployeddeployed_$RANDOM$RANDOM
   steps:
-    -   in: bn create --config.ttl '2 hours' node8 $FUNC_NAME
+    -   in: bn create --config.ttl '2 hours' node12 $FUNC_NAME
     -   in: bn remove $FUNC_NAME
         err: |-
             RequestId: %
@@ -742,7 +742,7 @@
 
 - test: Test logs (bad-path)
   steps:
-    -   in: bn create node8 endlessclue
+    -   in: bn create node12 endlessclue
     -   in: bn logs endlessclue --since h23sdh2
         err: |-
              Invalid time format "h23sdh2"
@@ -757,7 +757,7 @@
 
 - test: Invalid name in binaris.yml  (bad-path)
   setup:
-    - bn create node8 pickypumpkin
+    - bn create node12 pickypumpkin
     # replace line 2 of binaris.yml(function name) with a bad function name
     - sed -i '2 c \  inv@a-d:' binaris.yml
   steps:
@@ -777,7 +777,7 @@
     - mkdir foo
     - chmod -rwx foo
   steps:
-    -   in: bn create node8 orangehero -p foo/bar
+    -   in: bn create node12 orangehero -p foo/bar
         err: "EACCES: permission denied, mkdir '/home/dockeruser/test/foo/bar'"
         exit: 1
 
@@ -808,7 +808,7 @@
   setup:
     - unset BINARIS_API_KEY
   steps:
-    -   in: bn create node8 handsomelycalendar
+    -   in: bn create node12 handsomelycalendar
     -   in: bn deploy handsomelycalendar
         err: Binaris conf file could not be read and BINARIS_API_KEY is undefined, please use "bn login"
         exit: 1
@@ -817,7 +817,7 @@
   setup:
     - export BINARIS_API_KEY=impossiblekey2313213
   steps:
-    -   in: bn create node8 perplexingpersimmon
+    -   in: bn create node12 perplexingpersimmon
     -   in: bn deploy perplexingpersimmon
         err: |-
             RequestId: *
@@ -889,7 +889,7 @@
 - test: Test if imagemagick exists in runtime environment
   setup:
     - export FUNC_NAME=largeimagemagick$RANDOM$RANDOM
-    - bn create --config.ttl '2 hours' node8 $FUNC_NAME
+    - bn create --config.ttl '2 hours' node12 $FUNC_NAME
     - npm i shelljs
     - |-
       cat <<EOF >/home/dockeruser/test/function.js
@@ -941,7 +941,7 @@
   setup:
     - export LONG_NAME=binarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinaris$RANDOM$RANDOM
   steps:
-    -   in: bn create --config.ttl '2 hours' node8 $LONG_NAME
+    -   in: bn create --config.ttl '2 hours' node12 $LONG_NAME
     -   in: bn deploy $LONG_NAME
     -   in: bn invoke $LONG_NAME
         out: |-
@@ -951,7 +951,7 @@
   setup:
     - export SERVER_LONG_NAME=binarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinaris
   steps:
-    -   in: bn create node8 $SERVER_LONG_NAME
+    -   in: bn create node12 $SERVER_LONG_NAME
     -   in: bn deploy $SERVER_LONG_NAME
         exit: 1
         err: "Function name cannot be longer than 200"
@@ -966,7 +966,7 @@
   setup:
     - export LOCAL_LONG_NAME=binarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinarisbinaris1111
   steps:
-    -   in: bn create node8 $LOCAL_LONG_NAME
+    -   in: bn create node12 $LOCAL_LONG_NAME
     -   in: bn deploy $LOCAL_LONG_NAME
         exit: 1
         err: "ENAMETOOLONG: name too long, open '/home/dockeruser/test/.binaris/binaris*1111.tgz'"
@@ -976,7 +976,7 @@
 # - test: Test perf 1 second (good-path)
 #   setup:
 #     - export FUNC_NAME=measure1sec$RANDOM$RANDOM
-#     - bn create --config.ttl '2 hours' node8 $FUNC_NAME
+#     - bn create --config.ttl '2 hours' node12 $FUNC_NAME
 #     - bn deploy $FUNC_NAME
 #   cleanup:
 #     - bn remove $FUNC_NAME
@@ -986,14 +986,14 @@
 #             Running performance test on function measure1sec#.
 #             Executing 5000 invocations with 1 "thread" up to 1 second.
 #             Stand by for results...
-# 
+#
 #             Perf summary
 #             ============
 #             Total time  % s*
 #             Invocations %
 #             Errors      %
 #             Rate        % rps*
-# 
+#
 #             Latencies
 #             =========
 #             Mean % ms*
@@ -1007,7 +1007,7 @@
 - test: Test perf 100 invocations (good-path)
   setup:
     - export FUNC_NAME=measure100_$RANDOM$RANDOM
-    - bn create --config.ttl '2 hours' node8 $FUNC_NAME
+    - bn create --config.ttl '2 hours' node12 $FUNC_NAME
     - bn deploy $FUNC_NAME
   cleanup:
     - bn remove $FUNC_NAME
@@ -1039,7 +1039,7 @@
   cleanup:
     - bn remove emptyenv
   steps:
-    -   in: bn create node8 emptyenv
+    -   in: bn create node12 emptyenv
     -   in: |-
             cat <<EOF >>/home/dockeruser/test/binaris.yml
                 env:
@@ -1056,7 +1056,7 @@
 
 - test: non dict env
   steps:
-    -   in: bn create node8 nondictenv
+    -   in: bn create node12 nondictenv
     -   in: |-
             cat <<EOF >>/home/dockeruser/test/binaris.yml
                 env:
@@ -1108,13 +1108,13 @@
 - test: existing files
   steps:
     -   in: touch binaris.yml
-    -   in: bn create node8 alreadyExists
+    -   in: bn create node12 alreadyExists
         exit: 1
         err: "/home/dockeruser/test/binaris.yml already exists"
 
 - test: create configuration options (good-path)
   steps:
-    -  in: bn create node8 testConfOpts --config.executionModel=exclusive --config.env.PATH --config.env.FOO=bar
+    -  in: bn create node12 testConfOpts --config.executionModel=exclusive --config.env.PATH --config.env.FOO=bar
     -  in: |-
            cat <<EOF >>/home/dockeruser/test/expected.yml
            functions:
@@ -1122,7 +1122,7 @@
                file: function.js
                entrypoint: handler
                executionModel: exclusive
-               runtime: node8
+               runtime: node12
                env:
                  PATH: null
                  FOO: bar
@@ -1131,18 +1131,18 @@
 
 - test: invalid create configuration options (bad-path)
   steps:
-    -  in: bn create node8 testBadConfOpts --config=bad
+    -  in: bn create node12 testBadConfOpts --config=bad
        exit: 1
        err: "Non object create configuration options: bad"
-    -  in: bn create node8 testBadConfOpts --config
+    -  in: bn create node12 testBadConfOpts --config
        exit: 1
        err: "Non object create configuration options: true"
-    -  in: bn create node8 testBadConfOpts --config=bad --config.foo=bar
+    -  in: bn create node12 testBadConfOpts --config=bad --config.foo=bar
        exit: 1
        err: "Non object create configuration options: bad"
-    -  in: bn create node8 testBadConfOpts --config --config.foo=bar
+    -  in: bn create node12 testBadConfOpts --config --config.foo=bar
        exit: 1
        err: "Non object create configuration options: true"
-    -  in: bn create node8 testArrayOpts --config=aaa --config=bbb
+    -  in: bn create node12 testArrayOpts --config=aaa --config=bbb
        exit: 1
        err: "Non object create configuration options: aaa,bbb"
