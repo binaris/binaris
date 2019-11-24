@@ -4,7 +4,7 @@
   steps:
     -   in: export BASE_ARGS="-H X-Binaris-Api-Key:${BINARIS_API_KEY}"
     -   in: export TEST_FUNCTION="https://${BINARIS_INVOKE_ENDPOINT}/v2/run/${BINARIS_ACCOUNT_ID}/returnJSInput"
-    -   in: bn create node8 returnJSInput
+    -   in: bn create node12 returnJSInput
     -   in: 'echo "exports.handler = (input) => ({ inputType: typeof input, input});" >function.js'
     -   in: bn deploy returnJSInput
     -   in: curl -s ${BASE_ARGS} "${TEST_FUNCTION}"
@@ -18,13 +18,13 @@
     -   in: curl -s --data '["foo","bar"]' ${BASE_ARGS} "${TEST_FUNCTION}"
         out: '{"inputType":"object","input":["foo","bar"]}'
 
-- test: Test js method 
+- test: Test js method
   cleanup:
     -   bn remove returnJSMethod
   steps:
     -   in: export BASE_ARGS="-H X-Binaris-Api-Key:${BINARIS_API_KEY}"
     -   in: export TEST_FUNCTION="https://${BINARIS_INVOKE_ENDPOINT}/v2/run/${BINARIS_ACCOUNT_ID}/returnJSMethod"
-    -   in: bn create node8 returnJSMethod
+    -   in: bn create node12 returnJSMethod
     -   in: 'echo "exports.handler = (_, ctx) => ctx.request.method;" >function.js'
     -   in: bn deploy returnJSMethod
     -   in: curl -s -X GET ${BASE_ARGS} "${TEST_FUNCTION}"
@@ -46,7 +46,7 @@
   steps:
     -   in: export BASE_ARGS="-H X-Binaris-Api-Key:${BINARIS_API_KEY}"
     -   in: export TEST_FUNCTION="https://${BINARIS_INVOKE_ENDPOINT}/v2/run/${BINARIS_ACCOUNT_ID}/returnJSReqBody"
-    -   in: bn create node8 returnJSReqBody
+    -   in: bn create node12 returnJSReqBody
     -   in: 'echo "exports.handler = (_, ctx) => ctx.request.body;" >function.js'
     -   in: bn deploy returnJSReqBody
     -   in: curl -s ${BASE_ARGS} "${TEST_FUNCTION}"
@@ -70,7 +70,7 @@
   steps:
     -   in: export BASE_ARGS="-H X-Binaris-Api-Key:${BINARIS_API_KEY}"
     -   in: export TEST_FUNCTION="https://${BINARIS_INVOKE_ENDPOINT}/v2/run/${BINARIS_ACCOUNT_ID}/returnJSReqTestHeader"
-    -   in: bn create node8 returnJSReqTestHeader
+    -   in: bn create node12 returnJSReqTestHeader
     -   in: 'echo "exports.handler = (_, ctx) => ctx.request.headers.test;" >function.js'
     -   in: bn deploy returnJSReqTestHeader
     -   in: curl -s ${BASE_ARGS} "${TEST_FUNCTION}"
@@ -90,7 +90,7 @@
   steps:
     -   in: export BASE_ARGS="-H X-Binaris-Api-Key:${BINARIS_API_KEY}"
     -   in: export TEST_FUNCTION="https://${BINARIS_INVOKE_ENDPOINT}/v2/run/${BINARIS_ACCOUNT_ID}/returnJSReqQuery"
-    -   in: bn create node8 returnJSReqQuery
+    -   in: bn create node12 returnJSReqQuery
     -   in: 'echo "exports.handler = (_, ctx) => ctx.request.query;" >function.js'
     -   in: bn deploy returnJSReqQuery
     -   in: curl -s ${BASE_ARGS} "${TEST_FUNCTION}"
@@ -114,7 +114,7 @@
   steps:
     -   in: export BASE_ARGS="-H X-Binaris-Api-Key:${BINARIS_API_KEY}"
     -   in: export TEST_FUNCTION="https://${BINARIS_INVOKE_ENDPOINT}/v2/run/${BINARIS_ACCOUNT_ID}/returnJSReqPath"
-    -   in: bn create node8 returnJSReqPath
+    -   in: bn create node12 returnJSReqPath
     -   in: 'echo "exports.handler = (_, ctx) => ctx.request.path;" >function.js'
     -   in: bn deploy returnJSReqPath
     -   in: curl -s ${BASE_ARGS} "${TEST_FUNCTION}"
@@ -140,7 +140,7 @@
   cleanup:
     -   bn remove customJSResponse
   steps:
-    -   in: bn create node8 customJSResponse
+    -   in: bn create node12 customJSResponse
     -   in: |-
            cat >function.js << EOL
            exports.handler = async (_, ctx) => {
