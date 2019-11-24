@@ -755,6 +755,36 @@
         err: "Error: getaddrinfo ENOTFOUND fake.logs.binaris.invalid. fake.logs.binaris.invalid.:443"
         exit: 1
 
+- test: Test {NODE_RUNTIME} E2E
+  foreach:
+    - NODE_RUNTIME: node8
+      ACTUAL_VERSION: v8
+    - NODE_RUNTIME: node10
+      ACTUAL_VERSION: v10
+    - NODE_RUNTIME: node12
+      ACTUAL_VERSION: v12
+  setup:
+    - export FUNC_NAME={NODE_RUNTIME}e2e$RANDOM$RANDOM
+    - bn create --config.ttl '2 hours' {NODE_RUNTIME} $FUNC_NAME
+    - |-
+      cat > function.js << EOL
+      exports.handler = async () => {
+        return process.version;
+      }
+      EOL
+  cleanup:
+    - bn remove $FUNC_NAME
+  steps:
+    -   in: bn deploy $FUNC_NAME
+        out: |-
+            Deployed function %
+            Invoke with one of:
+              "bn invoke %"
+              "curl -H X-Binaris-Api-Key:% https://%"
+    -   in: |-
+          bn invoke $FUNC_NAME
+        out: "{ACTUAL_VERSION}"
+
 - test: Invalid name in binaris.yml  (bad-path)
   setup:
     - bn create node12 pickypumpkin
